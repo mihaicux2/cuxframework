@@ -39,7 +39,7 @@ class CuxFileMessages extends CuxBaseMessages {
                 }
             }
             
-            Cux::getInstance()->cache->set("messages.$lang", $this->_messages[$lang], 3600);
+            Cux::getInstance()->cache->set("messages.$lang", $messages, 3600);
         }
         
         $this->_messages[$lang] = $messages;
