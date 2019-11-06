@@ -1,6 +1,6 @@
 <?php
 
-namespace CuxFramework\messages;
+namespace CuxFramework\components\messages;
 
 use CuxFramework\utils\CuxSingleton;
 use CuxFramework\utils\CuxBase;
@@ -25,7 +25,8 @@ class CuxFileMessages extends CuxBaseMessages {
             $this->_messages[$lang] = $messages;
             
              // load base messages
-            $langFile = "i18n/{$lang}.php";
+            $langFile = "vendor/cux/cuxframework/src/CuxFramework/components/messages/i18n/{$lang}.php";
+            
             if (file_exists($langFile) && is_readable($langFile)){
                 $messages = array_merge($messages, require($langFile));
             }
@@ -34,12 +35,11 @@ class CuxFileMessages extends CuxBaseMessages {
             if ($this->messagesPath && file_exists($this->messagesPath) && is_readable($this->messagesPath)){
                 $messages = array_merge($messages, require($this->messagesPath));
             }
-            if (!empty($messages)){
-                $this->_messages[$lang] = $messages;
-            }
             
             Cux::getInstance()->cache->set("messages.$lang", $this->_messages[$lang], 3600);
         }
+        
+        $this->_messages[$lang] = $messages;
     }
     
     public function translate($category, $message, $lang){

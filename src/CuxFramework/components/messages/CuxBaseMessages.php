@@ -1,6 +1,6 @@
 <?php
 
-namespace CuxFramework\messages;
+namespace CuxFramework\components\messages;
 
 use CuxFramework\utils\CuxSingleton;
 use CuxFramework\utils\CuxBase;

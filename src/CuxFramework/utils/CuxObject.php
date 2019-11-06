@@ -170,7 +170,7 @@ class CuxObject {
         return $ret;
     }
     
-    private function labels(){
+    public function labels(){
         return array();
     }
     

@@ -32,7 +32,9 @@ class Cux extends CuxSingleton {
     
     public static function translate($category, $message, $params){
         
-        $message = $this->messages->translate($category, $message, $this->language);
+        $ref = static::getInstance();
+        
+        $message = $ref->messages->translate($category, $message, $ref->language);
         
         if (!empty($params)){
             foreach ($params as $key => $value){
