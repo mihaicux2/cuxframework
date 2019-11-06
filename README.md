@@ -193,14 +193,21 @@ project
 │   │   db.php
 │   
 └───vendor
+|   └───bin
+|   └───box
+|   └─── ... 
 |   └───mihaicux
-|       |    └───cuxframework
-|       |    |   |   .git
-|       |    |   |   .composer.json
-|       |    |   └───src
-|       |    |   |   └───CuxFramework
-|       |    |   |   |   |     components
-|       |    |   |   |   |     ...
+|   |   |    └───cuxframework
+|   |   |    |   |   .git
+|   |   |    |   |   composer.json
+|   |   |    |   |   README.md
+|   |   |    |   └───src
+|   |   |    |   |   └───CuxFramework
+|   |   |    |   |   |   |   components
+|   |   |    |   |   |   |   ...
+|   |   |    └─── ...
+|   └─── ...
+| ...   |    ... |   |   |   ...
 ```
 
 
