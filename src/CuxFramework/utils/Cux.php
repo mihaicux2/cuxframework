@@ -140,19 +140,23 @@ class Cux extends CuxSingleton {
     }
     
     private function loadModule($moduleName){
-        $module = $this->getFullyQualifiedModuleName($moduleName);
+        $module = ($this->isModuleRelative($moduleName)) ? $this->getFullyQualifiedModuleName($moduleName, true) : $this->getFullyQualifiedModuleName($moduleName);
         $this->_module = $module::getInstance();
     }
     
-    private function getFullyQualifiedModuleName($moduleName){
-        return "modules\\".ucfirst($moduleName)."Module";
+    private function getFullyQualifiedModuleName($moduleName, $relative=false){
+        return ($relative) ? "modules\\".ucfirst($moduleName)."Module" : "CuxFramework\\modules\\".ucfirst($moduleName)."Module";
+    }
+    
+    private function isModuleRelative($moduleName){
+        $fullyQualifiedNameRelative = $this->getFullyQualifiedModuleName($moduleName, true);
+        return (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxSingleton"));
     }
     
     public function moduleExists($moduleName){
         $fullyQualifiedName = $this->getFullyQualifiedModuleName($moduleName);
-//        echo $fullyQualifiedName;
-//        die();
-        return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxSingleton"));
+        $fullyQualifiedNameRelative = $this->getFullyQualifiedModuleName($moduleName, true);
+        return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxSingleton")) || (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxSingleton"));
     }
     
     public function beforeRun(){

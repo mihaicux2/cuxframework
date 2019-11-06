@@ -6,6 +6,8 @@ use CuxFramework\utils\CuxSingleton;
 use CuxFramework\utils\CuxBase;
 use CuxFramework\utils\Cux;
 
+use Composer;
+
 class CuxLayout extends CuxSingleton {
 
     private $_moduleName;
@@ -51,8 +53,15 @@ class CuxLayout extends CuxSingleton {
         $content = $this->renderPartial($name, $params);
         $pageTitle = $this->pageTitle;
         ob_start();
-        if (!@include($layoutPath)) {
-            throw new \Exception("Layout-ul cerut nu a fost gasit: " . $this->layoutName, 501);
+        if (file_exists($layoutPath) && is_readable($layoutPath)){
+            if (!@include($layoutPath)) {
+                throw new \Exception("Layout-ul cerut nu a fost gasit: " . $this->layoutName, 501);
+            }
+        } else {
+            $layoutPath = "vendor/cux/cuxframework/src/CuxFramework/".$layoutPath;
+            if (!@include($layoutPath)) {
+                throw new \Exception("Layout-ul cerut nu a fost gasit: " . $this->layoutName, 501);
+            }
         }
         return ob_get_clean();
     }
@@ -74,8 +83,16 @@ class CuxLayout extends CuxSingleton {
             }
         }
         $path .= $name . $this->viewExtension;
-        if (!@include($path)) {
-            throw new \Exception("Vizualizarea nu a fost gasita: $name", 501);
+        
+        if (file_exists($path) && is_readable($path)){
+            if (!@include($path)) {
+                throw new \Exception("Vizualizarea nu a fost gasita: $name", 501);
+            }
+        } else {
+            $path = "vendor/cux/cuxframework/src/CuxFramework/".$path;
+            if (!@include($path)) {
+                throw new \Exception("Vizualizarea nu a fost gasita: $name", 501);
+            }
         }
         return ob_get_clean();
     }
