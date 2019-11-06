@@ -26,7 +26,7 @@ class Cux extends CuxSingleton {
     private $_controllerName;
     private $_actionName;
     
-    private $params = array();
+    private $_params = array();
     
     public static function translate($category, $message, $params){
         if (!empty($params)){
@@ -60,6 +60,14 @@ class Cux extends CuxSingleton {
         
         CuxBase::config($ref, $config);
         
+    }
+    
+    public function getParams(){
+        return $this->_params;
+    }
+    
+    public function getParam(string $paramName){
+        return isset($this->_params[$paramName]) ? $this->_params[$paramName] : null;
     }
     
     public function poweredBy(): string {
