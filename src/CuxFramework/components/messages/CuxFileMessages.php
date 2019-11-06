@@ -32,8 +32,11 @@ class CuxFileMessages extends CuxBaseMessages {
             }
             
             // load custom messages
-            if ($this->messagesPath && file_exists($this->messagesPath) && is_readable($this->messagesPath)){
-                $messages = array_merge($messages, require($this->messagesPath));
+            if ($this->messagesPath){
+                $langFile2 = $this->messagesPath."/{$lang}.php";
+                if (file_exists($langFile2) && is_readable($langFile2)){
+                    $messages = array_merge($messages, require($langFile2));
+                }
             }
             
             Cux::getInstance()->cache->set("messages.$lang", $this->_messages[$lang], 3600);

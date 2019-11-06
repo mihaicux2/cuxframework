@@ -30,7 +30,7 @@ class Cux extends CuxSingleton {
     
     private $_params = array();
     
-    public static function translate($category, $message, $params){
+    public static function translate($category, $message, $params = array()){
         
         $ref = static::getInstance();
         

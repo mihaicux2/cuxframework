@@ -59,7 +59,7 @@ class CuxLengthValidator extends CuxBaseValidator {
                 return false;
          } elseif (isset($this->_props["maxLength"]) && ($len > $this->_props["maxLength"])) {
              if ($canAddError) {
-                    $obj->addError($attr, Cux::translate("error", "{attr} must be less than {max_len} characters!", array(
+                    $obj->addError($attr, Cux::translate("error", "{attr} must be at most {max_len} characters!", array(
                                 "{attr}" => $label,
                                 "{max_len}" => $this->_props["maxLength"]
                     )));

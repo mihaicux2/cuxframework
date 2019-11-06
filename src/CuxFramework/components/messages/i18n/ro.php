@@ -13,9 +13,9 @@ return array(
         "Invalid attribute: {attr}!" => "Atribut invalid: {attr}!",
         "{attr} is empty!" => "Atribut necompletat: {attr}!",
         "{attr} must be between {min_len} and {max_len} characters!" => "{attr} trebuie sa aiba intre {min_len} si {max_len} caractere!",
-        "{attr} must be at least {min_len} characters!" => "",
-        "{attr} must be less than {max_len} characters!" => "",
-        "{attr} must match {attr2}" => "",
+        "{attr} must be at least {min_len} characters!" => "{attr} trebuie sa aiba cel putin {min_len} caractere!",
+        "{attr} must be at most {max_len} characters!" => "{attr} trebuie sa aiba cel mult {max_len} caractere!",
+        "{attr} must match {attr2}" => "{attr} trebuie sa fie egal cu {attr2}",
     )
 );
 
