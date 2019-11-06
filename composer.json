@@ -22,8 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "CuxFramework\\": "src/CuxFramework",
-            "Box\\Spout\\": "vendor/spout/src/Spout"
+            "CuxFramework\\": "src/CuxFramework"
         }
     },
     "license": "LGPL-2.1"
