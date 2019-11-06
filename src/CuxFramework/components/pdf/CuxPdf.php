@@ -137,22 +137,20 @@ class CuxPdf extends CuxSingleton {
     public static function config(array $config): void {
         $ref = static::getInstance();
         CuxBase::config($ref, $config);
-
-        require("vendor/mpdf60/mpdf.php");
-
-        $ref->_mpdf = new \mPDF(
-            $ref->mode,
-            $ref->format,
-            $ref->defaultFontSize,
-            $ref->defaultFont,
-            $ref->marginLeft,
-            $ref->marginRight,
-            $ref->marginTop,
-            $ref->marginBottom,
-            $ref->marginHeader,
-            $ref->marginFooter,
-            $ref->orientation
-        );
+        
+        $ref->_mpdf = new \Mpdf\Mpdf(array(
+            'mode' => $ref->mode,
+            'format' => $ref->format,
+            'default_font_size' => $ref->defaultFontSize,
+            'default_font' => $ref->defaultFont,
+            'margin_left' => $ref->marginLeft,
+            'margin_right' => $ref->marginRight,
+            'margin_top' => $ref->marginTop,
+            'margin_bottom' => $ref->marginBottom,
+            'margin_header' => $ref->marginHeader,
+            'margin_footer' => $ref->marginFooter,
+            'orientation' => $ref->orientation
+        ));
     }
     
     public function output(string $content = '', string $file = '', $dest = self::DEST_BROWSER){
