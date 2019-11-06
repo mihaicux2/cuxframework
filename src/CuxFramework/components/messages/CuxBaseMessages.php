@@ -16,7 +16,7 @@ abstract class CuxBaseMessages extends CuxSingleton {
         $ref->_lang = Cux::getInstance()->language;
     }
     
-    abstract public function translate($category, $message, $lang);
+    abstract public function translate($category, $message, $lang, $context);
     
 }
     

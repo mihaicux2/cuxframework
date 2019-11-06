@@ -14,6 +14,8 @@ class Cux extends CuxSingleton {
     
     public $language = "en";
     
+    public $events = array();
+    
     private $_components = array();
     
     private $_behaviours = array();
@@ -30,11 +32,17 @@ class Cux extends CuxSingleton {
     
     private $_params = array();
     
-    public static function translate($category, $message, $params = array()){
+    public function raiseEvent($eventName, $params = array()){
+        if (isset($this->events[$eventName])){
+            $this->events[$eventName]($params);
+        }
+    }
+    
+    public static function translate($category, $message, $params = array(), $context = ""){
         
         $ref = static::getInstance();
         
-        $message = $ref->messages->translate($category, $message, $ref->language);
+        $message = $ref->messages->translate($category, $message, $ref->language, $context);
         
         if (!empty($params)){
             foreach ($params as $key => $value){

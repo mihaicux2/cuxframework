@@ -45,7 +45,7 @@ class CuxFileMessages extends CuxBaseMessages {
         $this->_messages[$lang] = $messages;
     }
     
-    public function translate($category, $message, $lang){
+    public function translate($category, $message, $lang, $context){
         
         if (!$lang){
             $lang = $this->_lang;
@@ -53,7 +53,17 @@ class CuxFileMessages extends CuxBaseMessages {
         
         $this->loadMessages($lang);
         
-        return (isset($this->_messages[$lang]) && isset($this->_messages[$lang][$category]) && isset($this->_messages[$lang][$category][$message])) ? $this->_messages[$lang][$category][$message] : $message;
+        if (isset($this->_messages[$lang]) && isset($this->_messages[$lang][$category]) && isset($this->_messages[$lang][$category][$message])){
+            return $this->_messages[$lang][$category][$message];
+        } else {
+            Cux::getInstance()->raiseEvent("missingTranslation", array(
+                "category" => $category,
+                "message" => $message,
+                "lang" => $lang,
+                "context" => $context
+            ));
+            return $message;
+        }
         
     }
     
