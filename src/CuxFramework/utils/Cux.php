@@ -26,6 +26,8 @@ class Cux extends CuxSingleton {
     private $_controllerName;
     private $_actionName;
     
+    private $params = array();
+    
     public static function translate($category, $message, $params){
         if (!empty($params)){
             foreach ($params as $key => $value){
@@ -49,6 +51,11 @@ class Cux extends CuxSingleton {
             $ref->_behaviours = $config["behaviours"];
             $config["behaviours"] = null;
             unset($config["behaviours"]);
+        }
+        
+        if (isset($config["params"])){
+            $ref->_params = $config["params"];
+            unset($config["params"]);
         }
         
         CuxBase::config($ref, $config);
