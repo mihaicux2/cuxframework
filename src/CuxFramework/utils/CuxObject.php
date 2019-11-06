@@ -8,6 +8,8 @@ class CuxObject {
     protected $_errors = array();
     protected $_hasErrors = false;
     
+    static protected $_labels;
+    
     public function config(array $properties): CuxObject {
         CuxBase::config($this, $properties);
         return $this;
@@ -175,8 +177,10 @@ class CuxObject {
     }
     
     public function getLabel($field){
-        $labels = $this->labels();
-        return isset($labels[$field]) ? $labels[$field] : $this->generateAttributeLabel($field);
+        if (!static::$_labels){
+            static::$_labels = $this->labels();
+        }
+        return isset(static::$_labels[$field]) ? static::$_labels[$field] : $this->generateAttributeLabel($field);
     }
     
     public function generateAttributeLabel($name) {
