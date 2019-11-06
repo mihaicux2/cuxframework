@@ -12,6 +12,8 @@ class Cux extends CuxSingleton {
     );
     public $debug = false;
     
+    public $language = "en";
+    
     private $_components = array();
     
     private $_behaviours = array();
@@ -29,6 +31,9 @@ class Cux extends CuxSingleton {
     private $_params = array();
     
     public static function translate($category, $message, $params){
+        
+        $message = $this->messages->translate($category, $message, $this->language);
+        
         if (!empty($params)){
             foreach ($params as $key => $value){
                 $message = str_replace($key, $value, $message);
@@ -91,6 +96,11 @@ class Cux extends CuxSingleton {
         if (!isset($config["components"]) || !isset($config["components"]["logger"])){
             $this->loadComponent("logger", array(
                 "class" => 'CuxFramework\components\log\CuxNullLogger'
+            ));
+        }
+        if (!isset($config["components"]) || !isset($config["components"]["messages"])){
+            $this->loadComponent("messages", array(
+                "class" => 'CuxFramework\components\messages\CuxFileMessages'
             ));
         }
         if (!isset($config["components"]) || !isset($config["components"]["traffic"])){

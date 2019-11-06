@@ -28,7 +28,7 @@ class CuxIsNumericValidator extends CuxBaseValidator{
         $value = is_object($obj) ? $obj->$attr : $obj[$attr];
         if (!is_numeric($value)){
             if ($canAddError){
-                $obj->addError($attr, Cux::translate("error", "{attr} is empty!!", array(
+                $obj->addError($attr, Cux::translate("error", "{attr} is empty!", array(
                     "{attr}" => $label
                 )));
             }
