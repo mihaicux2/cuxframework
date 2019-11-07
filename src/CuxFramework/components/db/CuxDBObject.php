@@ -145,6 +145,19 @@ abstract class CuxDBObject extends CuxObject {
         return $this;
     }
 
+    public function getPDOType($type){
+        switch ($type){
+            case "integer":
+                return PDO::PARAM_INT;
+                break;
+            case "string":
+                return PDO::PARAM_STR;
+                break;
+            default:
+                return false;
+        }
+    }
+    
     public function getByPk($key): ?CuxDBObject {
 
         $columnMap = $this->getTableSchema();
