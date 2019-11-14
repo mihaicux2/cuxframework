@@ -25,7 +25,7 @@ class CuxFileMessages extends CuxBaseMessages {
             $this->_messages[$lang] = $messages;
             
              // load base messages
-            $langFile = "vendor/cux/cuxframework/src/CuxFramework/components/messages/i18n/{$lang}.php";
+            $langFile = "vendor/mihaicux/cuxframework/src/CuxFramework/components/messages/i18n/{$lang}.php";
             
             if (file_exists($langFile) && is_readable($langFile)){
                 $messages = array_merge($messages, require($langFile));
@@ -35,7 +35,7 @@ class CuxFileMessages extends CuxBaseMessages {
             if ($this->messagesPath){
                 $langFile2 = $this->messagesPath."/{$lang}.php";
                 if (file_exists($langFile2) && is_readable($langFile2)){
-                    $messages = array_merge($messages, require($langFile2));
+                    $messages = array_merge_recursive($messages, require($langFile2));
                 }
             }
             
