@@ -2,22 +2,20 @@
 
 namespace CuxFramework\components\url;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\components\request\CuxRequest;
 use CuxFramework\utils\Cux;
 
-class CuxUrlManager extends CuxSingleton {
+class CuxUrlManager extends CuxBaseObject {
 
     public $defaultAction = "";
     public $routes = array();
 
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
 
-        if (!is_array($ref->routes)) {
-            $ref->routes = array();
+        if (!is_array($this->routes)) {
+            $this->routes = array();
         }
     }
 

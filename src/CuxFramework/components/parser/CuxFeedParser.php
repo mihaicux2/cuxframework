@@ -2,16 +2,14 @@
 
 namespace CuxFramework\components\parser;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 
-class CuxFeedParser extends CuxSingleton {
+class CuxFeedParser extends CuxBaseObject {
     
     private $_posts = array();
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
     
     function parse(string $urlOrPath): bool {

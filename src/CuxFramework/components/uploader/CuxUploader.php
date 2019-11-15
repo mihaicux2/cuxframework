@@ -2,11 +2,10 @@
 
 namespace CuxFramework\components\uploader;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 
-class CuxUploader extends CuxSingleton {
+class CuxUploader extends CuxBaseObject {
 
     private $_prefix;
     private $mimeTypes = array(
@@ -1245,11 +1244,10 @@ class CuxUploader extends CuxSingleton {
     public $thumbHeight = 100;
     public $keepAspectRatio = true;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
-        $ref->setRandomPrefix();
+        $this->setRandomPrefix();
     }
     
     public function getExtension(string $path): string{

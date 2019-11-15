@@ -2,9 +2,9 @@
 
 namespace CuxFramework\components\log;
 
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 
-abstract class CuxLogger extends CuxSingleton{
+abstract class CuxLogger extends CuxBaseObject{
     
     const DEBUG     = 1;
     const INFO      = 2;

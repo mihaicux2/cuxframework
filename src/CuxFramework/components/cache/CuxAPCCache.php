@@ -6,9 +6,8 @@ use CuxFramework\utils\CuxBase;
 
 class CuxAPCCache extends CuxCache {
 
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         $extension = "apcu";
         if (!extension_loaded($extension)) {
             throw new \Exception("APCCache are nevoia ca extensia de PHP `$extension` sa fie incarcata.", 501);

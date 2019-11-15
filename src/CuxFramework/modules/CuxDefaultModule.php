@@ -2,19 +2,17 @@
 
 namespace CuxFramework\modules;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 
-class CuxDefaultModule extends CuxSingleton{
+class CuxDefaultModule extends CuxBaseObject{
     
     protected $_name;
     protected $_controller;
     
     public $defaultController = "cuxDefault";
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
 
     public function run(){
@@ -31,7 +29,8 @@ class CuxDefaultModule extends CuxSingleton{
         }
         else{
             $controller = ($this->isControllerRelative($controllerName)) ? $this->getFullyQualifiedControllerName($controllerName, true) : $this->getFullyQualifiedControllerName($controllerName);
-            $this->_controller = $controller::getInstance();
+            $controllerInstance = new $controller();
+            $this->_controller = $controllerInstance;
         }
     }
     
@@ -46,7 +45,7 @@ class CuxDefaultModule extends CuxSingleton{
     public function controllerExists($controllerName){
         $fullyQualifiedName = $this->getFullyQualifiedControllerName($controllerName);
         $fullyQualifiedNameRelative = $this->getFullyQualifiedControllerName($controllerName, true);
-        return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxSingleton")) || (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxSingleton"));
+        return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxBaseObject")) || (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxBaseObject"));
     }
     
     private function getFullyQualifiedControllerName($controllerName, $relative=false){
@@ -55,7 +54,7 @@ class CuxDefaultModule extends CuxSingleton{
     
     private function isControllerRelative($controllerName){
         $fullyQualifiedNameRelative = $this->getFullyQualifiedControllerName($controllerName, true);
-        return (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxSingleton"));
+        return (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxBaseObject"));
     }
     
     public function getController(){

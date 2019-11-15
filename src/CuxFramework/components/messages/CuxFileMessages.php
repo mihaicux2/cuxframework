@@ -12,9 +12,8 @@ class CuxFileMessages extends CuxBaseMessages {
     
     public $messagesPath = "";
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
     
     private function loadMessages($lang){

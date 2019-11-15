@@ -2,11 +2,10 @@
 
 namespace CuxFramework\components\traffic;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 
-abstract class CuxTraffic extends CuxSingleton {
+abstract class CuxTraffic extends CuxBaseObject {
     
     /**
      * The list of IP's that are not monitored
@@ -16,9 +15,8 @@ abstract class CuxTraffic extends CuxSingleton {
     
     public $ignoreAjax = true;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
  
     public function getVisitorsInfo(){

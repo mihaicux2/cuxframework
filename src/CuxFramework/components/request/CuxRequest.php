@@ -13,20 +13,18 @@ namespace CuxFramework\components\request;
  * 
  */
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 
-class CuxRequest extends CuxSingleton {
+class CuxRequest extends CuxBaseObject {
 
     private $_path;
     private $_params;
     private $_scriptName;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
-        $ref->preProcessRequest();
+        $this->preProcessRequest();
     }
 
     private function preProcessRequest(): void{

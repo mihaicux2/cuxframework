@@ -2,16 +2,14 @@
 
 namespace components\session;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 
-class CuxNullSession extends CuxSingleton implements \SessionHandlerInterface, \SessionIdInterface {
+class CuxNullSession extends CuxBaseObject implements \SessionHandlerInterface, \SessionIdInterface {
 
     private $_sId;
 
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
 
     private function buildKey($key) {

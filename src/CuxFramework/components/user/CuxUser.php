@@ -2,13 +2,12 @@
 
 namespace CuxFramework\components\user;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 use CuxFramework\components\db\CuxDBCriteria;
 use CuxFramework\components\db\CuxDBObject;
 
-class CuxUser extends CuxSingleton {
+class CuxUser extends CuxBaseObject {
 
     public $flashMessageKey = "userFlash";
     
@@ -18,8 +17,8 @@ class CuxUser extends CuxSingleton {
     protected $_role;
     protected $_permissions = array();
 
-    public static function config(array $config): void {
-        
+    public function config(array $config): void {
+        parent::config($config);
     }
 
     public function addError(string $field, string $message): CuxUser {

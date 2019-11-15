@@ -2,10 +2,9 @@
 
 namespace CuxFramework\components\pdf;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 
-class CuxPdf extends CuxSingleton {
+class CuxPdf extends CuxBaseObject {
     
     // mode
     const MODE_BLANK = '';
@@ -134,22 +133,21 @@ class CuxPdf extends CuxSingleton {
      */
     private $_mpdf;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
-        $ref->_mpdf = new \Mpdf\Mpdf(array(
-            'mode' => $ref->mode,
-            'format' => $ref->format,
-            'default_font_size' => $ref->defaultFontSize,
-            'default_font' => $ref->defaultFont,
-            'margin_left' => $ref->marginLeft,
-            'margin_right' => $ref->marginRight,
-            'margin_top' => $ref->marginTop,
-            'margin_bottom' => $ref->marginBottom,
-            'margin_header' => $ref->marginHeader,
-            'margin_footer' => $ref->marginFooter,
-            'orientation' => $ref->orientation
+        $this->_mpdf = new \Mpdf\Mpdf(array(
+            'mode' => $this->mode,
+            'format' => $this->format,
+            'default_font_size' => $this->defaultFontSize,
+            'default_font' => $this->defaultFont,
+            'margin_left' => $this->marginLeft,
+            'margin_right' => $this->marginRight,
+            'margin_top' => $this->marginTop,
+            'margin_bottom' => $this->marginBottom,
+            'margin_header' => $this->marginHeader,
+            'margin_footer' => $this->marginFooter,
+            'orientation' => $this->orientation
         ));
     }
     

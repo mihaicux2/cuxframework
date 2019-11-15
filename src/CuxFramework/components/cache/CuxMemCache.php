@@ -8,17 +8,16 @@ class CuxMemCache extends CuxCache {
 
     private $_memcached;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         $extension = "memcached";
         if (!extension_loaded($extension)) {
             throw new \Exception("MemCache are nevoie ca extensia de PHP `$extension` sa fie incarcata.", 501);
         }
-        $ref->_memcached = new \Memcached();
-        if (is_array($ref->servers) && !empty($ref->servers)) {
-            foreach ($ref->servers as $server) {
-                $ref->_memcached->addServer($server["host"], $server["port"]);
+        $this->_memcached = new \Memcached();
+        if (is_array($this->servers) && !empty($this->servers)) {
+            foreach ($this->servers as $server) {
+                $this->_memcached->addServer($server["host"], $server["port"]);
             }
         }
     }

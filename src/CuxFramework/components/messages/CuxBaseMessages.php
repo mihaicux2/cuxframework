@@ -2,18 +2,17 @@
 
 namespace CuxFramework\components\messages;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
+use CuxFramework\utils\Cux;
 
-abstract class CuxBaseMessages extends CuxSingleton {
+abstract class CuxBaseMessages extends CuxBaseObject {
     
     private $_lang;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
-        $ref->_lang = Cux::getInstance()->language;
+        $this->_lang = Cux::getInstance()->language;
     }
     
     abstract public function translate($category, $message, $lang, $context);

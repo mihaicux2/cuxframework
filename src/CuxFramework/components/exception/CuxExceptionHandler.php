@@ -2,19 +2,17 @@
 
 namespace CuxFramework\components\exception;
 
-use CuxFramework\utils\CuxBase;
-use CuxFramework\utils\CuxSingleton;
 use CuxFramework\utils\Cux;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\components\log\CuxLogger;
 
-class CuxExceptionHandler extends CuxSingleton{
+class CuxExceptionHandler extends CuxBaseObject{
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
-        set_exception_handler(array($ref, "handleException"));
-        set_error_handler(array($ref, "handleError"));
+        set_exception_handler(array($this, "handleException"));
+        set_error_handler(array($this, "handleError"));
         
     }
     
@@ -89,6 +87,10 @@ class CuxExceptionHandler extends CuxSingleton{
             "message" => $ex->getMessage(),
             "stackTrace" => $ex->getTrace()
         );
+        
+//        print_r($ex);
+//        die();
+        
         Cux::getInstance()->logger->log(CuxLogger::ERROR, $ex->getMessage(), $exArray);
         Cux::getInstance()->layout->setPageTitle("Exceptie/eroare #".$ex->getCode());
         

@@ -13,14 +13,13 @@ use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\AbstractMultiSheetsWriter;
 use Box\Spout\Writer\Style\Style;
 
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\CuxBase;
 
-class CuxExporter extends CuxSingleton {
+class CuxExporter extends CuxBaseObject {
 
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
 
     public function createWriter(string $fileName, string $type = Type::XLSX, bool $directDownload = true) : AbstractMultiSheetsWriter{

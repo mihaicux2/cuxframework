@@ -4,9 +4,9 @@ namespace CuxFramework\controllers\cuxDefault;
 
 use CuxFramework\utils\Cux;
 use CuxFramework\components\user\CuxUser;
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 
-class CuxDefaultController extends CuxSingleton {
+class CuxDefaultController extends CuxBaseObject {
 
     public $defaultAction = "index";
     protected $_action;
@@ -14,7 +14,7 @@ class CuxDefaultController extends CuxSingleton {
     protected $_params = array();
     public $pageTitle = "";
 
-    public static function config(array $config): void {
+    public function config(array $config): void {
         parent::config($config);
     }
 

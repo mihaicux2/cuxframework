@@ -2,9 +2,9 @@
 
 namespace CuxFramework\components\cache;
 
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 
-abstract class CuxCache extends CuxSingleton{
+abstract class CuxCache  extends CuxBaseObject {
     
     public $key = "defaultEncryptionKey"; // you should change this
     public $keyPrefix = "";

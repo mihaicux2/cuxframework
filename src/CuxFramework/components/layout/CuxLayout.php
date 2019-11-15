@@ -2,13 +2,13 @@
 
 namespace CuxFramework\components\layout;
 
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\CuxBase;
 use CuxFramework\utils\Cux;
 
 use Composer;
 
-class CuxLayout extends CuxSingleton {
+class CuxLayout extends CuxBaseObject {
 
     private $_moduleName;
     private $_controllerName;
@@ -18,9 +18,8 @@ class CuxLayout extends CuxSingleton {
     public $viewExtension = ".php";
     public $pageTitle = "";
 
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
 
     public function setModuleName(string $moduleName): CuxLayout {

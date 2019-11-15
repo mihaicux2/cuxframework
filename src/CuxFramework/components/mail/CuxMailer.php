@@ -2,11 +2,11 @@
 
 namespace CuxFramework\components\mail;
 
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\CuxBase;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class CuxMailer extends CuxSingleton {
+class CuxMailer extends CuxBaseObject {
     
     public $from;
     public $replyTo = false;
@@ -28,25 +28,24 @@ class CuxMailer extends CuxSingleton {
     
     private $_mail;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
 //        require("vendor/PHPMailer/PHPMailerAutoload.php");
 
-        $ref->_mail = new PHPMailer;
+        $this->_mail = new PHPMailer;
         
-        $ref->_mail->Host = $ref->host;
-        if ($ref->smtp) {
-            $ref->_mail->isSMTP();
-            $ref->_mail->SMTPAuth = true;
+        $this->_mail->Host = $this->host;
+        if ($this->smtp) {
+            $this->_mail->isSMTP();
+            $this->_mail->SMTPAuth = true;
         }
-        $ref->_mail->Username = $ref->username;
-        $ref->_mail->Password = $ref->password;
-        $ref->_mail->SMTPSecure = $ref->smtpSecure;
-        $ref->_mail->Port = $ref->port;
+        $this->_mail->Username = $this->username;
+        $this->_mail->Password = $this->password;
+        $this->_mail->SMTPSecure = $this->smtpSecure;
+        $this->_mail->Port = $this->port;
         
-        $ref->setFrom($ref->from);
+        $this->setFrom($this->from);
     }
     
     /**

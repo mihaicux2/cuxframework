@@ -2,12 +2,11 @@
 
 namespace components\session;
 
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 use CuxFramework\components\log\CuxLogger;
 
-class CuxMemcachedSession extends CuxSingleton implements \SessionHandlerInterface, \SessionIdInterface {
+class CuxMemcachedSession extends CuxBaseObject implements \SessionHandlerInterface, \SessionIdInterface {
 
     public $key = "defaultEncryptionKey"; // you should change this
     public $servers = array();
@@ -17,40 +16,39 @@ class CuxMemcachedSession extends CuxSingleton implements \SessionHandlerInterfa
     public $restoreFromCookie = true;
     public $sessionName = "defaultSessionName";
 
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);        
+    public function config(array $config): void {
+        parent::config($config);   
         
-        $ref->_memcached = new \Memcached();
-        if (is_array($ref->servers) && !empty($ref->servers)) {
-            foreach ($ref->servers as $server) {
-                $ref->_memcached->addServer($server["host"], $server["port"]);
+        $this->_memcached = new \Memcached();
+        if (is_array($this->servers) && !empty($this->servers)) {
+            foreach ($this->servers as $server) {
+                $this->_memcached->addServer($server["host"], $server["port"]);
             }
         }
         
-        session_set_save_handler($ref, true);
+        session_set_save_handler($this, true);
         
         @session_regenerate_id(true);
         
         session_set_cookie_params(
             array(
-                "lifetime" => $ref->lifeTime,
+                "lifetime" => $this->lifeTime,
                 "path" => "/",
                 "domain" => Cux::getInstance()->request->getServerValue("SERVER_NAME"),
                 "secure" => false,
-                "httponly" => $ref->httpOnly,
+                "httponly" => $this->httpOnly,
             )
         );
         
-        @session_name($ref->sessionName);
+        @session_name($this->sessionName);
         $ok = @session_start();
         if (!$ok){
             @session_regenerate_id(true);
             @session_start();
         }
         
-        if ($ref->restoreFromCookie){
-            setcookie(session_name(), session_id(), time()+$ref->lifeTime, "/", Cux::getInstance()->request->getServerValue("SERVER_NAME"), $ref->secureCookie, $ref->httpOnly);
+        if ($this->restoreFromCookie){
+            setcookie(session_name(), session_id(), time()+$this->lifeTime, "/", Cux::getInstance()->request->getServerValue("SERVER_NAME"), $this->secureCookie, $this->httpOnly);
         }
     }
     

@@ -8,12 +8,11 @@ class CuxFileTraffic extends CuxTraffic {
     
     public $logFile = false;
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
         
-        if (!$ref->logFile){
-            $ref->logFile = "log".DIRECTORY_SEPARATOR."traffic_".date("Y-m-d").".log";
+        if (!$this->logFile){
+            $this->logFile = "log".DIRECTORY_SEPARATOR."traffic_".date("Y-m-d").".log";
         }
     }
 

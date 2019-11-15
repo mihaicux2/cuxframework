@@ -158,9 +158,9 @@ class CuxObject {
         $rules = $this->rules();
         if (!empty($rules)){
             foreach ($rules as $rule){
-                $validator = $rule["validator"]::getInstance();
+                $validator = new $rule["validator"]();
                 if (isset($rule["params"])){
-                    $validator::config($rule["params"]);
+                    $validator->config($rule["params"]);
                 }
                 foreach ($rule["fields"] as $field){
                     if (!$validator->validate($this, $field)){

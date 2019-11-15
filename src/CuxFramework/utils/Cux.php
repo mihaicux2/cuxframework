@@ -176,7 +176,8 @@ class Cux extends CuxSingleton {
     
     private function loadModule($moduleName){
         $module = ($this->isModuleRelative($moduleName)) ? $this->getFullyQualifiedModuleName($moduleName, true) : $this->getFullyQualifiedModuleName($moduleName);
-        $this->_module = $module::getInstance();
+        $moduleInstance = new $module();
+        $this->_module = $moduleInstance;
     }
     
     private function getFullyQualifiedModuleName($moduleName, $relative=false){
@@ -185,13 +186,13 @@ class Cux extends CuxSingleton {
     
     private function isModuleRelative($moduleName){
         $fullyQualifiedNameRelative = $this->getFullyQualifiedModuleName($moduleName, true);
-        return (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxSingleton"));
+        return (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxBaseObject"));
     }
     
     public function moduleExists($moduleName){
         $fullyQualifiedName = $this->getFullyQualifiedModuleName($moduleName);
         $fullyQualifiedNameRelative = $this->getFullyQualifiedModuleName($moduleName, true);
-        return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxSingleton")) || (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxSingleton"));
+        return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxBaseObject")) || (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxBaseObject"));
     }
     
     public function beforeRun(){
@@ -211,8 +212,9 @@ class Cux extends CuxSingleton {
         if (!isset($config["params"])){
             $config["params"] = array();
         }
-        $config["class"]::config($config["params"]);
-        $this->_components[$cName] = $config["class"]::getInstance();
+        $instance = new $config["class"]();
+        $instance->config($config["params"]);
+        $this->_components[$cName] = $instance;
     }
 
     public function hasComponent($name) {

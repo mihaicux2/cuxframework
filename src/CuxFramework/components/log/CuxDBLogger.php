@@ -10,9 +10,8 @@ class CuxDBLogger extends CuxLogger {
     public $logTable = "cux_log";
     public $db = "db";
     
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-        CuxBase::config($ref, $config);
+    public function config(array $config): void {
+        parent::config($config);
     }
 
     public function log(int $level, string $message, array $context = array()): bool{

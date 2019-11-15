@@ -2,16 +2,16 @@
 
 namespace CuxFramework\components\validator;
 
-use CuxFramework\utils\CuxSingleton;
+use CuxFramework\utils\CuxBaseObject;
 
-abstract class CuxBaseValidator extends CuxSingleton{
+abstract class CuxBaseValidator extends CuxBaseObject{
     
     protected $_props;
     
     abstract function validate($obj, string $attr): bool;
     
-    public static function config(array $config): void {
-        static::getInstance()->_props = $config;
+    public function config(array $config): void {
+        $this->_props = $config;;
     }
     
     protected function checkHasProperty($obj, string $attr): bool{

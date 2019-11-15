@@ -7,10 +7,9 @@ use PDOException;
 use PDOStatement;
 
 use CuxFramework\utils\Cux;
-use CuxFramework\utils\CuxSingleton;
-use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\CuxBaseObject;
 
-class PDOWrapper extends CuxSingleton {
+class PDOWrapper  extends CuxBaseObject {
 
     const TYPE_PK = 'pk';
     const TYPE_UPK = 'upk';
@@ -42,17 +41,16 @@ class PDOWrapper extends CuxSingleton {
     public $schemaCacheTimeout = 3600;
     public $fetchMode = PDO::FETCH_ASSOC;
     public $errorMode = PDO::ERRMODE_EXCEPTION;
-
-    public static function config(array $config): void {
-        $ref = static::getInstance();
-       CuxBase::config($ref, $config);
+    
+    public function config(array $config): void {
+       parent::config($config);
         try {
-            $ref->_db = new PDO($ref->connectionString, $ref->username, $ref->password);
-            if (isset($ref->fetchMode)) {
-                $ref->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, $ref->fetchMode);
+            $this->_db = new PDO($this->connectionString, $this->username, $this->password);
+            if (isset($this->fetchMode)) {
+                $this->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, $this->fetchMode);
             }
-            if (isset($ref->errorMode)) {
-                $ref->setAttribute(PDO::ATTR_ERRMODE, $ref->errorMode);
+            if (isset($this->errorMode)) {
+                $this->setAttribute(PDO::ATTR_ERRMODE, $this->errorMode);
             }
         } catch (PDOException $ex) {
             throw new \Exception($ex->getMessage(), (int) $ex->getCode());
