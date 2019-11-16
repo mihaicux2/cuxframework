@@ -2,7 +2,7 @@
 
 namespace CuxFramework\utils;
 
-class CuxObject {
+class CuxObject extends CuxBaseObject{
 
     protected $_attributes = array();
     protected $_errors = array();
@@ -10,9 +10,8 @@ class CuxObject {
     
     static protected $_labels;
     
-    public function config(array $properties): CuxObject {
-        CuxBase::config($this, $properties);
-        return $this;
+    public function config(array $properties): void {
+        $this->config($properties);
     }
 
     public static function className() {

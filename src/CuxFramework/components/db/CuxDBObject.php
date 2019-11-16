@@ -469,7 +469,7 @@ abstract class CuxDBObject extends CuxObject {
     }
 
     public function afterInsert($fields = array()) {
-        
+        $this->_isNewRecord = false;
     }
 
     public function beforeUpdate($fields = array()) {
