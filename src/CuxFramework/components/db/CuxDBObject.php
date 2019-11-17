@@ -22,12 +22,22 @@ abstract class CuxDBObject extends CuxObject {
 
     private static $_instances = array();
     
+    private $dbConnection;
+    
     /**
      * This method can be overridden by extending classes. It's useful if you want to have both master and slave connections
      * @return \CuxFramework\components\db\PDOWrapper
      */
     public function getDBConnection(): PDOWrapper{
-        return Cux::getInstance()->db;
+        if (!$this->dbConnection) {
+            $this->dbConnection = Cux::getInstance()->db;
+        }
+        return $this->dbConnection;
+    }
+    
+    public function setDBConnection(PDOWrapper $dbConnection): CuxDBObject {
+        $this->dbConnection = $dbConnection;
+        return $this;
     }
     
     public function __construct() {
@@ -224,6 +234,17 @@ abstract class CuxDBObject extends CuxObject {
             if (isset($relations[$related])) {
                 $ob = $relations[$related]["class"];
                 $crit = new CuxDBCriteria();
+                if (isset($relations[$related]["via"])){
+                    $obInstance = $ob::getInstance();
+                    $pk = $ob::getInstance()->getPk();
+                    $pkKeys = array_keys($pk);
+                    $where =  (isset($relations[$related]["via"]["condition"])) ? (" AND ".$relations[$related]["via"]["condition"]) : "";
+                    $crit->join[] = "JOIN ".$relations[$related]["via"]["table"]." t1 ON t1.".$relations[$related]["via"]["keys"]["to"]." = ".$ob::getInstance()->tableName().".".$pkKeys[0].$where;
+                }
+                if (isset($relations[$related]["condition"])){
+                    $crit->addCondition($relations[$related]["condition"]);
+                }
+                
                 switch ($relations[$related]["type"]) {
                     case static::HAS_ONE:
                         $relPk = $ob::getInstance()->getPkName();
@@ -266,7 +287,11 @@ abstract class CuxDBObject extends CuxObject {
                         $i = 0;
                         foreach ($crtPk as $key => $pk) {
                             $param = ":" . $crit->paramName();
-                            $crit->addCondition($ob::getInstance()->tableName() . "." . $relations[$related]["key"][$i] . "=" . $param);
+                            if (isset($relations[$related]["via"])){
+                                $crit->addCondition("t1." . $relations[$related]["key"][$i] . "=" . $param);
+                            } else {
+                                $crit->addCondition($ob::getInstance()->tableName() . "." . $relations[$related]["key"][$i] . "=" . $param);
+                            }
                             $crit->params[$param] = $pk;
                             $i++;
                         }
@@ -531,6 +556,7 @@ abstract class CuxDBObject extends CuxObject {
             }
             $calledClass = get_called_class();
             $ob = new $calledClass();
+            $ob->setDBConnection($this->getDBConnection());
             $ob->setAttributes($row);
             $ob->_isNewRecord = false;
             return $ob;
@@ -569,6 +595,7 @@ abstract class CuxDBObject extends CuxObject {
             foreach ($rows as $row) {
                 $calledClass = get_called_class();
                 $ob = new $calledClass();
+//                $ob->setDBConnection($this->getDBConnection());
                 $ob->setAttributes($row);
                 $ob->_isNewRecord = false;
                 $ret[] = $ob;
@@ -586,8 +613,13 @@ abstract class CuxDBObject extends CuxObject {
         $columnMap = $this->getTableSchema();
 
         $query = "SELECT " . implode(", ", $crit->select ? $crit->select : $this->getColumnsForQuery())
-                . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName())
-                . " WHERE " . $crit->condition;
+                . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
+        
+        if (!empty($crit->join)){
+            $query .= " ".implode(" ", $crit->join);
+        }
+        
+        $query .=  " WHERE " . $crit->condition;
         if ($crit->order) {
             $query .= " ORDER BY " . $crit->order;
         }
@@ -608,6 +640,7 @@ abstract class CuxDBObject extends CuxObject {
             }
             $calledClass = get_called_class();
             $ob = new $calledClass();
+//            $ob->setDBConnection($this->getDBConnection());
             $ob->setAttributes($row);
             $ob->_isNewRecord = false;
             return $ob;
@@ -621,6 +654,11 @@ abstract class CuxDBObject extends CuxObject {
 
         $query = "SELECT COUNT(*) AS total"
                 . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
+        
+        if (!empty($crit->join)){
+            $query .= " ".implode(" ", $crit->join);
+        }
+        
         $query .= " WHERE " . $crit->condition;
 
         $stmt = $this->getDbConnection()->prepare($query);
@@ -647,13 +685,17 @@ abstract class CuxDBObject extends CuxObject {
 
         $query = "SELECT " . implode(", ", $this->getColumnsForQuery())
                 . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
+        
+        if (!empty($crit->join)){
+            $query .= " ".implode(" ", $crit->join);
+        }
 
         $query .= " WHERE " . $crit->condition;
         if ($crit->order) {
             $query .= " ORDER BY " . $crit->order;
         }
         $query .= " LIMIT " . $crit->limit . " OFFSET " . $crit->offset;
-
+        
         $stmt = $this->getDbConnection()->prepare($query);
         if (!empty($crit->params)) {
             foreach ($crit->params as $key => $value) {
@@ -673,6 +715,7 @@ abstract class CuxDBObject extends CuxObject {
             foreach ($rows as $row) {
                 $calledClass = get_called_class();
                 $ob = new $calledClass();
+//                $ob->setDBConnection($this->getDBConnection());
                 $ob->setAttributes($row);
                 $ob->_isNewRecord = false;
                 $pk = $ob->getPk();

@@ -140,9 +140,8 @@ class PDOWrapper  extends CuxBaseObject {
     }
 
     public function getTableSchema(string $tableName): array {
-
         if (Cux::getInstance()->hasComponent("cache")) {
-            $map = Cux::getInstance()->cache->get("schema." . $tableName);
+            $map = Cux::getInstance()->cache->get("schema." . $this->connectionString.".".$tableName);
             if ($map !== FALSE) {
                 return $map;
             }
@@ -160,8 +159,8 @@ class PDOWrapper  extends CuxBaseObject {
             }
         }
 
-        if (Cux::getInstance()->hasComponent("cache") && Cux::getInstance()->db->enableSchemaCache) {
-            Cux::getInstance()->cache->set("schema." . $tableName, $schema, Cux::getInstance()->db->schemaCacheTimeout);
+        if (Cux::getInstance()->hasComponent("cache") && $this->enableSchemaCache) {
+            Cux::getInstance()->cache->set("schema." . $this->connectionString.".".$tableName, $schema, $this->schemaCacheTimeout);
         }
 
         return $schema;
@@ -170,7 +169,7 @@ class PDOWrapper  extends CuxBaseObject {
     public function getColumnMap(string $tableName): array {
         $map = array();
 
-        $stmt = Cux::getInstance()->db->prepare("SHOW FULL COLUMNS FROM " . $this->quoteTableName($tableName));
+        $stmt = $this->prepare("SHOW FULL COLUMNS FROM " . $this->quoteTableName($tableName));
         try {
 
             if ($stmt->execute()) {

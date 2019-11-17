@@ -10,6 +10,7 @@ class CuxDBCriteria{
     public $limit = 500;
     public $offset = 0;
     public $select = array();
+    public $join = array();
     
     public function __construct() {
         $this->addCondition("1=1");
