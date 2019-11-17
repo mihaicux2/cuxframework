@@ -24,6 +24,11 @@ abstract class CuxDBObject extends CuxObject {
     
     private $dbConnection;
     
+    public function __sleep()
+    {
+        return array('_attributes', '_errors', '_hasErrors', '_relations', '_with', '_isNewRecord');
+    }
+    
     /**
      * This method can be overridden by extending classes. It's useful if you want to have both master and slave connections
      * @return \CuxFramework\components\db\PDOWrapper
