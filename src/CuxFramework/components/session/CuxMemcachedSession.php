@@ -63,13 +63,6 @@ class CuxMemcachedSession extends CuxBaseObject implements \SessionHandlerInterf
 
     public function destroy($sessId) {
         $this->log('destroy(' . $sessId . ')');
-        
-        if (($user = $this->get("user")) != false){
-            $qSession = "DELETE FROM cux_user_session WHERE session_id=:sessionId";
-            $stmt = Cux::getInstance()->db->prepare($qSession);
-            $stmt->bindValue(":sessionId", session_id());
-            $stmt->execute();
-        }
         $_SESSION = null;
         return $this->_memcached->delete($sessId);
     }

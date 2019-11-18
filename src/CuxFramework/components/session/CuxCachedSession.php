@@ -58,13 +58,6 @@ class CuxCachedSession extends CuxBaseObject implements \SessionHandlerInterface
 
     public function destroy($sessId) {
         $this->log('destroy(' . $sessId . ')');
-        
-        if (($user = $this->get("user")) != false){
-            $qSession = "DELETE FROM cux_user_session WHERE session_id=:sessionId";
-            $stmt = Cux::getInstance()->db->prepare($qSession);
-            $stmt->bindValue(":sessionId", session_id());
-            $stmt->execute();
-        }
         $_SESSION = null;
         return Cux::getInstance()->cache->delete($sessId);
     }
