@@ -58,13 +58,13 @@ class CuxPaginator {
         
         $pages = array();
         foreach ($this->_texts as $i => $text){
-            $class = ($this->_page == $text["page"]) ? " class='active'" : "";
+            $class = ($this->_page == $text["page"]) ? " active" : "";
             if (!isset($text["disabled"])){
                 $link = str_replace($this->pageParam."/".$this->_page, $this->pageParam."/".$text["page"], $path);
-                $pages[] = "<li$class><a href='$link' title='".$text["title"]."'>".$text["text"]."</a></li>";
+                $pages[] = "<li class='page-item{$class}'><a class='page-link' href='$link' title='".$text["title"]."'>".$text["text"]."</a></li>";
             }
             else{
-                $pages[] = "<li class='disabled'><a title='".$text["title"]."'>".$text["text"]."</a></li>";
+                $pages[] = "<li class='page-item disabled'><a class='page-link' title='".$text["title"]."'>".$text["text"]."</a></li>";
             }
         }
         
