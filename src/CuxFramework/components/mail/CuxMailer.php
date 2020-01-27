@@ -191,7 +191,7 @@ class CuxMailer extends CuxBaseObject {
         if (!empty($this->from)){
             $headers .= 'From: ' . $this->from . "\r\n";
         }
-        if (!empty($this->replyTo) && $this->replyTo != $this->to){
+        if (!empty($this->replyTo)){
             $headers .= 'Reply-To: ' . $this->replyTo . "\r\n";
         }
         if (!empty($this->_cc)){
