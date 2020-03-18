@@ -8,7 +8,7 @@ use CuxFramework\components\log\CuxLogger;
 
 class CuxExceptionHandler extends CuxBaseObject{
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         set_exception_handler(array($this, "handleException"));
@@ -74,7 +74,7 @@ class CuxExceptionHandler extends CuxBaseObject{
     }
     
     // also TypeError & other PHP data types
-    public function handleException(/*\Exception*/ $ex): void{
+    public function handleException(/*\Exception*/ $ex){
         
         http_response_code((int)$ex->getCode());
         if (($obLevel = ob_get_level()) > 0){ // renunta la orice era de afisat inainte de eroare

@@ -12,7 +12,7 @@ class CuxFileMessages extends CuxBaseMessages {
     
     public $messagesPath = "";
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
     

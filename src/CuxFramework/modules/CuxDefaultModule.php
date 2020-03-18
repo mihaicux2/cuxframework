@@ -11,7 +11,7 @@ class CuxDefaultModule extends CuxBaseObject{
     
     public $defaultController = "cuxDefault";
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 

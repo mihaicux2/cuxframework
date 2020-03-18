@@ -16,7 +16,7 @@ class CuxMemcachedSession extends CuxBaseObject implements \SessionHandlerInterf
     public $restoreFromCookie = true;
     public $sessionName = "defaultSessionName";
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);   
         
         $this->_memcached = new \Memcached();

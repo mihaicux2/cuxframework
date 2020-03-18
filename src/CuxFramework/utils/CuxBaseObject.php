@@ -4,7 +4,7 @@ namespace CuxFramework\utils;
 
 class CuxBaseObject {
 
-    public function config(array $properties): void {
+    public function config(array $properties) {
         foreach ($properties as $name => $value) {
             $this->$name = $value;
         }

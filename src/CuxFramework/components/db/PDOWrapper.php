@@ -42,7 +42,7 @@ class PDOWrapper  extends CuxBaseObject {
     public $fetchMode = PDO::FETCH_ASSOC;
     public $errorMode = PDO::ERRMODE_EXCEPTION;
     
-    public function config(array $config): void {
+    public function config(array $config) {
        parent::config($config);
         try {
             $this->_db = new PDO($this->connectionString, $this->username, $this->password);

@@ -10,7 +10,7 @@ class CuxObject extends CuxBaseObject{
     
     static protected $_labels;
     
-    public function config(array $properties): void {
+    public function config(array $properties) {
         $this->config($properties);
     }
 

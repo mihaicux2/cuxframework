@@ -6,7 +6,7 @@ use CuxFramework\utils\CuxBase;
 
 class CuxOutTraffic extends CuxTraffic {
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 

@@ -18,7 +18,7 @@ class CuxLayout extends CuxBaseObject {
     public $viewExtension = ".php";
     public $pageTitle = "";
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 

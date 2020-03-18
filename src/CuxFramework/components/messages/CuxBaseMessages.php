@@ -9,7 +9,7 @@ abstract class CuxBaseMessages extends CuxBaseObject {
     
     private $_lang;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         $this->_lang = Cux::getInstance()->language;

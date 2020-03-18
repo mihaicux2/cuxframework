@@ -10,7 +10,7 @@ class CuxDBLogger extends CuxLogger {
     public $logTable = "cux_log";
     public $db = "db";
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 

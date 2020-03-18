@@ -16,11 +16,11 @@ class CuxDBCriteria{
         $this->addCondition("1=1");
     }
     
-    public function addCondition(string $cond, string $defaultOperator = "AND"): void{
+    public function addCondition(string $cond, string $defaultOperator = "AND"){
         $this->condition = (!empty($this->condition)) ? ($this->condition." ".$defaultOperator." (".$cond.")") : "(".$cond.")";
     }
     
-    public function addInCondition(string $column, array $values, string $defaultOperator = "AND"): void{
+    public function addInCondition(string $column, array $values, string $defaultOperator = "AND"){
         $ops = array();
         $params = array();
         foreach ($values as $i => $value){

@@ -52,7 +52,7 @@ class Cux extends CuxSingleton {
         return $message;
     }
     
-    public static function config(array $config): void {
+    public static function config(array $config) {
         $ref = static::getInstance();
         $ref->startTime = microtime(true);
         $ref->loadDefaultComponents($config);
@@ -97,7 +97,7 @@ class Cux extends CuxSingleton {
         return "<a href='mailto:".$this->author["email"]."'>".$this->author["name"]."</a> ".date("Y");
     }
     
-    public function loadDefaultComponents(array $config): void{
+    public function loadDefaultComponents(array $config){
         if (!isset($config["components"]) || !isset($config["components"]["exceptionHandler"])){
             $this->loadComponent("exceptionHandler", array(
                 "class" => 'CuxFramework\components\exception\CuxExceptionHandler'

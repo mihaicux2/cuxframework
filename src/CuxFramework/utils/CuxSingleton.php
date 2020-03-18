@@ -10,7 +10,7 @@ abstract class CuxSingleton {
         
     }
 
-    abstract public static function config(array $config): void;
+    abstract public static function config(array $config);
 
     final public static function getInstance(): CuxSingleton {
         $calledClass = get_called_class();

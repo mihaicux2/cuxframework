@@ -514,7 +514,7 @@ abstract class CuxDBObject extends CuxObject {
         return true;
     }
 
-    public function afterDelete(): void {
+    public function afterDelete() {
         
     }
 

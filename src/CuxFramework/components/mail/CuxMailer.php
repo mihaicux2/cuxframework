@@ -28,7 +28,7 @@ class CuxMailer extends CuxBaseObject {
     
     private $_mail;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
 //        require("vendor/PHPMailer/PHPMailerAutoload.php");

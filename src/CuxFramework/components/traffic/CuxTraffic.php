@@ -15,7 +15,7 @@ abstract class CuxTraffic extends CuxBaseObject {
     
     public $ignoreAjax = true;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
  

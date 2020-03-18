@@ -18,7 +18,7 @@ use CuxFramework\utils\CuxBase;
 
 class CuxExporter extends CuxBaseObject {
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 

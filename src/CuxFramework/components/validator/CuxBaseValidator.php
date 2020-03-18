@@ -10,7 +10,7 @@ abstract class CuxBaseValidator extends CuxBaseObject{
     
     abstract function validate($obj, string $attr): bool;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         $this->_props = $config;;
     }
     

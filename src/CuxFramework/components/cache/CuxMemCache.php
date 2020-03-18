@@ -8,7 +8,7 @@ class CuxMemCache extends CuxCache {
 
     private $_memcached;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         $extension = "memcached";
         if (!extension_loaded($extension)) {

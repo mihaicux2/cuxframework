@@ -1244,7 +1244,7 @@ class CuxUploader extends CuxBaseObject {
     public $thumbHeight = 100;
     public $keepAspectRatio = true;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         $this->setRandomPrefix();

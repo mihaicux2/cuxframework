@@ -11,7 +11,7 @@ class CuxUrlManager extends CuxBaseObject {
     public $defaultAction = "";
     public $routes = array();
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
 
         if (!is_array($this->routes)) {

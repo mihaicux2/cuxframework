@@ -133,7 +133,7 @@ class CuxPdf extends CuxBaseObject {
      */
     private $_mpdf;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         $this->_mpdf = new \Mpdf\Mpdf(array(

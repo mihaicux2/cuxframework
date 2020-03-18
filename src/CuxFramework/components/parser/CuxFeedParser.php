@@ -8,7 +8,7 @@ class CuxFeedParser extends CuxBaseObject {
     
     private $_posts = array();
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
     

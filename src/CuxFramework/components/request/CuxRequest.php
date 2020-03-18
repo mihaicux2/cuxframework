@@ -21,13 +21,13 @@ class CuxRequest extends CuxBaseObject {
     private $_params;
     private $_scriptName;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         $this->preProcessRequest();
     }
 
-    private function preProcessRequest(): void{
+    private function preProcessRequest(){
         $uri = $this->getUri();
         $queryInRequest = strpos($uri, "?");
         if ($queryInRequest !== false){

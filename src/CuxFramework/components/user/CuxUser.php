@@ -17,7 +17,7 @@ class CuxUser extends CuxBaseObject {
     protected $_role;
     protected $_permissions = array();
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 

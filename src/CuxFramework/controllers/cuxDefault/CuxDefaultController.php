@@ -14,16 +14,16 @@ class CuxDefaultController extends CuxBaseObject {
     protected $_params = array();
     public $pageTitle = "";
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 
-    public function setPageTitle(string $title): void {
+    public function setPageTitle(string $title) {
         $this->pageTitle = $title;
         Cux::getInstance()->layout->setPageTitle($title);
     }
 
-    public function setLayout(string $layout): void {
+    public function setLayout(string $layout) {
         Cux::getInstance()->layout->setLayout($layout);
     }
 
@@ -31,7 +31,7 @@ class CuxDefaultController extends CuxBaseObject {
         return true;
     }
 
-    public function afterAction(string $actionName): void {
+    public function afterAction(string $actionName) {
         
     }
 
@@ -66,7 +66,7 @@ class CuxDefaultController extends CuxBaseObject {
         return $ret;
     }
 
-    public function loadAction(string $actionName): void {
+    public function loadAction(string $actionName) {
         $this->_actionName = $actionName;
         $this->_params = $this->getParams($actionName);
 
@@ -86,7 +86,7 @@ class CuxDefaultController extends CuxBaseObject {
         return $this->_action;
     }
 
-    public function run(): void {
+    public function run() {
         if ($this->beforeAction($this->_actionName)) {
             call_user_func(array($this, $this->_action), $this->_params);
             $this->afterAction($this->_actionName);

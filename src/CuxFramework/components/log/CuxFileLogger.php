@@ -8,7 +8,7 @@ class CuxFileLogger extends CuxLogger {
     
     public $logFile = false;
     
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         if (!$this->logFile){

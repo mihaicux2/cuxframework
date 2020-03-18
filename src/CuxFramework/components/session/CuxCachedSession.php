@@ -18,7 +18,7 @@ class CuxCachedSession extends CuxBaseObject implements \SessionHandlerInterface
     public $secureCookie = true;
     public $httpOnly = true;
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
         
         session_set_save_handler($this, true);

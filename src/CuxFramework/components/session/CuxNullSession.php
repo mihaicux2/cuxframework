@@ -8,7 +8,7 @@ class CuxNullSession extends CuxBaseObject implements \SessionHandlerInterface, 
 
     private $_sId;
 
-    public function config(array $config): void {
+    public function config(array $config) {
         parent::config($config);
     }
 
