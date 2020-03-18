@@ -16,7 +16,7 @@ class CuxExceptionHandler extends CuxBaseObject{
         
     }
     
-    public function handleError(int $code, string $message, string $file, int $line) : ?\ErrorException{
+    public function handleError(int $code, string $message, string $file, int $line){
         if (!(error_reporting() & $code)){
             return null;
         }
