@@ -6,6 +6,7 @@ class Cux extends CuxSingleton {
 
     public $version = "1.0.0";
     public $appName = "Cux PHP Framework";
+    public $encryptionSalt = "klM1$%#@!F@#N.:]"; // random 16bytes salt. This should really be changed from the config file
     public $author = array(
         "name" => "Mihail Cuculici",
         "email" => "mihai.cuculici@gmail.com"

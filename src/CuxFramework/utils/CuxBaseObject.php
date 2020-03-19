@@ -36,10 +36,9 @@ class CuxBaseObject {
         
         $data = serialize($data);
         
-//        // Set a random salt
-//        $salt = openssl_random_pseudo_bytes(16);
         // Set a random salt
-        $salt = "klM1$%#@!F@#N.:]";
+//        $salt = openssl_random_pseudo_bytes(16);
+        $salt = Cux::getInstance()->encryptionSalt;
 
         $salted = '';
         $dx = '';
