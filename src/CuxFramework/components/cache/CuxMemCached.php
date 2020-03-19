@@ -4,20 +4,20 @@ namespace CuxFramework\components\cache;
 
 use CuxFramework\utils\CuxBase;
 
-class CuxMemCache extends CuxCache {
+class CuxMemCached extends CuxCache {
 
-    private $_memcache;
+    private $_memcached;
     
     public function config(array $config) {
         parent::config($config);
-        $extension = "memcache";
+        $extension = "memcached";
         if (!extension_loaded($extension)) {
-            throw new \Exception("MemCache are nevoie ca extensia de PHP `$extension` sa fie incarcata.", 501);
+            throw new \Exception("MemCached are nevoie ca extensia de PHP `$extension` sa fie incarcata.", 501);
         }
-        $this->_memcache = new \Memcache();
+        $this->_memcached = new \Memcached();
         if (is_array($this->servers) && !empty($this->servers)) {
             foreach ($this->servers as $server) {
-                $this->_memcache->addServer($server["host"], $server["port"]);
+                $this->_memcached->addServer($server["host"], $server["port"]);
             }
         }
     }
@@ -39,16 +39,16 @@ class CuxMemCache extends CuxCache {
     }
 
     public function get(string $key) {
-        return $this->_memcache->get($this->buildKey($key));
+        return $this->_memcached->get($this->buildKey($key));
     }
 
     public function getValues(array $keys): array {
-        $values = $this->_memcache->fetchAll($this->buildKeys($keys));
+        $values = $this->_memcached->fetchAll($this->buildKeys($keys));
         return is_array($values) ? $values : [];
     }
 
     public function set(string $key, $value, int $duration): bool {
-        return $this->_memcache->set($this->buildKey($key), $value, MEMCACHE_COMPRESSED, $duration);
+        return $this->_memcached->set($this->buildKey($key), $value, $duration);
     }
 
     public function setValues(array $data, int $duration): array {
@@ -56,12 +56,12 @@ class CuxMemCache extends CuxCache {
         foreach ($data as $key => $value) {
             $hashedData[$this->buildKey($key)] = $value;
         }
-        $result = $this->_memcache->setMulti($hashedData, $duration);
+        $result = $this->_memcached->setMulti($hashedData, $duration);
         return $result ? array_keys($data) : [];
     }
 
     public function add(string $key, $value, int $duration): bool {
-        return $this->_memcache->add($this->buildKey($key), $value, MEMCACHE_COMPRESSED, $duration);
+        return $this->_memcached->add($this->buildKey($key), $value, $duration);
     }
 
     public function addValues(array $data, int $duration): array {
@@ -76,11 +76,11 @@ class CuxMemCache extends CuxCache {
     }
 
     public function delete(string $key): bool {
-        return $this->_memcache->delete($this->buildKey($key));
+        return $this->_memcached->delete($this->buildKey($key));
     }
 
     public function flush(): bool {
-        return $this->_memcache->flush();
+        return $this->_memcached->flush();
     }
 
-} 
+}
