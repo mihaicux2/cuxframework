@@ -15,7 +15,7 @@ abstract class CuxLogger extends CuxBaseObject{
     const ALERT     = 64;
     const EMERGENCY = 128;
     
-    public $logLevel = 255;
+    public $logLevel = CuxLogger::EMERGENCY + CuxLogger::ALERT +CuxLogger::CRITICAL + CuxLogger::ERROR;
     
 //    const DEBUG     = 255; // 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128
 //    const INFO      = 127; // 1 + 2 + 4 + 8 + 16 + 32 + 64

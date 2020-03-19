@@ -115,7 +115,7 @@ class CuxMemcachedSession extends CuxBaseObject implements \SessionHandlerInterf
     private function log($action) {
         $msg = "SESSION_LOG <".$this->id()."@".$_SERVER["REQUEST_URI"].">: ".$action;
         if (Cux::getInstance()->hasComponent("logger")){
-            Cux::getInstance()->logger->log(CuxLogger::INFO, $msg);
+            Cux::log(CuxLogger::INFO, $msg);
         }
     }
 

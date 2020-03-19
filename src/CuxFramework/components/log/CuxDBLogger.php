@@ -8,7 +8,7 @@ use CuxFramework\utils\Cux;
 class CuxDBLogger extends CuxLogger {
     
     public $logTable = "cux_log";
-    public $db = "db";
+    public $dbConnection = "db";
     
     public function config(array $config) {
         parent::config($config);
@@ -20,10 +20,10 @@ class CuxDBLogger extends CuxLogger {
             $micro = sprintf("%06d", ($t - floor($t)) * 1000000);
             $d = new \DateTime(date('Y-m-d H:i:s.' . $micro, $t));
             
-            $tableName = Cux::getInstance()->{$this->db}->quoteTableName($this->logTable);
-            $sql = "INSERT INTO $tableName (log_time, level, message, context)
+            $tableName = Cux::getInstance()->{$this->dbConnection}->quoteTableName($this->logTable);
+            $sql = "INSERT INTO {$dbName}.{$tableName} (log_time, level, message, context)
                     VALUES (:log_time, :level, :message, :context)";
-            $stmt = Cux::getInstance()->{$this->db}->prepare($sql);
+            $stmt = Cux::getInstance()->{$this->dbConnection}->prepare($sql);
             $stmt->bindValue(":log_time", $d->format("Y-m-d H:i:s") );
             $stmt->bindValue(":level", $level);
             $stmt->bindValue(":message", $message );

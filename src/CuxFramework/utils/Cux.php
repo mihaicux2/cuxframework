@@ -2,6 +2,8 @@
 
 namespace CuxFramework\utils;
 
+use CuxFramework\components\log\CuxLogger;
+
 class Cux extends CuxSingleton {
 
     public $version = "1.0.0";
@@ -51,6 +53,52 @@ class Cux extends CuxSingleton {
             }
         }
         return $message;
+    }
+    
+    public static function emergency($message, array $context = array()): bool {
+        return static::log(CuxLogger::EMERGENCY, $message, $context);
+    }
+    
+    public static function alert($message, array $context = array()): bool {
+        return static::log(CuxLogger::ALERT, $message, $context);
+    }
+    
+    public static function critical($message, array $context = array()): bool {
+        return static::log(CuxLogger::CRITICAL, $message, $context);
+    }
+    
+    public static function error($message, array $context = array()): bool {
+        return static::log(CuxLogger::ERROR, $message, $context);
+    }
+    
+    public static function warning($message, array $context = array()): bool {
+        return static::log(CuxLogger::WARNING, $message, $context);
+    }
+    
+    public static function notice($message, array $context = array()): bool {
+        return static::log(CuxLogger::NOTICE, $message, $context);
+    }
+    
+    public static function info($message, array $context = array()): bool {
+        return static::log(CuxLogger::INFO, $message, $context);
+    }
+    
+    public static function debug($message, array $context = array()): bool {
+        return static::log(CuxLogger::DEBUG, $message, $context);
+    }
+    
+    public static function log(int $level, string $message, array $context = array()): bool{
+        $ret = true;
+    
+        $ref = static::getInstance();
+        
+        if ($ref->hasComponent("logger")){
+            foreach ($ref->logger as $logger){
+                $ret = $ret && $logger->log($level, $message, $context);
+            }
+        }
+        
+        return $ret;
     }
     
     public static function config(array $config) {
@@ -108,7 +156,7 @@ class Cux extends CuxSingleton {
         }
         if (!isset($config["components"]) || !isset($config["components"]["logger"])){
             $this->loadComponent("logger", array(
-                "class" => 'CuxFramework\components\log\CuxNullLogger'
+                "class" => 'CuxFramework\components\log\CuxFileLogger'
             ));
         }
         if (!isset($config["components"]) || !isset($config["components"]["messages"])){
@@ -170,7 +218,7 @@ class Cux extends CuxSingleton {
                 "message" => $ex->getMessage(),
                 "stackTrace" => $ex->getTrace()
             );
-            Cux::getInstance()->logger->log(\components\log\CuxLogger::ERROR, $ex->getMessage(), $exArray);
+//            Cux::log(\components\log\CuxLogger::ERROR, $ex->getMessage(), $exArray);
             throw new Exception("Controller invalid", 404);
         }
         
@@ -215,9 +263,18 @@ class Cux extends CuxSingleton {
         if (!isset($config["params"])){
             $config["params"] = array();
         }
-        $instance = new $config["class"]();
-        $instance->config($config["params"]);
-        $this->_components[$cName] = $instance;
+        if (isset($config["instances"])){
+            $this->_components[$cName] = array();
+            foreach ($config["instances"] as $config2){
+                $instance = new $config2["class"]();
+                $instance->config($config2["params"]);
+                $this->_components[$cName][] = $instance;
+            }
+        } else {
+            $instance = new $config["class"]();
+            $instance->config($config["params"]);
+            $this->_components[$cName] = $instance;
+        }
     }
 
     public function hasComponent($name) {

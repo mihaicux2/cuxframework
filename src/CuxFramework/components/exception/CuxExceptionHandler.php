@@ -91,7 +91,7 @@ class CuxExceptionHandler extends CuxBaseObject{
 //        print_r($ex);
 //        die();
         
-        Cux::getInstance()->logger->log(CuxLogger::ERROR, $ex->getMessage(), $exArray);
+        Cux::log(CuxLogger::ERROR, $ex->getMessage(), $exArray);
         Cux::getInstance()->layout->setPageTitle("Exceptie/eroare #".$ex->getCode());
         
         if (Cux::getInstance()->request->isAjax()){

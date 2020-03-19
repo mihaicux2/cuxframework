@@ -7,12 +7,19 @@ use CuxFramework\utils\CuxBase;
 class CuxFileLogger extends CuxLogger {
     
     public $logFile = false;
+    public $logDir = "runtime/logs";
     
     public function config(array $config) {
         parent::config($config);
         
+        if (!is_dir($this->logDir) || !is_writable($this->logDir)){
+            if (!mkdir($this->logDir, 0755, true)){
+                die("Cannot create the log directory. Please configure the `\$logDir` property to a writable path");
+            }
+        }
+        
         if (!$this->logFile){
-            $this->logFile = "log".DIRECTORY_SEPARATOR."log_".date("Y-m-d").".log";
+            $this->logFile = "log_".date("Y-m-d").".log";
         }
     }
 
@@ -49,12 +56,13 @@ class CuxFileLogger extends CuxLogger {
             $t = microtime(true);
             $micro = sprintf("%06d", ($t - floor($t)) * 1000000);
             $d = new \DateTime(date('Y-m-d H:i:s.' . $micro, $t));
-            file_put_contents($this->logFile, '[ ' . $d->format("Y-m-d H:i:s.u") . ' ]: <' . $logLevel . '>  ' .$message . PHP_EOL, FILE_APPEND | LOCK_EX);
+            file_put_contents($this->logDir.DIRECTORY_SEPARATOR.$this->logFile, '[ ' . $d->format("Y-m-d H:i:s.u") . ' ]: <' . $logLevel . '>  ' .$message . PHP_EOL, FILE_APPEND | LOCK_EX);
             if (is_array($context) && !empty($context)){
-                return (file_put_contents($this->logFile, json_encode($context) . PHP_EOL, FILE_APPEND | LOCK_EX) !== false);
+                return (file_put_contents($this->logDir.DIRECTORY_SEPARATOR.$this->logFile, json_encode($context) . PHP_EOL, FILE_APPEND | LOCK_EX) !== false);
             }
             return false;
         }
+        return false;
     }
     
 }

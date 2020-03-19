@@ -55,7 +55,7 @@ class CuxUser extends CuxBaseObject {
     }
 
     public function setIdentity(CuxDBObject $user) {
-        Cux::getInstance()->logger->info("Setting identity for user " . $user->user_id);
+        Cux::info("Setting identity for user " . $user->user_id);
         $this->_identity = $user;
         Cux::getInstance()->session->set("user", $this->_identity);
     }
