@@ -56,13 +56,7 @@ class Cux extends CuxSingleton {
     public static function config(array $config) {
         $ref = static::getInstance();
         $ref->startTime = microtime(true);
-        $ref->loadDefaultComponents($config);
         
-        if (isset($config["components"])) {
-            foreach ($config["components"] as $cId => $component) {
-                $ref->loadComponent($cId, $component);
-            }
-        }
         if (isset($config["behaviours"])){
             $ref->_behaviours = $config["behaviours"];
             $config["behaviours"] = null;
@@ -75,6 +69,14 @@ class Cux extends CuxSingleton {
         }
         
         CuxBase::config($ref, $config);
+        
+        $ref->loadDefaultComponents($config);
+        
+        if (isset($config["components"])) {
+            foreach ($config["components"] as $cId => $component) {
+                $ref->loadComponent($cId, $component);
+            }
+        }
         
     }
     
