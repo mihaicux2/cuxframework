@@ -54,12 +54,16 @@ class CuxLayout extends CuxBaseObject {
         ob_start();
         if (file_exists($layoutPath) && is_readable($layoutPath)){
             if (!@include($layoutPath)) {
-                throw new \Exception("Layout-ul cerut nu a fost gasit: " . $this->layoutName, 501);
+                throw new \Exception(Cux::translate("error", "Layout not found: {layout}", array(
+                    "{layout}" => $this->layoutName
+                )), 501);
             }
         } else {
             $layoutPath = "vendor/cux/cuxframework/src/CuxFramework/".$layoutPath;
             if (!@include($layoutPath)) {
-                throw new \Exception("Layout-ul cerut nu a fost gasit: " . $this->layoutName, 501);
+                throw new \Exception(Cux::translate("error", "Layout not found: {layout}", array(
+                    "{layout}" => $this->layoutName
+                )), 501);
             }
         }
         return ob_get_clean();
@@ -85,12 +89,16 @@ class CuxLayout extends CuxBaseObject {
         
         if (file_exists($path) && is_readable($path)){
             if (!@include($path)) {
-                throw new \Exception("Vizualizarea nu a fost gasita: $name", 501);
+                throw new \Exception(Cux::translate("error", "View not found: {view}", array(
+                    "{view}" => $name
+                )), 501);
             }
         } else {
             $path = "vendor/cux/cuxframework/src/CuxFramework/".$path;
             if (!@include($path)) {
-                throw new \Exception("Vizualizarea nu a fost gasita: $name", 501);
+                throw new \Exception(Cux::translate("error", "View not found: {view}", array(
+                    "{view}" => $name
+                )), 501);
             }
         }
         return ob_get_clean();

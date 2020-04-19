@@ -16,6 +16,11 @@ return array(
         "{attr} must be at least {min_len} characters!" => "{attr} trebuie sa aiba cel putin {min_len} caractere!",
         "{attr} must be at most {max_len} characters!" => "{attr} trebuie sa aiba cel mult {max_len} caractere!",
         "{attr} must match {attr2}" => "{attr} trebuie sa fie egal cu {attr2}",
+        "Undefined property: {class}.{attribute}" => "Proprietate nedefinita: {class}.{attribute}",
+        "Undefined relation: {class}.{attribute}" => "Relatie nedefinita: {class}.{attribute}",
+        "Extension not found: {extension}" => "Extensia nu a fost gasita: {extension}",
+        "Layout not found: {layout}" => "Layout-ul nu a fost gasita: {layout}",
+        "View not found: {view}" => "View-ul nu a fost gasita: {view}",
     )
 );
 

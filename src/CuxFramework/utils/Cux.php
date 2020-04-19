@@ -17,6 +17,8 @@ class Cux extends CuxSingleton {
     
     public $language = "en";
     
+    public $charset = "UTF-8";
+    
     public $events = array();
     
     private $_components = array();

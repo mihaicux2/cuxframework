@@ -2,6 +2,8 @@
 
 namespace CuxFramework\utils;
 
+use CuxFramework\utils\CuxSlug;
+
 class CuxObject extends CuxBaseObject{
 
     protected $_attributes = array();
@@ -180,6 +182,20 @@ class CuxObject extends CuxBaseObject{
             static::$_labels = $this->labels();
         }
         return isset(static::$_labels[$field]) ? static::$_labels[$field] : $this->generateAttributeLabel($field);
+    }
+    
+    public function getAttributeLabel($attribute){
+        return $this->getLabel($attribute);
+    }
+    
+    public function getAttributeId($attribute){
+//        return CuxSlug::slugify(get_class($this)."_".$attribute);
+        return $this->getShortName()."_".$attribute;
+    }
+    
+    public function getAttributeName($attribute){
+//        return CuxSlug::slugify(get_class($this))."[".CuxSlug::slugify($attribute)."]";
+        return $this->getShortName()."[".$attribute."]";
     }
     
     public function generateAttributeLabel($name) {

@@ -3,6 +3,7 @@
 namespace CuxFramework\components\cache;
 
 use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\Cux;
 
 class CuxAPCCache extends CuxCache {
 
@@ -10,7 +11,9 @@ class CuxAPCCache extends CuxCache {
         parent::config($config);
         $extension = "apcu";
         if (!extension_loaded($extension)) {
-            throw new \Exception("APCCache are nevoia ca extensia de PHP `$extension` sa fie incarcata.", 501);
+            throw new \Exception(Cux::translate("error", "Extension not found: {extension}", array(
+                "{extension}" => $extension
+            )), 503);
         }
     }
 

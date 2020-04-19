@@ -3,6 +3,7 @@
 namespace CuxFramework\components\cache;
 
 use CuxFramework\utils\CuxBase;
+use CuxFramework\utils\Cux;
 
 class CuxMemCache extends CuxCache {
 
@@ -12,7 +13,9 @@ class CuxMemCache extends CuxCache {
         parent::config($config);
         $extension = "memcache";
         if (!extension_loaded($extension)) {
-            throw new \Exception("MemCache are nevoie ca extensia de PHP `$extension` sa fie incarcata.", 501);
+            throw new \Exception(Cux::translate("error", "Extension not found: {extension}", array(
+                "{extension}" => $extension
+            )), 503);
         }
         $this->_memcache = new \Memcache();
         if (is_array($this->servers) && !empty($this->servers)) {

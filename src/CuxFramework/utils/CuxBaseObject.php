@@ -55,4 +55,8 @@ class CuxBaseObject {
         return base64_encode($salt . $encrypted_data);
     }
     
+    public function getShortName(){
+        return (new \ReflectionClass($this))->getShortName();
+    }
+    
 }

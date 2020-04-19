@@ -71,7 +71,10 @@ abstract class CuxDBObject extends CuxObject {
                 return $this->getRelation($name);
             }
         }
-        throw new \Exception("Proprietatea " . get_class($this) . "." . $name . " nu este definita", 503);
+        throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
+            "{class}" => get_class($this),
+            "{attribute}" => $name
+        )), 503);
     }
 
     public function __set(string $name, $value) {
@@ -81,7 +84,10 @@ abstract class CuxDBObject extends CuxObject {
             if ($this->hasRelation($name) && is_subclass_of($value, $this->getRelationClassName($name))) {
                 $this->_relations[$name] = $value;
             } else {
-                throw new \Exception("Proprietatea " . get_class($this) . "." . $name . " nu exista", 503);
+                throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
+                    "{class}" => get_class($this),
+                    "{attribute}" => $name
+                )), 503);
             }
         }
     }
@@ -100,12 +106,15 @@ abstract class CuxDBObject extends CuxObject {
             if (isset($this->_relations[$name])) {
                 $this->_relations[$name] = null;
             } else {
-                throw new \Exception("Proprietatea " . get_class($this) . "." . $name . " nu exista", 503);
+                throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
+                    "{class}" => get_class($this),
+                    "{attribute}" => $name
+                )), 503);
             }
         }
     }
 
-    public function getRelationClassName(string $name): ?string {
+    public function getRelationClassName(string $name): string {
         $relations = $this->relations();
         return isset($relations[$name]) ? $relations[$name]["class"] : null;
     }
@@ -122,7 +131,7 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function setAttribute(string $attribute, $value): ?CuxObject {
+    public function setAttribute(string $attribute, $value): CuxObject {
         $columnMap = $this->getTableSchema();
         if (isset($columnMap["columns"][$attribute])) {
             return parent::setAttribute($attribute, $value);
@@ -130,10 +139,11 @@ abstract class CuxDBObject extends CuxObject {
         return null;
     }
 
-    public function with(array $rels): ?CuxDBObject {
-        if (!is_array($rels)) {
-            throw new \Exception(get_called_class() . "::with(). Metoda primeste un vector ca parametru de intrare", 503);
+    public function with(array $rels = null): CuxDBObject {
+        if (is_null($rels) || empty($rels)){
+            return $this;
         }
+        
         $relations = $this->relations();
         foreach ($rels as $relation) {
 
@@ -146,8 +156,12 @@ abstract class CuxDBObject extends CuxObject {
             );
             $relatedParts = array_slice($relatedParts, 1);
             foreach ($relatedParts as $depth => $related2) {
-                if (!isset($relationsPath[$depth]["relations"][$related2])) {
-                    throw new \Exception("Clasa " . $relationsPath[$depth]["class"] . " nu are nicio relatie denumita `" . $related2 . "`", 503);
+                if (!isset($relationsPath[$depth]["relations"][$related2])) {                    
+                    throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
+                        "{class}" => $relationsPath[$depth]["class"],
+                        "{attribute}" => $related2
+                    )), 503);
+                    
                 }
                 $relationsPath[$depth + 1] = array(
                     "class" => $relationsPath[$depth]["relations"][$related2]["class"],
@@ -173,7 +187,7 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
     
-    public function getByPk($key): ?CuxDBObject {
+    public function getByPk($key): CuxDBObject {
 
         $columnMap = $this->getTableSchema();
         $pk = $columnMap["primaryKey"];
@@ -308,7 +322,10 @@ abstract class CuxDBObject extends CuxObject {
                         $this->_relations[$related] = $ob::getInstance()->findAllByCondition($crit);
                         break;
                     default:
-                        throw new \Exception(get_called_class() . "::" . $name . " nu contine tipul de relatie definit", 503);
+                        throw new \Exception(Cux::translate("error", "Undefined relation: {class}.{attribute}", array(
+                            "{class}" => get_class($this),
+                            "{attribute}" => $related
+                        )), 503);
                 }
                 return $this->_relations[$related];
             }
@@ -533,7 +550,7 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function findByAttributes(array $attributes): ?CuxDBObject {
+    public function findByAttributes(array $attributes): CuxDBObject {
 
         $conditions = array();
         foreach ($attributes as $column => $value) {
@@ -613,8 +630,12 @@ abstract class CuxDBObject extends CuxObject {
     /**
      * @param mixed $condition
      */
-    public function findByCondition(CuxDBCriteria $crit): ?CuxDBObject {
+    public function findByCondition(CuxDBCriteria $crit = null): CuxDBObject {
 
+        if (is_null($crit)){
+            $crit = new CuxDBCriteria();
+        }
+        
         $columnMap = $this->getTableSchema();
 
         $query = "SELECT " . implode(", ", $crit->select ? $crit->select : $this->getColumnsForQuery())
@@ -682,8 +703,12 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function findAllByCondition(CuxDBCriteria $crit): array {
+    public function findAllByCondition(CuxDBCriteria $crit = null): array {
 
+        if (is_null($crit)){
+            $crit = new CuxDBCriteria();
+        }
+        
         $columnMap = $this->getTableSchema();
 
         $ret = array();
@@ -828,8 +853,12 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function findAllByCondition2(CuxDBCriteria $crit) {
+    public function findAllByCondition2(CuxDBCriteria $crit = null) {
 
+        if (is_null($crit)){
+            $crit = new CuxDBCriteria();
+        }
+        
         $columnMap = $this->getTableSchema();
 
         $ret = array();
