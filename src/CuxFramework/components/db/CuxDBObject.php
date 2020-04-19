@@ -1051,5 +1051,52 @@ abstract class CuxDBObject extends CuxObject {
         unset($new);
         return $this;
     }
+    
+    public function arrayListByCondition(string $key, string $val, CuxDBCriteria $crit = null): array {
+
+        if (is_null($crit)){
+            $crit = new CuxDBCriteria();
+        }
+
+        $ret = array();
+
+        $query = "SELECT " . $key . " AS `key`, ". $val . " AS `val`"
+                     . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
+        
+        if (!empty($crit->join)){
+            $query .= " ".implode(" ", $crit->join);
+        }
+
+        $query .= " WHERE " . $crit->condition;
+        if ($crit->order) {
+            $query .= " ORDER BY " . $crit->order;
+        }
+        $query .= " LIMIT " . $crit->limit . " OFFSET " . $crit->offset;
+        
+        $stmt = $this->getDbConnection()->prepare($query);
+        if (!empty($crit->params)) {
+            foreach ($crit->params as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+        }
+
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+
+            if (!$rows) {
+                return array();
+            }
+
+            $keys = array();
+
+            foreach ($rows as $row) {
+                $ret[$row["key"]] = $row["val"];
+            }
+        }
+
+        $this->_with = array(); // sad, sad... :-<
+
+        return $ret;
+    }
 
 }
