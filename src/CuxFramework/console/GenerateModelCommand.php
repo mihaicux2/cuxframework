@@ -40,6 +40,8 @@ class GenerateModelCommand extends CuxCommand{
             $this->modelName = ucfirst(CuxSlug::camelCase($this->tableName));
         }
         
+        echo $this->getColoredString("Generating model for table `{$this->tableName}`: {$this->modelName}...", "light_green", "black").PHP_EOL;
+        
         $namespace = str_replace(DIRECTORY_SEPARATOR, "\\", $this->outputDir);
         
         $outputFile = $this->outputDir.DIRECTORY_SEPARATOR.$this->modelName.".php";
@@ -194,7 +196,7 @@ class GenerateModelCommand extends CuxCommand{
         
         file_put_contents($outputFile, $output);
         
-        
+        echo $this->getColoredString("DONE generating file: {$outputFile}.", "light_green", "black").PHP_EOL;
 //        echo "DONE".PHP_EOL;
         
     }
