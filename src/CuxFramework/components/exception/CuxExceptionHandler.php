@@ -90,11 +90,11 @@ class CuxExceptionHandler extends CuxBaseObject{
         
         Cux::log(CuxLogger::ERROR, $ex->getMessage(), $exArray);
         
-        if (Cux::getInstance()->hasComponent("layout")){
+        if (Cux::getInstance()->isWebApp() && Cux::getInstance()->hasComponent("layout")){
             Cux::getInstance()->layout->setPageTitle("Exceptie/eroare #".$ex->getCode());
         }
         
-        if (Cux::getInstance()->hasComponent("request") && Cux::getInstance()->request->isAjax()){
+        if (Cux::getInstance()->isWebApp() && Cux::getInstance()->hasComponent("request") && Cux::getInstance()->request->isAjax()){
             echo $ex->getMessage();
         }
         else{
@@ -104,7 +104,7 @@ class CuxExceptionHandler extends CuxBaseObject{
                 Cux::getInstance()->redirect("/login");
             }
 
-            if (Cux::getInstance()->hasComponent("layout")){
+            if (Cux::getInstance()->isWebApp() && Cux::getInstance()->hasComponent("layout")){
                 if (Cux::getInstance()->debug){
                     echo Cux::getInstance()->layout->render("//errors/errorDebug", array("ex"=>$ex));
                 }

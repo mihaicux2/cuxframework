@@ -15,8 +15,6 @@ class Cux extends CuxSingleton {
     );
     public $debug = false;
     
-    public $console = false;
-    
     public $language = "en";
     
     public $charset = "UTF-8";
@@ -36,6 +34,8 @@ class Cux extends CuxSingleton {
     private $_moduleName;
     private $_controllerName;
     private $_actionName;
+    
+    private $_console = false;
     
     private $_params = array();
     
@@ -120,6 +120,8 @@ class Cux extends CuxSingleton {
             unset($config["params"]);
         }
         
+        $ref->_console = (php_sapi_name() === 'cli');
+        
         CuxBase::config($ref, $config);
         
         $ref->loadDefaultComponents($config);
@@ -130,6 +132,14 @@ class Cux extends CuxSingleton {
             }
         }
         
+    }
+    
+    public function isConsoleApp(){
+        return $this->_console;
+    }
+    
+    public function isWebApp(){
+        return !$this->_console;
     }
     
     public function getParams(){
@@ -178,11 +188,11 @@ class Cux extends CuxSingleton {
                 "class" => 'CuxFramework\components\url\CuxUrlManager'
             ));
         }
-//        if (!isset($config["components"]) || !isset($config["components"]["layout"])){
-//            $this->loadComponent("layout", array(
-//                "class" => 'CuxFramework\components\layout\CuxLayout'
-//            ));
-//        }
+        if (!isset($config["components"]) || !isset($config["components"]["layout"])){
+            $this->loadComponent("layout", array(
+                "class" => 'CuxFramework\components\layout\CuxLayout'
+            ));
+        }
         if (!isset($config["components"]) || !isset($config["components"]["user"])){
             $this->loadComponent("user", array(
                 "class" => 'CuxFramework\components\user\CuxUser'
