@@ -88,13 +88,13 @@ class CuxExceptionHandler extends CuxBaseObject{
             "stackTrace" => $ex->getTrace()
         );
         
-//        print_r($ex);
-//        die();
-        
         Cux::log(CuxLogger::ERROR, $ex->getMessage(), $exArray);
-        Cux::getInstance()->layout->setPageTitle("Exceptie/eroare #".$ex->getCode());
         
-        if (Cux::getInstance()->request->isAjax()){
+        if (Cux::getInstance()->hasComponent("layout")){
+            Cux::getInstance()->layout->setPageTitle("Exceptie/eroare #".$ex->getCode());
+        }
+        
+        if (Cux::getInstance()->hasComponent("request") && Cux::getInstance()->request->isAjax()){
             echo $ex->getMessage();
         }
         else{
@@ -104,11 +104,15 @@ class CuxExceptionHandler extends CuxBaseObject{
                 Cux::getInstance()->redirect("/login");
             }
 
-            if (Cux::getInstance()->debug){
-                echo Cux::getInstance()->layout->render("//errors/errorDebug", array("ex"=>$ex));
-            }
-            else{
-                echo Cux::getInstance()->layout->render("//errors/error", array("ex"=>$ex));
+            if (Cux::getInstance()->hasComponent("layout")){
+                if (Cux::getInstance()->debug){
+                    echo Cux::getInstance()->layout->render("//errors/errorDebug", array("ex"=>$ex));
+                }
+                else{
+                    echo Cux::getInstance()->layout->render("//errors/error", array("ex"=>$ex));
+                }
+            } else {
+                print_r($exArray);
             }
         }
     }

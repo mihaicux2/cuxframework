@@ -15,6 +15,8 @@ class Cux extends CuxSingleton {
     );
     public $debug = false;
     
+    public $console = false;
+    
     public $language = "en";
     
     public $charset = "UTF-8";
@@ -176,11 +178,11 @@ class Cux extends CuxSingleton {
                 "class" => 'CuxFramework\components\url\CuxUrlManager'
             ));
         }
-        if (!isset($config["components"]) || !isset($config["components"]["layout"])){
-            $this->loadComponent("layout", array(
-                "class" => 'CuxFramework\components\layout\CuxLayout'
-            ));
-        }
+//        if (!isset($config["components"]) || !isset($config["components"]["layout"])){
+//            $this->loadComponent("layout", array(
+//                "class" => 'CuxFramework\components\layout\CuxLayout'
+//            ));
+//        }
         if (!isset($config["components"]) || !isset($config["components"]["user"])){
             $this->loadComponent("user", array(
                 "class" => 'CuxFramework\components\user\CuxUser'
