@@ -7,7 +7,7 @@ use CuxFramework\utils\Cux;
 class CuxLengthValidator extends CuxBaseValidator {
 
     public function validate($obj, string $attr): bool {
-
+        
         if (is_object($obj)) {
             $label = method_exists($obj, "getLabel") ? $obj->getLabel($attr) : $attr;
             $canAddError = method_exists($obj, "addError");
@@ -29,7 +29,7 @@ class CuxLengthValidator extends CuxBaseValidator {
 
         if (!is_string($value)) {
             if ($canAddError) {
-                $obj->addError($attr, Cux::translate("error", "Invalid attribute: {attr}!", array(
+                $obj->addError($attr, Cux::translate("error", "{attr} must be string!", array(
                             "{attr}" => $label
                 )));
             }

@@ -12,6 +12,8 @@ return array(
         "Uploaded file cannot be saved" => "Fisierul incarcat nu a putut fi salvat",
         "Invalid attribute: {attr}!" => "Atribut invalid: {attr}!",
         "{attr} is empty!" => "Atribut necompletat: {attr}!",
+        "{attr} must be numeric" => "Attributul trebuie sa aiba o valoare numerica: {attr}!",
+        "{attr} must be string" => "Attributul trebuie sa aiba o valoare de tip sir de caractere: {attr}!",
         "{attr} must be between {min_len} and {max_len} characters!" => "{attr} trebuie sa aiba intre {min_len} si {max_len} caractere!",
         "{attr} must be at least {min_len} characters!" => "{attr} trebuie sa aiba cel putin {min_len} caractere!",
         "{attr} must be at most {max_len} characters!" => "{attr} trebuie sa aiba cel mult {max_len} caractere!",

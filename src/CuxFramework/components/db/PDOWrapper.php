@@ -34,6 +34,7 @@ class PDOWrapper  extends CuxBaseObject {
 
     private $_db = null;
     private $_stmt = null;
+    private $_dbName = null;
     public $connectionString = "";
     public $username = "";
     public $password = "";
@@ -52,11 +53,21 @@ class PDOWrapper  extends CuxBaseObject {
             if (isset($this->errorMode)) {
                 $this->setAttribute(PDO::ATTR_ERRMODE, $this->errorMode);
             }
+            
+            $connectionStringDetails = explode(";", $this->connectionString);
+            $dbDetails = end($connectionStringDetails);
+            $dbDetails2 = explode("=", $dbDetails);
+            $this->_dbName = $dbDetails2[1];
+            
         } catch (PDOException $ex) {
             throw new \Exception($ex->getMessage(), (int) $ex->getCode());
         }
     }
 
+    public function getDBName(){
+        return $this->_dbName;
+    }
+    
     public function beginTransaction(): bool {
         return $this->_db->beginTransaction();
     }

@@ -11,8 +11,20 @@ class CuxSlug extends CuxSingleton {
         CuxBase::config($ref, $config);
     }
 
+    public static function camelCase(string $str, array $noStrip = []): string {
+        // non-alpha and non-numeric characters become spaces
+        $str = preg_replace('/[^a-z0-9' . implode("", $noStrip) . ']+/i', ' ', $str);
+        $str = trim($str);
+        // uppercase the first character of each word
+        $str = ucwords($str);
+        $str = str_replace(" ", "", $str);
+        $str = lcfirst($str);
+
+        return $str;
+    }
+    
     // convert text to slugs
-    static public function slugify(string $text, string $separator = '_', bool $toLowerCase = true) {
+    static public function slugify(string $text, string $separator = '_', bool $toLowerCase = true): string {
 
         $matrix = array(
             'й' => 'i', 'ц' => 'c', 'у' => 'u', 'к' => 'k', 'е' => 'e', 'н' => 'n',
@@ -54,7 +66,7 @@ class CuxSlug extends CuxSingleton {
     }
     
     // convert text to URL-friendly string
-    public static function seourelize($string, $sufix = '') {
+    public static function seourelize($string, $sufix = ''): string {
         $string = static::convertEncoding($string);
 
         $string = strip_tags($string);
@@ -76,7 +88,7 @@ class CuxSlug extends CuxSingleton {
         return $string . $sufix;
     }
 
-    public static function convertEncoding($text = "") {
+    public static function convertEncoding($text = ""): string {
         $text = static::remove_accents($text);
 
         $roman = array("Sch", "sch", 'Yo', 'Zh', 'Kh', 'Ts', 'Ch', 'Sh', 'Yu', 'ya', 'yo', 'zh', 'kh', 'ts', 'ch', 'sh', 'yu', 'ya', 'A', 'B', 'V', 'G', 'D', 'E', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', '', 'Y', '', 'E', 'a', 'b', 'v', 'g', 'd', 'e', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', '', 'y', '', 'e');
@@ -86,7 +98,7 @@ class CuxSlug extends CuxSingleton {
         return $text;
     }
 
-    public static function seems_utf8($str) {
+    public static function seems_utf8($str): bool {
         $length = strlen($str);
         for ($i = 0; $i < $length; $i++) {
             $c = ord($str[$i]);
@@ -120,7 +132,7 @@ class CuxSlug extends CuxSingleton {
      * @param string $string Text that might have accent characters
      * @return string Filtered string with replaced "nice" characters.
      */
-    public static function remove_accents($string) {
+    public static function remove_accents($string): string {
         if (!preg_match('/[\x80-\xff]/', $string))
             return $string;
 
