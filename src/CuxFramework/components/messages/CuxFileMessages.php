@@ -52,7 +52,7 @@ class CuxFileMessages extends CuxBaseMessages {
         
         $this->loadMessages($lang);
         
-        if (isset($this->_messages[$lang]) && isset($this->_messages[$lang][$category]) && isset($this->_messages[$lang][$category][$message])){
+        if (isset($this->_messages[$lang]) && isset($this->_messages[$lang][$category]) && isset($this->_messages[$lang][$category][$message]) && $this->_messages[$lang][$category][$message]){
             return $this->_messages[$lang][$category][$message];
         } else {
             Cux::getInstance()->raiseEvent("missingTranslation", array(

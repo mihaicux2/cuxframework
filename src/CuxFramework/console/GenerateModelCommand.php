@@ -246,13 +246,5 @@ class GenerateModelCommand extends CuxCommand{
     protected function quoteValue($name) {
         return strpos($name, "'") !== false ? $name : "'" . $name . "'";
     }
-    
-    private function parseArguments($args) {
-        parse_str(implode('&', $args), $args);
-        foreach ($args as $name => $value) {
-            if (property_exists($this, $name))
-                $this->$name = $value;
-        }
-    }
 
 }

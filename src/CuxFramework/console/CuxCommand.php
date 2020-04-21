@@ -54,6 +54,14 @@ abstract class CuxCommand extends CuxBaseObject{
         echo $this->getColoredString("Executing command {$name} ...", "yellow", "black").PHP_EOL.PHP_EOL;
     }
     
+    protected function parseArguments($args) {
+        parse_str(implode('&', $args), $args);
+        foreach ($args as $name => $value) {
+            if (property_exists($this, $name))
+                $this->$name = $value;
+        }
+    }
+    
     // remember to call this method if the command is called from the terminal(/console)
     public function registerShutdownFunctions() {
 
