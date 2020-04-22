@@ -294,6 +294,30 @@ class Cux extends CuxSingleton {
     public function hasComponent($name) {
         return isset($this->_components[$name]);
     }
+    
+    public function getModule(): \CuxFramework\modules\CuxDefaultModule{
+        return $this->_module;
+    }
+    
+    public function getController(): \CuxFramework\controllers\cuxDefault\CuxDefaultController{
+        return $this->_controller;
+    }
+    
+    public function getAction(): string{
+        return $this->_action;
+    }
+    
+    public function getActionName(): string{
+        return $this->_actionName;
+    }
+    
+    public function getActionParams(): array{
+        $controller = $this->getController();
+        if ($controller){
+            return $controller->getParams($this->getActionName());
+        }
+        return array();
+    }
 
     public function __get(string $name) {
         if (isset($this->_components[$name])) {

@@ -45,6 +45,8 @@ abstract class CuxBasePaginator {
             $page = 1;
         }
         $this->_page = $page;
+        
+        $this->_texts = $this->processTexts();
     }
     
     public function getPage(): int {
@@ -56,6 +58,7 @@ abstract class CuxBasePaginator {
             $totalPages = 1;
         }
         $this->_totalPages = $totalPages;
+        $this->_texts = $this->processTexts();
     }
     
     public function getTotalPages(): int{

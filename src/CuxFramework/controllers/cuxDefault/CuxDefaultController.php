@@ -38,8 +38,8 @@ class CuxDefaultController extends CuxBaseObject {
     public function getName(): string {
         return lcfirst(substr((new \ReflectionClass($this))->getShortName(), 0, -10));
     }
-
-    private function getParams(string $actionName): array {
+    
+    public function getParams(string $actionName): array {
         $ret = array();
         if (($pos = strpos($actionName, "?")) != false) {
             parse_str(substr($actionName, $pos + 1), $ret);

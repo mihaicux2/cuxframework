@@ -171,7 +171,7 @@ class CuxSorter {
 
             $retLink = CuxHTML::a($content . "&nbsp;" . $icon, $crtLink . $appendSign . implode("&", $sortArr), array("title" => $title));
             if ($this->_multiSort == true && count($sortArr) > 1 && $fieldFound) {
-                array_splice($sortArr, $extraLink, 1);
+                array_splice($sortArr, 0, 1);
                 $retLink .= "&nbsp;" . CuxHTML::a("<span class='fas fa-times text-danger' title='" . Cux::translate("core.sorter", "Remove sorting criiteria") . "'></span>", $crtLink . $appendSign . implode("&", $sortArr));
             }
 
