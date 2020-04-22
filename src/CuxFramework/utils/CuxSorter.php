@@ -123,14 +123,13 @@ class CuxSorter {
         }
 
         $sortDetails = $this->getCrtSortDetails();
-//        print_r($sortDetails);
 
         $sortField = $field;
         $sortOrder = "asc";
 
 //        $crtLink = Cux::getInstance()->request->getUri();
 
-        $gets = $_GET;
+        $gets = Cux::getInstance()->request->getParams();
         if (isset($gets[$this->_sortParam])) {
             $gets[$this->_sortParam] = null;
             unset($gets[$this->_sortParam]);
