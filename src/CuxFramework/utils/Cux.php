@@ -49,7 +49,9 @@ class Cux extends CuxSingleton {
         
         $ref = static::getInstance();
         
-        $message = $ref->messages->translate($category, $message, $ref->language, $context);
+        if ($ref->hasComponent("messages")){
+            $message = $ref->messages->translate($category, $message, $ref->language, $context);
+        }
         
         if (!empty($params)){
             foreach ($params as $key => $value){
@@ -183,16 +185,24 @@ class Cux extends CuxSingleton {
                 "class" => 'CuxFramework\components\traffic\CuxNullTraffic'
             ));
         }
-        if (!isset($config["components"]) || !isset($config["components"]["urlManager"])){
-            $this->loadComponent("traffic", array(
-                "class" => 'CuxFramework\components\url\CuxUrlManager'
-            ));
+        if ($this->isWebApp()){
+            if (!isset($config["components"]) || !isset($config["components"]["request"])){
+                $this->loadComponent("request", array(
+                    "class" => 'CuxFramework\components\request\CuxRequest'
+                ));
+            }
+            if (!isset($config["components"]) || !isset($config["components"]["urlManager"])){
+                $this->loadComponent("traffic", array(
+                    "class" => 'CuxFramework\components\url\CuxUrlManager'
+                ));
+            }
+            if (!isset($config["components"]) || !isset($config["components"]["layout"])){
+                $this->loadComponent("layout", array(
+                    "class" => 'CuxFramework\components\layout\CuxLayout'
+                ));
+            }
         }
-        if (!isset($config["components"]) || !isset($config["components"]["layout"])){
-            $this->loadComponent("layout", array(
-                "class" => 'CuxFramework\components\layout\CuxLayout'
-            ));
-        }
+        
         if (!isset($config["components"]) || !isset($config["components"]["user"])){
             $this->loadComponent("user", array(
                 "class" => 'CuxFramework\components\user\CuxUser'
@@ -203,12 +213,19 @@ class Cux extends CuxSingleton {
     public function run(){
         $this->beforeRun();
         
-        $routeInfo = explode("/", $this->urlManager->parseRequest($this->request));
+        $route = $this->urlManager->getMatchedRoute();
         
+        if (!$route){
+            throw new \Exception(Cux::translate("core.errors", "Invalid URL", array(), "Message shown on PageNotFound exception"), 404);
+        }
+        
+        $routeDetails = $route->getDetails();
+        $routeInfo = explode("/", $routeDetails["path"]);
+                
         $this->_moduleName = $routeInfo[0];
         
         if (!$this->moduleExists($this->_moduleName)){
-            throw new \Exception("Modul invalid", 404);
+            throw new \Exception(Cux::translate("core.errors", "Invalid module", array(), "Message shown on PageNotFound exception"), 404);
         }
         else{
             $this->loadModule($this->_moduleName);
@@ -233,7 +250,7 @@ class Cux extends CuxSingleton {
                 "stackTrace" => $ex->getTrace()
             );
 //            Cux::log(\components\log\CuxLogger::ERROR, $ex->getMessage(), $exArray);
-            throw new Exception("Controller invalid", 404);
+            throw new Exception(Cux::translate("core.errors", "Invalid controller", array(), "Message shown on PageNotFound exception"), 404);
         }
         
         $this->afterRun();
@@ -325,12 +342,13 @@ class Cux extends CuxSingleton {
         } elseif (property_exists($this, $name)) {
             return $this->$name;
         } else {
-            throw new \Exception("Clasa ".get_called_class()." nu are nicio proprietate sau componenta denumita `" . $name . "`", 503);
+            $className = get_class($this);
+            throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
         }
     }
 
     public function basePath(): string{
-        return realpath(__DIR__.DIRECTORY_SEPARATOR."../../../"); // we are in the "vendor/cuxframework/utils" folder
+        return realpath(__DIR__.DIRECTORY_SEPARATOR."../../../"); // we are in the "vendor/mihaicux/cuxframework/src/CuxFramework/utils" folder
 //        return realpath("");
     }
     
@@ -350,32 +368,32 @@ class Cux extends CuxSingleton {
         
         $map = array(
             'y' => array(
-                'an',
-                'ani'
+                Cux::translate("core.debug", "year", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "years", array(), "Core message, used for writing execution time")
             ),
             'm' => array(
-                'luna',
-                'luni'
+                Cux::translate("core.debug", "month", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "months", array(), "Core message, used for writing execution time")
             ),
             'w' => array(
-                'saptamana',
-                'saptamani'
+                Cux::translate("core.debug", "week", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "weeks", array(), "Core message, used for writing execution time")
             ),
             'd' => array(
-                'zi',
-                'zile'
+                Cux::translate("core.debug", "day", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "days", array(), "Core message, used for writing execution time")
             ),
             'h' => array(
-                'ora',
-                'ore'
+                Cux::translate("core.debug", "hour", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "hours", array(), "Core message, used for writing execution time")
             ),
             'i' => array(
-                'minut',
-                'minute'
+                Cux::translate("core.debug", "minute", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "minutes", array(), "Core message, used for writing execution time")
             ),
             's' => array(
-                'secunda',
-                'secunde'
+                Cux::translate("core.debug", "second", array(), "Core message, used for writing execution time"),
+                Cux::translate("core.debug", "seconds", array(), "Core message, used for writing execution time")
             )
         );
         
@@ -389,42 +407,9 @@ class Cux extends CuxSingleton {
             $ret = array_slice($ret, 0, 1);
         }
         
-        return !empty($ret) ? ("acum ".implode(", ", $ret)) : "acum";
+//        return !empty($ret) ? Cux::translate("core.debug", "{timeEllapsed} ago", array("{timeEllapsed}" => implode(", ", $ret)), "Core message, used for writing execution time") : Cux::translate("core.debug", "A few seconds ago", array(), "Core message, used for writing execution time");
+        return !empty($ret) ? implode(", ", $ret) : "";
         
-    }
-    
-    public function createSlug($text, $separator = '-') {
-
-        $matrix = array(
-            'й' => 'i', 'ц' => 'c', 'у' => 'u', 'к' => 'k', 'е' => 'e', 'н' => 'n',
-            'г' => 'g', 'ш' => 'sh', 'щ' => 'shch', 'з' => 'z', 'х' => 'h', 'ъ' => '',
-            'ф' => 'f', 'ы' => 'y', 'в' => 'v', 'а' => 'a', 'п' => 'p', 'р' => 'r',
-            'о' => 'o', 'л' => 'l', 'д' => 'd', 'ж' => 'zh', 'э' => 'e', 'ё' => 'e',
-            'я' => 'ya', 'ч' => 'ch', 'с' => 's', 'м' => 'm', 'и' => 'i', 'т' => 't',
-            'ь' => '', 'б' => 'b', 'ю' => 'yu', 'ү' => 'u', 'қ' => 'k', 'ғ' => 'g',
-            'ә' => 'e', 'ң' => 'n', 'ұ' => 'u', 'ө' => 'o', 'Һ' => 'h', 'һ' => 'h',
-            'і' => 'i', 'ї' => 'ji', 'є' => 'je', 'ґ' => 'g',
-            'Й' => 'I', 'Ц' => 'C', 'У' => 'U', 'Ұ' => 'U', 'Ө' => 'O', 'К' => 'K',
-            'Е' => 'E', 'Н' => 'N', 'Г' => 'G', 'Ш' => 'SH', 'Ә' => 'E', 'Ң ' => 'N',
-            'З' => 'Z', 'Х' => 'H', 'Ъ' => '', 'Ф' => 'F', 'Ы' => 'Y', 'В' => 'V',
-            'А' => 'A', 'П' => 'P', 'Р' => 'R', 'О' => 'O', 'Л' => 'L', 'Д' => 'D',
-            'Ж' => 'ZH', 'Э' => 'E', 'Ё' => 'E', 'Я' => 'YA', 'Ч' => 'CH', 'С' => 'S',
-            'М' => 'M', 'И' => 'I', 'Т' => 'T', 'Ь' => '', 'Б' => 'B', 'Ю' => 'YU',
-            'Ү' => 'U', 'Қ' => 'K', 'Ғ' => 'G', 'Щ' => 'SHCH', 'І' => 'I', 'Ї' => 'YI',
-            'Є' => 'YE', 'Ґ' => 'G',
-            'ă' => 'a', 'Ă' => 'A', 'â' => 'a', 'Â' => 'A', 'î' => 'i', 'Î' => 'I',
-            'ş' => 's', 'Ş' => 'S', 'ţ' => 't', 'Ţ' => 'T', 'ș' => 's', 'Ș' => 'S',
-            'ț' => 't', 'Ţ' => 'T'
-        );
-        foreach ($matrix as $from => $to) {
-            $text = mb_eregi_replace($from, $to, $text);
-        }
-        
-        $text = preg_replace('~[^\\pL\d]+~u', $separator, strtolower($text));
-        $flip = $separator == '-' ? '_' : '-';
-        $text = preg_replace('![' . preg_quote($flip) . ']+!u', $separator, $text);
-        $text = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $text);
-        return substr(trim($text, $separator), 0, 64);
     }
     
     public function goBack(){

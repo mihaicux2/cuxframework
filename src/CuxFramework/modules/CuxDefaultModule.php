@@ -25,7 +25,7 @@ class CuxDefaultModule extends CuxBaseObject{
     
     public function loadController($controllerName){
         if (!$this->controllerExists($controllerName)){
-            throw new \Exception("Controller invalid", 404);
+            throw new Exception(Cux::translate("core.errors", "Invalid controller", array(), "Message shown on PageNotFound exception"), 404);
         }
         else{
             $controller = ($this->isControllerRelative($controllerName)) ? $this->getFullyQualifiedControllerName($controllerName, true) : $this->getFullyQualifiedControllerName($controllerName);
@@ -38,7 +38,7 @@ class CuxDefaultModule extends CuxBaseObject{
         try{
             $this->_controller->loadAction($actionName);
         } catch (Exception $ex) {
-            throw new \Exception("Actiune invalida", 404);
+            throw new Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
         }
     }
     

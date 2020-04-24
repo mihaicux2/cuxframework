@@ -18,7 +18,7 @@ class CuxIsNumericValidator extends CuxBaseValidator{
         
         if (!parent::checkHasProperty($obj, $attr)){
             if ($canAddError){
-                $obj->addError($attr, Cux::translate("error", "Invalid attribute: {attr}!", array(
+                $obj->addError($attr, Cux::translate("core.errors", "Invalid attribute: {attr}!", array(
                     "{attr}" => $label
                 )));
             }
@@ -33,7 +33,7 @@ class CuxIsNumericValidator extends CuxBaseValidator{
         
         if (!is_numeric($value)){
             if ($canAddError){
-                $obj->addError($attr, Cux::translate("error", "{attr} must be numeric!", array(
+                $obj->addError($attr, Cux::translate("core.errors", "{attr} must be numeric!", array(
                     "{attr}" => $label
                 )));
             }

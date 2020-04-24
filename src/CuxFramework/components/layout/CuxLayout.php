@@ -59,7 +59,7 @@ class CuxLayout extends CuxBaseObject {
                 )), 501);
             }
         } else {
-            $layoutPath = "vendor/cux/cuxframework/src/CuxFramework/".$layoutPath;
+            $layoutPath = "vendor/mihaicux/cuxframework/src/CuxFramework/".$layoutPath;
             if (!@include($layoutPath)) {
                 throw new \Exception(Cux::translate("error", "Layout not found: {layout}", array(
                     "{layout}" => $this->layoutName
@@ -94,7 +94,7 @@ class CuxLayout extends CuxBaseObject {
                 )), 501);
             }
         } else {
-            $path = "vendor/cux/cuxframework/src/CuxFramework/".$path;
+            $path = "vendor/mihaicux/cuxframework/src/CuxFramework/".$path;
             if (!@include($path)) {
                 throw new \Exception(Cux::translate("error", "View not found: {view}", array(
                     "{view}" => $name

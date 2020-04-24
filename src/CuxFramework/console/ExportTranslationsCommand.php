@@ -10,6 +10,7 @@ class ExportTranslationsCommand extends CuxCommand{
     
     public $outputFile;
     public $translationsDir = "i18n";
+    public $includeVendor = false;
     
     private $_translations;
     
@@ -21,24 +22,31 @@ class ExportTranslationsCommand extends CuxCommand{
             $this->outputFile = "./messages.xlsx";
         }
         
+        
         $this->loadExistingTranslations();
         
         echo $this->getColoredString("Getting source files...", "yellow", "black");
+        
+        $excludedDirs = array(
+            "assets",
+            "config",
+            "i18n",
+            "log",
+            "img",
+            "queries",
+            "runtime",
+            "uploads",
+        );
+        
+        if (!$this->includeVendor){
+            $excludedDirs[] = "vendor";
+        }
+        
         $files = $this->findFilesRecursive(realpath("./"), array(
             "fileTypes" => array(
                 "php"
             ),
-            "exclude" => array(
-                "assets",
-                "config",
-                "i18n",
-                "log",
-                "img",
-                "queries",
-                "runtime",
-                "uploads",
-                "vendor"
-            )
+            "exclude" => $excludedDirs
         ));
         echo $this->getColoredString("DONE!", "green", "yellow").PHP_EOL;
         
@@ -67,6 +75,12 @@ class ExportTranslationsCommand extends CuxCommand{
     }
     
     private function loadExistingTranslations(){
+        
+        if (Cux::getInstance()->hasComponent("messages")){
+            $this->_translations = Cux::getInstance()->messages->getAllMessages();
+            return;
+        }
+        
         if (!file_exists($this->translationsDir) || !is_readable($this->translationsDir)){
             echo $this->getColoredString("Please make sure the translations directory folder exists and is readable", "red", "black");
             return;
@@ -86,13 +100,12 @@ class ExportTranslationsCommand extends CuxCommand{
                     $ext = strtolower(end($exts));
                     $lang = $exts[0];
                     
-//                    echo $lang." | ".$ext.PHP_EOL
-                    
                     if ($ext == "php"){
                         if (!isset($this->_translations[$lang])) {
                             $this->_translations[$lang] = array();
                         }
-                        $this->_translations[$lang] = array_merge($this->_translations[$lang], require_once($fPath));
+                        $this->_translations[$lang] = array_merge($this->_translations[$lang], require($fPath));
+                        
                     }
                 }
              }
@@ -116,8 +129,8 @@ class ExportTranslationsCommand extends CuxCommand{
         $messages = array();
         
         $subject = file_get_contents($fName);
-        //  Pattern                                   |       category           |            message      |               params                 |  message details   |
-        $pattern = '/\bCux::translate\s*\(\s*[\'\"]([^\'\"]+)[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(,\s*(array\([^\)]*\)|\[([^\]]+)\]))*(,\s*[\'\"]([^\'\"]+)[\'\"])*/ims';
+        //  Pattern                                   |       category           |            message      |               params                 |  message details   | ) |
+        $pattern = '/\bCux::translate\s*\(\s*[\'\"]([^\'\"]+)[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(,\s*(array\([^\)]*\)|\[([^\]]+)\]))*(,\s*[\'\"]([^\'\"]+)[\'\"])\s*\)*/ims';
         $totalFound = preg_match_all($pattern, $subject, $matches, PREG_SET_ORDER);
         if ($totalFound){
 //            echo $totalFound;

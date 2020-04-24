@@ -15,7 +15,12 @@ abstract class CuxBaseMessages extends CuxBaseObject {
         $this->_lang = Cux::getInstance()->language;
     }
     
-    abstract public function translate($category, $message, $lang, $context);
+    abstract public function translate($category, $message, $lang, $context): string;
+    
+    abstract public function getAllMessages(): array;
+    
+    abstract public function getLocaleMessages(string $lang): array;
+    
     
 }
     

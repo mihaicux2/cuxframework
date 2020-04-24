@@ -40,7 +40,7 @@ abstract class CuxDBObject extends CuxObject {
         return $this->dbConnection;
     }
     
-    public function setDBConnection(PDOWrapper $dbConnection): CuxDBObject {
+    public function setDBConnection(PDOWrapper $dbConnection) {
         $this->dbConnection = $dbConnection;
         return $this;
     }
@@ -71,10 +71,7 @@ abstract class CuxDBObject extends CuxObject {
                 return $this->getRelation($name);
             }
         }
-        throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
-            "{class}" => get_class($this),
-            "{attribute}" => $name
-        )), 503);
+        throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => get_class($this), "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
     }
 
     public function __set(string $name, $value) {
@@ -84,10 +81,7 @@ abstract class CuxDBObject extends CuxObject {
             if ($this->hasRelation($name) && is_subclass_of($value, $this->getRelationClassName($name))) {
                 $this->_relations[$name] = $value;
             } else {
-                throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
-                    "{class}" => get_class($this),
-                    "{attribute}" => $name
-                )), 503);
+                throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => get_class($this), "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
             }
         }
     }
@@ -106,10 +100,7 @@ abstract class CuxDBObject extends CuxObject {
             if (isset($this->_relations[$name])) {
                 $this->_relations[$name] = null;
             } else {
-                throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
-                    "{class}" => get_class($this),
-                    "{attribute}" => $name
-                )), 503);
+                throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => get_class($this), "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
             }
         }
     }
@@ -156,11 +147,9 @@ abstract class CuxDBObject extends CuxObject {
             );
             $relatedParts = array_slice($relatedParts, 1);
             foreach ($relatedParts as $depth => $related2) {
-                if (!isset($relationsPath[$depth]["relations"][$related2])) {                    
-                    throw new \Exception(Cux::translate("error", "Undefined property: {class}.{attribute}", array(
-                        "{class}" => $relationsPath[$depth]["class"],
-                        "{attribute}" => $related2
-                    )), 503);
+                if (!isset($relationsPath[$depth]["relations"][$related2])) {           
+                    $className = get_class($this);
+                    throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
                     
                 }
                 $relationsPath[$depth + 1] = array(
@@ -187,7 +176,7 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
     
-    public function getByPk($key): CuxDBObject {
+    public function getByPk($key) {
 
         $columnMap = $this->getTableSchema();
         $pk = $columnMap["primaryKey"];
@@ -219,7 +208,7 @@ abstract class CuxDBObject extends CuxObject {
             if (!$row) {
                 return null;
             }
-            $calledClass = get_called_class();
+            $calledClass = get_class($this);
             $ob = new $calledClass();
             $ob->setAttributes($row);
             $ob->_isNewRecord = false;
@@ -322,10 +311,8 @@ abstract class CuxDBObject extends CuxObject {
                         $this->_relations[$related] = $ob::getInstance()->findAllByCondition($crit);
                         break;
                     default:
-                        throw new \Exception(Cux::translate("error", "Undefined relation: {class}.{attribute}", array(
-                            "{class}" => get_class($this),
-                            "{attribute}" => $related
-                        )), 503);
+                        $className = get_class($this);
+                        throw new \Exception(Cux::translate("core.errors", "Undefined relation: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $related), "Message shown when trying to access invalid class properties"), 503);
                 }
                 return $this->_relations[$related];
             }
@@ -550,7 +537,7 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function findByAttributes(array $attributes): CuxDBObject {
+    public function findByAttributes(array $attributes) {
 
         $conditions = array();
         foreach ($attributes as $column => $value) {
@@ -576,7 +563,7 @@ abstract class CuxDBObject extends CuxObject {
             if (!$row) {
                 return null;
             }
-            $calledClass = get_called_class();
+            $calledClass = get_class($this);
             $ob = new $calledClass();
             $ob->setDBConnection($this->getDBConnection());
             $ob->setAttributes($row);
@@ -615,7 +602,7 @@ abstract class CuxDBObject extends CuxObject {
                 return array();
             }
             foreach ($rows as $row) {
-                $calledClass = get_called_class();
+                $calledClass = get_class($this);
                 $ob = new $calledClass();
 //                $ob->setDBConnection($this->getDBConnection());
                 $ob->setAttributes($row);
@@ -630,7 +617,7 @@ abstract class CuxDBObject extends CuxObject {
     /**
      * @param mixed $condition
      */
-    public function findByCondition(CuxDBCriteria $crit = null): CuxDBObject {
+    public function findByCondition(CuxDBCriteria $crit = null) {
 
         if (is_null($crit)){
             $crit = new CuxDBCriteria();
@@ -664,7 +651,7 @@ abstract class CuxDBObject extends CuxObject {
             if (!$row) {
                 return null;
             }
-            $calledClass = get_called_class();
+            $calledClass = get_class($this);
             $ob = new $calledClass();
 //            $ob->setDBConnection($this->getDBConnection());
             $ob->setAttributes($row);
@@ -743,7 +730,7 @@ abstract class CuxDBObject extends CuxObject {
             $keys = array();
 
             foreach ($rows as $row) {
-                $calledClass = get_called_class();
+                $calledClass = get_class($this);
                 $ob = new $calledClass();
 //                $ob->setDBConnection($this->getDBConnection());
                 $ob->setAttributes($row);
@@ -948,7 +935,7 @@ abstract class CuxDBObject extends CuxObject {
                 return array();
             }
             foreach ($rows as $row) {
-                $calledClass = get_called_class();
+                $calledClass = get_class($this);
                 $ob = new $calledClass();
                 $ob->setAttributes($row);
                 $ob->_isNewRecord = false;

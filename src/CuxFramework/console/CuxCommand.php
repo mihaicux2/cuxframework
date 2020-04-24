@@ -3,6 +3,7 @@
 namespace CuxFramework\console;
 
 use CuxFramework\utils\CuxBaseObject;
+use CuxFramework\utils\Cux;
 
 abstract class CuxCommand extends CuxBaseObject{
     
@@ -48,10 +49,11 @@ abstract class CuxCommand extends CuxBaseObject{
             $this->clrScr();
         }
         
-        $fullClassName = get_called_class();
+        $fullClassName = get_class($this);
         $names = explode("\\", $fullClassName);
         $name = lcfirst(substr(end($names), 0, -7));
-        echo $this->getColoredString("Executing command {$name} ...", "yellow", "black").PHP_EOL.PHP_EOL;
+        
+        echo $this->getColoredString(Cux::translate("core.commands", "Executing command {name}...", array("{name}" => $name), "Message shown while executing console commands"), "light_cyan", "black").PHP_EOL.PHP_EOL;
     }
     
     protected function parseArguments($args) {
@@ -102,10 +104,25 @@ abstract class CuxCommand extends CuxBaseObject{
         if (!$this->fromInterface) {
             $stats = $this->getScriptStats();
             echo PHP_EOL;
-
-            echo $this->getColoredString("Ended at : " . $stats["endTime"], "green") . "\n";
-            echo $this->getColoredString("Finished execution in " . $stats["duration"]["hours"] . " hour(s), " . $stats["duration"]["minutes"] . " minute(s)" . " and " . $stats["duration"]["seconds"] . " second(s)", "light_blue", "black") . "\n";
-            echo $this->getColoredString("Maximum memory used: " . $stats["peakMemory"], "light_blue", "black") . "\n\n";
+            
+            $ellapsedTime = array();
+            if ($stats["duration"]["hours"]){
+                echo "a";
+                $ellapsedTime[] = $stats["duration"]["hours"]." ".Cux::translate("core.debug", "hours", array(), "Core message, used for writing execution time");
+            }
+            if ($stats["duration"]["minutes"]){
+                echo "b";
+                $ellapsedTime[] = $stats["duration"]["minutes"]." ".Cux::translate("core.debug", "minutes", array(), "Core message, used for writing execution time");
+            }
+//            if ($stats["duration"]["seconds"]){
+                $ellapsedTime[] = $stats["duration"]["seconds"]." ".Cux::translate("core.debug", "seconds", array(), "Core message, used for writing execution time");
+//            }
+            
+            $timeEllapsed = implode(", ", $ellapsedTime);
+            
+            echo $this->getColoredString(Cux::translate("core.commands", "Ended at:  {endTime}...", array("{endTime}" => $stats["endTime"]), "Message shown while executing console commands"), "light_blue", "black") . "\n";
+            echo $this->getColoredString(Cux::translate("core.commands","Finished execution in:  {timeEllapsed}...", array("{timeEllapsed}" => $timeEllapsed), "Message shown while executing console commands"), "light_blue", "black") . "\n";
+            echo $this->getColoredString(Cux::translate("core.commands", "Maximum memory used:  {maxMemory}...", array("{maxMemory}" => $stats["peakMemory"]), "Message shown while executing console commands"), "light_blue", "black") . "\n\n";
         }
     }
     

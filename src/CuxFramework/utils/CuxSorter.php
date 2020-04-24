@@ -44,13 +44,8 @@ class CuxSorter {
     }
 
     private function getCrtSortDetails() {
-        $crtLink = Cux::getInstance()->request->getUri();
-        $sort = Cux::getInstance()->request->getParam($this->_sortParam, ($this->_multiSort) ? array() : "");
-        if (!is_array($sort)) {
-            if (!empty($sort) && strpos($sort, ".") !== false) {
-                $sort = array($sort);
-            }
-        }
+        $params = Cux::getInstance()->request->getParams();
+        $sort = isset($params[$this->_sortParam]) ? $params[$this->_sortParam] : array();
 
         $ret = array();
 
@@ -129,17 +124,29 @@ class CuxSorter {
 
 //        $crtLink = Cux::getInstance()->request->getUri();
 
-        $gets = Cux::getInstance()->request->getParams();
-        if (isset($gets[$this->_sortParam])) {
-            $gets[$this->_sortParam] = null;
-            unset($gets[$this->_sortParam]);
-        }
+        $params = Cux::getInstance()->request->getParams();
+//        if (isset($params[$this->_sortParam])) {
+//            $params[$this->_sortParam] = null;
+//            unset($params[$this->_sortParam]);
+//        }
 
-        $crtLink = Cux::getInstance()->request->getPath();
-        $appendSign = "?";
-        if (!empty($gets)) {
-            $crtLink .= "?" . http_build_query($gets);
-            $appendSign = "&";
+        $crtLink = Cux::getInstance()->request->getRoutePath();
+        $path = $crtLink;
+        if (!empty($params)){
+            $paramsArr = array();
+            foreach ($params as $key => $val){
+                if ($key == $sortField){
+                    $sortOrder = ($sortData["sortOrder"] == "asc") ? "desc" : "asc";
+                }
+                if ($key == $this->_sortParam) continue;
+                if (!is_array($val)){
+                    $path .= "/{$key}/{$val}";
+                } else {
+                    foreach ($val as $val2){
+                        $path .= "/{$key}[]/{$val2}";
+                    }
+                }
+            }
         }
 
         if (!empty($sortDetails)) {
@@ -152,7 +159,7 @@ class CuxSorter {
                     $sortOrder = ($sortData["sortOrder"] == "asc") ? "desc" : "asc";
                     $fieldFound = true;
                 } else {
-                    $sortArr[$it] = $this->_sortParam . (($this->_multiSort) ? "[]" : "") . "=" . $sortData["sortField"] . "." . $sortData["sortOrder"];
+                    $sortArr[$it] = $this->_sortParam . (($this->_multiSort) ? "[]" : "") . "/" . $sortData["sortField"] . "." . $sortData["sortOrder"];
                 }
                 $it++;
             }
@@ -164,21 +171,21 @@ class CuxSorter {
             }
             
             if (!$this->_multiSort) {
-                $sortArr = array($this->_sortParam . (($this->_multiSort) ? "[]" : "") . "=" . $sortField . "." . $sortOrder);
+                $sortArr = array($this->_sortParam . (($this->_multiSort) ? "[]" : "") . "/" . $sortField . "." . $sortOrder);
             } else {
-                array_unshift($sortArr, $this->_sortParam . (($this->_multiSort) ? "[]" : "") . "=" . $sortField . "." . $sortOrder);
+                array_unshift($sortArr, $this->_sortParam . (($this->_multiSort) ? "[]" : "") . "/" . $sortField . "." . $sortOrder);
             }
 
-            $retLink = CuxHTML::a($content . "&nbsp;" . $icon, $crtLink . $appendSign . implode("&", $sortArr), array("title" => $title));
+            $retLink = CuxHTML::a($content . "&nbsp;" . $icon, $path . "/" . implode("/", $sortArr), array("title" => $title));
             if ($this->_multiSort == true && count($sortArr) > 1 && $fieldFound) {
                 array_splice($sortArr, 0, 1);
-                $retLink .= "&nbsp;" . CuxHTML::a("<span class='fas fa-times text-danger' title='" . Cux::translate("core.sorter", "Remove sorting criiteria") . "'></span>", $crtLink . $appendSign . implode("&", $sortArr));
+                $retLink .= "&nbsp;" . CuxHTML::a("<span class='fas fa-times text-danger' title='" . Cux::translate("core.sorter", "Remove sorting criiteria") . "'></span>", $path . "/" . implode("/", $sortArr));
             }
 
             return $retLink;
         } else {
-            $sortField = $this->_sortParam . (($this->_multiSort) ? "[]" : "") . "=" . $sortField . "." . $sortOrder;
-            return CuxHTML::a($content, $crtLink . $appendSign . $this->_sortParam . "=" . $sortField . "." . $sortOrder, array("title" => $title));
+            $sortField = $this->_sortParam . (($this->_multiSort) ? "[]" : "") . "/" . $sortField . "." . $sortOrder;
+            return CuxHTML::a($content, $crtLink . "/" . $this->_sortParam . "/" . $sortField . "." . $sortOrder, array("title" => $title));
         }
     }
 

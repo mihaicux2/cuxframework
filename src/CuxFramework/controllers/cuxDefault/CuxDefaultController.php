@@ -40,17 +40,13 @@ class CuxDefaultController extends CuxBaseObject {
     }
     
     public function getParams(string $actionName): array {
-        $ret = array();
-        if (($pos = strpos($actionName, "?")) != false) {
-            parse_str(substr($actionName, $pos + 1), $ret);
+        try {
+            $route = Cux::getInstance()->urlManager->getMatchedRoute();
+            $routeInfo = $route->getDetails();
+            return $routeInfo["params"];
+        } catch (\Exception $e){
+            throw new Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
         }
-        $ret = array_merge($ret, $_GET);
-
-//        $uri = Cux::getInstance()->urlManager->getRoute(Cux::getInstance()->request);
-//        die($uri);
-//        $extraParams = substr($uri, strpos($uri, $actionName));
-
-        return $ret;
     }
 
     private function getStringWithoutParams(string $actionName): string {
@@ -72,8 +68,9 @@ class CuxDefaultController extends CuxBaseObject {
 
         $action = $this->getFullyQualifiedActionName($actionName);
         if (!method_exists($this, $action)) {
-            throw new \Exception("Actiune invalida", 404);
+            throw new Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
         }
+        
         $this->_action = $action;
         if (!$this->pageTitle) {
             $this->pageTitle = $actionName;

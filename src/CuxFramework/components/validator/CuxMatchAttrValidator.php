@@ -18,18 +18,14 @@ class CuxMatchAttrValidator extends CuxBaseValidator{
         
         if (!parent::checkHasProperty($obj, $attr)){
             if ($canAddError){
-                $obj->addError($attr, Cux::translate("error", "Invalid attribute: {attr}!", array(
-                    "{attr}" => $label
-                )));
+                $obj->addError($attr, Cux::translate("core.errors", "Invalid attribute: {attr}!", array("{attr}" => $label), "Error shown on model validation"));
             }
             return false;
         }
         if (!parent::checkHasProperty($obj, $this->_props["field"])){
             if ($canAddError){
                 $label2 = method_exists($obj, "getLabel") ? $obj->getLabel($this->_props["field"]) : $this->_props["field"];
-                $obj->addError($this->_props["field"], Cux::translate("error", "Invalid attribute: {attr}!", array(
-                    "{attr}" => $label2
-                )));
+                $obj->addError($this->_props["field"], Cux::translate("core.errors", "Invalid attribute: {attr}!", array( "{attr}" => $label2), "Error shown on model validation"));
             }
             return false;
         }
@@ -42,10 +38,7 @@ class CuxMatchAttrValidator extends CuxBaseValidator{
         $value2 = is_object($obj) ? $obj->{$this->_props["field"]} : $obj[$this->_props["field"]];
         if ($value != $value2){
             if ($canAddError){
-                $obj->addError($attr, Cux::translate("error", "{attr} must match {attr2}", array(
-                    "{attr}" => $label,
-                    "{attr2}" => $label2
-                )));
+                $obj->addError($attr, Cux::translate("core.errors", "{attr} must match {attr2}", array("{attr}" => $label,"{attr2}" => $label2), "Error shown on model validation"));
             }
             return false;
         }

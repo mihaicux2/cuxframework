@@ -1,6 +1,7 @@
 <?php
 
 namespace CuxFramework\components\request;
+use CuxFramework\utils\Cux;
 
 /*
  * http://php.net/manual/en/geoip.setup.php:
@@ -33,10 +34,12 @@ class CuxRequest extends CuxBaseObject {
         if ($queryInRequest !== false){
             $this->_path = substr($uri, 0, $queryInRequest);
             parse_str(substr($uri, $queryInRequest+1), $this->_params);
+            
         } else {
             $this->_path = $uri;
             parse_str($this->getServerValue("QUERY_STRING"), $this->_params);
         }
+        
         $this->_scriptName = basename($this->getServerValue("SCRIPT_NAME"));
     }
     
@@ -235,11 +238,36 @@ class CuxRequest extends CuxBaseObject {
      */
     public function getParams(): array{
 //        return $_GET;
+        
+        try {
+            $route = Cux::getInstance()->urlManager->getMatchedRoute();
+            $routeInfo = $route->getDetails();
+            $params = $routeInfo["params"];
+            $this->_params = $routeInfo["params"];
+        } catch (\Exception $e){}
+        
         return $this->_params;
     }
     
     public function getPath(): string{
+        
+         try {
+            $route = Cux::getInstance()->urlManager->getMatchedRoute();
+            $routeInfo = $route->getDetails();
+            $this->_path = $routeInfo["path"];
+        } catch (\Exception $e){}
+        
         return $this->_path;
+    }
+    
+    public function getRoutePath(): string{
+        try {
+            $route = Cux::getInstance()->urlManager->getMatchedRoute();
+            $routeInfo = $route->getDetails();
+            return $routeInfo["routePath"];
+        } catch (\Exception $e){}
+        
+        return $this->getPath();
     }
     
     public function getScriptName(): string{

@@ -99,7 +99,7 @@ class CuxExceptionHandler extends CuxBaseObject{
         }
         else{
             if ($ex->getCode() == 401){ // login required
-                Cux::getInstance()->user->setFlashMessage("info", "Este necesara autentificarea!");
+                Cux::getInstance()->user->setFlashMessage("info", "Login required!");
                 Cux::getInstance()->user->setFlashMessage("httpStatus", $ex->getCode());
                 Cux::getInstance()->redirect("/login");
             }

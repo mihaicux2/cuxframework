@@ -13,15 +13,6 @@ class CuxFeedParser extends CuxBaseObject {
     }
     
     function parse(string $urlOrPath): bool {
-//        $content = file_get_contents($urlOrPath);
-//        $content = preg_replace('#(^\s*<!\[CDATA\[|\]\]>\s*$)#sim', '', (string)$content);
-//        echo $content;
-//        die();
-//        if (!($dom = simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOERROR | LIBXML_ERR_NONE))){
-//        if (!($dom = simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOCDATA))){
-//        if (!($dom = simplexml_load_string($content))){
-//            return;
-//        }
         
         if (!($dom = simplexml_load_file($urlOrPath, "SimpleXMLElement", LIBXML_NOCDATA))){
             return false;

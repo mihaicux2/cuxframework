@@ -13,9 +13,7 @@ class CuxMemCached extends CuxCache {
         parent::config($config);
         $extension = "memcached";
         if (!extension_loaded($extension)) {
-            throw new \Exception(Cux::translate("error", "Extension not found: {extension}", array(
-                "{extension}" => $extension
-            )), 503);
+            throw new \Exception(Cux::translate("core.errors", "Extension not found: {extension}", array("{extension}" => $extension), "Error shown on missing extension"), 503);
         }
         $this->_memcached = new \Memcached();
         if (is_array($this->servers) && !empty($this->servers)) {

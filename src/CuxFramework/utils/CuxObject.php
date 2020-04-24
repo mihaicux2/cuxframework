@@ -31,7 +31,8 @@ class CuxObject extends CuxBaseObject{
         elseif (array_key_exists($name, $this->_attributes)){
             return $this->_attributes[$name];
         }
-        throw new \Exception("Proprietatea " . get_class($this) . "." . $name . " nu este definita", 503);
+        $className = get_class($this);
+        throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
     }
     
     public function __set(string $name, $value){
@@ -46,7 +47,8 @@ class CuxObject extends CuxBaseObject{
             $this->_attributes[$name] = $value;
         }
         else{
-            throw new \Exception("Proprietatea " . get_class($this) . "." . $name . " nu exista", 503);
+            $className = get_class($this);
+            throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
         }
     }
     
@@ -76,7 +78,8 @@ class CuxObject extends CuxBaseObject{
             $this->_attributes[$name] = null;
         }
         else {
-            throw new \Exception("Proprietatea " . get_class($this) . "." . $name . " nu exista", 503);
+            $className = get_class($this);
+            throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
         }
     }
     
@@ -93,7 +96,8 @@ class CuxObject extends CuxBaseObject{
     
     public function setAttribute(string $attribute, $value): ?CuxObject{
         if (!$this->hasAttribute($attribute)){
-            throw new \Exception("Proprietatea " . get_class($this) . "." . $attribute . " nu exista", 503);
+            $className = get_class($this);
+            throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
         }
         $this->_attributes[$attribute] = $value;
         return $this;

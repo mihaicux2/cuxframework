@@ -1357,23 +1357,23 @@ class CuxUploader extends CuxBaseObject {
         if (!$this->isImage($path)) return false;
         if (!file_exists($this->uploadsDir)){
             if (!@mkdir($this->uploadsDir)){
-                throw new \Exception(Cux::translate("error", "Cannot create the uploads directory"), 505);
+                throw new \Exception(Cux::translate("core.errors", "Cannot create the uploads directory", array(), "Error shown while uploading a file"), 505);
             }
         }
         if (!file_exists($this->imagesDir)){
             if (!@mkdir($this->imagesDir)){
-                throw new \Exception(Cux::translate("error", "Cannot create the uploaded images directory"), 505);
+                throw new \Exception(Cux::translate("core.errors", "Cannot create the uploaded images directory", array(), "Error shown while uploading a file"), 505);
             }
         }
         if (!file_exists($this->thumbsDir)){
             if (@mkdir($this->thumbsDir)){
-                throw new \Exception(Cux::translate("error", "Cannot create the uploaded images thumbnails directory"), 505);
+                throw new \Exception(Cux::translate("core.errors", "Cannot create the uploaded images thumbnails directory", array(), "Error shown while uploading a file"), 505);
             }
         }
         $thumbDir = $this->thumbsDir."{$width}_{$height}";
         if (!file_exists($thumbDir)){
             if (!@mkdir($thumbDir)){
-                throw new \Exception(Cux::translate("error", "Cannot create the uploaded images thumbnails directory"), 505);
+                throw new \Exception(Cux::translate("core.errors", "Cannot create the uploaded images thumbnails directory", array(), "Error shown while uploading a file"), 505);
             }
         }
 //        return $thumbDir.DIRECTORY_SEPARATOR.$this->_prefix.$width."_".$height."_".(($keepAspectRatio) ? "yes_" : "no_").basename($path);
@@ -1396,28 +1396,29 @@ class CuxUploader extends CuxBaseObject {
     
     public function uploadFile(string $name): array{
         if (!isset($_FILES[$name])){
-            throw new \Exception(Cux::translate("error", "No file found"), 505);
+            throw new \Exception(Cux::translate("core.errors", "No file found", array(), "Error shown while uploading a file"), 505);
         }
         if ($_FILES[$name]["size"] > $this->maxFileSize){
-            throw new \Exception(Cux::translate("error", "File limit exceeded! Max allowed file size: {max_file_size}", array("{file_size}" => $this->convert($this->maxFileSize))), 505);
+            $fileSize = $this->convert($this->maxFileSize);
+            throw new \Exception(Cux::translate("core.errors", "File limit exceeded! Max allowed file size: {max_file_size}", array("{file_size}" => $fileSize), "Error shown while uploading a file"), 505);
         }
         switch ($_FILES[$name]['error']) {
             case UPLOAD_ERR_OK:
                 break;
             case UPLOAD_ERR_NO_FILE:
-                throw new \Exception(Cux::translate("error", "No file found"), 505);
+                throw new \Exception(Cux::translate("core.errors", "No file found"), array(), "Error shown while uploading a file", 505);
             case UPLOAD_ERR_INI_SIZE:
-                throw new \Exception(Cux::translate("error", "Config max file size exceeded"), 505);
+                throw new \Exception(Cux::translate("core.errors", "Config max file size exceeded", array(), "Error shown while uploading a file"), 505);
             case UPLOAD_ERR_FORM_SIZE:
-                throw new \Exception(Cux::translate("error", "Form max file size exceeded"), 505);
+                throw new \Exception(Cux::translate("core.errors", "Form max file size exceeded", array(), "Error shown while uploading a file"), 505);
             default:
-                throw new \Exception(Cux::translate("error", "Unknown upload error"), 504);
+                throw new \Exception(Cux::translate("core.errors", "Unknown upload error", array(), "Error shown while uploading a file"), 504);
         }
         $tmpName = $_FILES[$name]['tmp_name'];
         $realName = $_FILES[$name]['name'];
         $path = ($this->isImage($realName) ? $this->imagesDir : $this->uploadsDir).sha1_file($tmpName).".".$this->getExtension($realName);
         if (!@move_uploaded_file($tmpName, $path)){
-            throw new \Exception(Cux::translate("error", "Uploaded file cannot be saved"), 504);
+            throw new \Exception(Cux::translate("core.errors", "Uploaded file cannot be saved", array(), "Error shown while uploading a file"), 504);
         }
         
         $ret = array(

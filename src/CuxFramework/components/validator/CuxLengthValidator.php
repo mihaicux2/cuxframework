@@ -18,7 +18,7 @@ class CuxLengthValidator extends CuxBaseValidator {
 
         if (!parent::checkHasProperty($obj, $attr)) {
             if ($canAddError) {
-                $obj->addError($attr, Cux::translate("error", "Invalid attribute: {attr}!", array(
+                $obj->addError($attr, Cux::translate("core.errors", "Invalid attribute: {attr}!", array(
                             "{attr}" => $label
                 )));
             }
@@ -29,9 +29,7 @@ class CuxLengthValidator extends CuxBaseValidator {
 
         if (!is_string($value)) {
             if ($canAddError) {
-                $obj->addError($attr, Cux::translate("error", "{attr} must be string!", array(
-                            "{attr}" => $label
-                )));
+                $obj->addError($attr, Cux::translate("core.errors", "{attr} must be string!", array("{attr}" => $label), "Error shown on model validation"));
             }
             return false;
         }
@@ -41,28 +39,18 @@ class CuxLengthValidator extends CuxBaseValidator {
         if (isset($this->_props["minLength"]) && isset($this->_props["maxLength"]) && ($len < $this->_props["minLength"] || $len > $this->_props["maxLength"])) {
             if ($len < $this->_props["minLength"] || $len > $this->_props["maxLength"]) {
                 if ($canAddError) {
-                    $obj->addError($attr, Cux::translate("error", "{attr} must be between {min_len} and {max_len} characters!", array(
-                                "{attr}" => $label,
-                                "{min_len}" => $this->_props["minLength"],
-                                "{max_len}" => $this->_props["maxLength"]
-                    )));
+                    $obj->addError($attr, Cux::translate("core.errors", "{attr} must be between {min_len} and {max_len} characters!", array("{attr}" => $label,"{min_len}" => $this->_props["minLength"],"{max_len}" => $this->_props["maxLength"]), "Error shown on model validation"));
                 }
                 return false;
             }
         } elseif (isset($this->_props["minLength"]) && ($len < $this->_props["minLength"])) {
              if ($canAddError) {
-                    $obj->addError($attr, Cux::translate("error", "{attr} must be at least {min_len} characters!", array(
-                                "{attr}" => $label,
-                                "{min_len}" => $this->_props["minLength"]
-                    )));
+                    $obj->addError($attr, Cux::translate("core.errors", "{attr} must be at least {min_len} characters!", array("{attr}" => $label,"{min_len}" => $this->_props["minLength"]), "Error shown on model validation"));
                 }
                 return false;
          } elseif (isset($this->_props["maxLength"]) && ($len > $this->_props["maxLength"])) {
              if ($canAddError) {
-                    $obj->addError($attr, Cux::translate("error", "{attr} must be at most {max_len} characters!", array(
-                                "{attr}" => $label,
-                                "{max_len}" => $this->_props["maxLength"]
-                    )));
+                    $obj->addError($attr, Cux::translate("core.errors", "{attr} must be at most {max_len} characters!", array("{attr}" => $label,"{max_len}" => $this->_props["maxLength"]), "Error shown on model validation"));
                 }
                 return false;
          }

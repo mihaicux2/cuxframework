@@ -34,7 +34,8 @@ class CuxFileMessages extends CuxBaseMessages {
             if ($this->messagesPath){
                 $langFile2 = $this->messagesPath."/{$lang}.php";
                 if (file_exists($langFile2) && is_readable($langFile2)){
-                    $messages = array_merge_recursive($messages, require($langFile2));
+//                    $messages = array_merge_recursive($messages, require($langFile2));
+                    $messages = array_merge($messages, require($langFile2));
                 }
             }
             
@@ -42,9 +43,18 @@ class CuxFileMessages extends CuxBaseMessages {
         }
         
         $this->_messages[$lang] = $messages;
+        
     }
     
-    public function translate($category, $message, $lang, $context){
+    public function getAllMessages(): array{
+        return $this->_messages;
+    }
+    
+    public function getLocaleMessages(string $lang): array {
+        return isset($this->_messages[$locale]) ? $this->_messages[$locale] : array();
+    }
+    
+    public function translate($category, $message, $lang, $context): string{
         
         if (!$lang){
             $lang = $this->_lang;
