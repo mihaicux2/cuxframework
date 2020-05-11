@@ -72,7 +72,7 @@ class CuxRequest extends CuxBaseObject {
      * @param hostname The hostname or IP address whose record is to be looked-up.
      * @return array Informations about the city, country, etc. of the current visitor
      */
-    public function getVisitorInfo(string $hostname = ""): ?array {
+    public function getVisitorInfo(string $hostname = "") {
         if (!$hostname) {
             $hostname = $this->getIp();
         }

@@ -94,7 +94,7 @@ class CuxObject extends CuxBaseObject{
         return null;
     }
     
-    public function setAttribute(string $attribute, $value): ?CuxObject{
+    public function setAttribute(string $attribute, $value){
         if (!$this->hasAttribute($attribute)){
             $className = get_class($this);
             throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
