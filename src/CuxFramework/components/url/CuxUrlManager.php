@@ -20,7 +20,8 @@ class CuxUrlManager extends CuxBaseObject {
         $request = Cux::getInstance()->request;
         $crtPath = $request->getPath();
         if (!empty($crtPath) && $crtPath != "/"){
-            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request);
+//            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request);
+            $defaultRoute = new CuxRoute($crtPath, $crtPath, $request, $crtPath);
         } else {
             $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request, $this->defaultAction);
         }

@@ -220,8 +220,12 @@ class Cux extends CuxSingleton {
         }
         
         $routeDetails = $route->getDetails();
-        $routeInfo = explode("/", $routeDetails["path"]);
-                
+        $routePath = $routeDetails["path"];
+        if (strpos($routePath, "/") === 0){ // remove leading slash ( if necessary)
+            $routePath = substr($routePath, 1);
+        }
+        $routeInfo = explode("/", $routePath);
+        
         $this->_moduleName = $routeInfo[0];
         
         if (!$this->moduleExists($this->_moduleName)){
