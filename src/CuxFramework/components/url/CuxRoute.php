@@ -74,9 +74,9 @@ class CuxRoute {
     }
     
     private function processPattern(string $route): string {
+        $route = str_replace(array("[", "]"), array("\\[", "\\]"), $route);
         $route = preg_replace("/<d(\+*)>/i", "([0-9]\$1)", $route);
         $route = preg_replace("/<w(\+*)>/i", "([a-zA-Z0-9-_\.]\${1})", $route);
-//        return "|" . str_replace("/", "\\/", trim($route)) . "$|im";
         return "|" . str_replace("/", "\\/", trim($route)) . "|im";
     }
     

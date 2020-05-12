@@ -19,12 +19,12 @@ class CuxUrlManager extends CuxBaseObject {
         
         $request = Cux::getInstance()->request;
         $crtPath = $request->getPath();
-        if (!empty($crtPath) && $crtPath != "/"){
-//            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request);
-            $defaultRoute = new CuxRoute($crtPath, $crtPath, $request, $crtPath);
-        } else {
-            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request, $this->defaultAction);
-        }
+//        if (!empty($crtPath) && $crtPath != "/"){
+////            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request);
+//            $defaultRoute = new CuxRoute($crtPath, $crtPath, $request, $crtPath);
+//        } else {
+//            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request, $this->defaultAction);
+//        }
         
         if (isset($config["routes"])){
             foreach ($config["routes"] as $route => $match){
@@ -33,13 +33,22 @@ class CuxUrlManager extends CuxBaseObject {
         }
         
         if (!$this->_crtRoute){
-            $this->_crtRoute = $defaultRoute;
-            $this->_routes[] = $defaultRoute;
+            if (!empty($crtPath) && $crtPath != "/"){
+//                $this->addRoute($this->defaultAction, $this->defaultAction, $request, $crtPath);
+                $this->addRoute($crtPath, $crtPath, $request, $crtPath);
+            } else {
+                $this->addRoute($this->defaultAction, $this->defaultAction, $request, $this->defaultAction);
+            }
         }
+        
+//        if (!$this->_crtRoute){
+//            $this->_crtRoute = $defaultRoute;
+//            $this->_routes[] = $defaultRoute;
+//        }
     }
 
-    public function addRoute(string $route, string $match, CuxRequest $request){
-        $route = new CuxRoute($route, $match, $request);
+    public function addRoute(string $route, string $match, CuxRequest $request, string $requestPath = null){
+        $route = new CuxRoute($route, $match, $request, $requestPath);
         if ($route->isRouteMatched()){
             $this->_crtRoute = $route;
         }
