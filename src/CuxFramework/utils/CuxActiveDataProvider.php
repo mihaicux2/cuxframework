@@ -116,41 +116,41 @@ class CuxActiveDataProvider extends CuxDataProvider {
         echo $this->getHeader();
         $columns = $this->getColumns();
         ?>
-        <table class="table table-striped d-none d-md-table table-hover table-fixed-layout">
-        <thead class="thead-light">
-            <tr>
+        <table class="<?php echo $this->getTableClass(); ?>">
+            <thead class="<?php echo $this->getTHeadClass(); ?>">
+                <tr>
+                    <?php foreach ($columns as $key => $columnDetails): ?>
+                        <?php $width = isset($columnDetails["width"]) ? " width='".$columnDetails["width"]."'" : ""; ?>
+                        <th <?php echo $width; ?>><?php echo $this->_sorter->sortLink($key, $columnDetails["label"]); ?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($this->_data)): ?>
+                <?php foreach ($this->_data as $row): ?>
+                <tr>
                 <?php foreach ($columns as $key => $columnDetails): ?>
-                    <?php $width = isset($columnDetails["width"]) ? " width='".$columnDetails["width"]."'" : ""; ?>
-                    <th <?php echo $width; ?>><?php echo $this->_sorter->sortLink($key, $columnDetails["label"]); ?></th>
+                    <td>
+                        <?php // print_r($columnDetails); ?>
+                        <?php if (is_string($columnDetails["value"])): ?>
+                            <?php echo $row->getAttribute($columnDetails["value"]); ?>
+                        <?php elseif (is_callable($columnDetails["value"])): ?>
+                            <?php echo call_user_func($columnDetails["value"], $row); ?>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
                 <?php endforeach; ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($this->_data)): ?>
-            <?php foreach ($this->_data as $row): ?>
-            <tr>
-            <?php foreach ($columns as $key => $columnDetails): ?>
-                <td>
-                    <?php // print_r($columnDetails); ?>
-                    <?php if (is_string($columnDetails["value"])): ?>
-                        <?php echo $row->getAttribute($columnDetails["value"]); ?>
-                    <?php elseif (is_callable($columnDetails["value"])): ?>
-                        <?php echo call_user_func($columnDetails["value"], $row); ?>
-                    <?php else: ?>
-                        -
-                    <?php endif; ?>
-                </td>
-            <?php endforeach; ?>
-            </tr>
-            <?php endforeach; ?>
-            <?php else: ?>
-            <tr>
-                <td colspan="<?php echo count($columns); ?>">
-                    <div class="alert alert-info"><?php echo Cux::translate("core.dataProvider", "No data to show"); ?></div>
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
+                </tr>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <tr>
+                    <td colspan="<?php echo count($columns); ?>">
+                        <div class="alert alert-info"><?php echo Cux::translate("core.dataProvider", "No data to show"); ?></div>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
         </table>
         <?php
         echo $this->getFooter();

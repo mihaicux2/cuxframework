@@ -11,6 +11,8 @@ abstract class CuxDataProvider {
     private $_header = "";
     private $_footer = "";
     private $_columns = array();
+    private $_tableClass = "table table-striped table-hover table-fixed-layout";
+    private $_tHeadClass ="thead-light";
     
     abstract function render(): string;
     
@@ -26,6 +28,14 @@ abstract class CuxDataProvider {
         
         if (isset($options["columns"])){
             $this->setColumns($options["columns"]);
+        }
+        
+        if (isset($options["tableClass"])){
+            $this->setTableClass($options["tableClass"]);
+        }
+        
+        if (isset($options["tHeadClass"])){
+            $this->setTHeadClass($options["tHeadClass"]);
         }
         
     }
@@ -54,6 +64,22 @@ abstract class CuxDataProvider {
     
     public function getColumns(): array{
         return $this->_columns;
+    }
+    
+    public function setTableClass(string $tableClass){
+        $this->_tableClass = $tableClass;
+    }
+    
+    public function getTableClass(): string{
+        return $this->_tableClass;
+    }
+    
+    public function setTHeadClass(string $theadClass){
+        $this->_tHeadClass = $theadClass;
+    }
+    
+    public function getTHeadClass(): string{
+        return $this->_tHeadClass;
     }
     
 }
