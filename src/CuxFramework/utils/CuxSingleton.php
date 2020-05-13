@@ -27,7 +27,7 @@ abstract class CuxSingleton {
     }
 
     private final function __wakeup() {
-        throw new Exception("Folosind Singleton, deserializarea obiectelor este interzisa!", 503);
+        throw new \Exception("Folosind Singleton, deserializarea obiectelor este interzisa!", 503);
     }
     
     // AES 256 decrypt

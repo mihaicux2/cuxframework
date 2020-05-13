@@ -254,7 +254,7 @@ class Cux extends CuxSingleton {
                 "stackTrace" => $ex->getTrace()
             );
 //            Cux::log(\components\log\CuxLogger::ERROR, $ex->getMessage(), $exArray);
-            throw new Exception(Cux::translate("core.errors", "Invalid controller", array(), "Message shown on PageNotFound exception"), 404);
+            throw new \Exception(Cux::translate("core.errors", "Invalid controller", array(), "Message shown on PageNotFound exception"), 404);
         }
         
         $this->afterRun();

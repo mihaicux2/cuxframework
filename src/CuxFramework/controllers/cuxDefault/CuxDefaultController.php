@@ -45,7 +45,7 @@ class CuxDefaultController extends CuxBaseObject {
             $routeInfo = $route->getDetails();
             return $routeInfo["params"];
         } catch (\Exception $e){
-            throw new Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
+            throw new \Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
         }
     }
 
@@ -68,7 +68,7 @@ class CuxDefaultController extends CuxBaseObject {
 
         $action = $this->getFullyQualifiedActionName($actionName);
         if (!method_exists($this, $action)) {
-            throw new Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
+            throw new \Exception(Cux::translate("core.errors", "Invalid action", array(), "Message shown on PageNotFound exception"), 404);
         }
         
         $this->_action = $action;
