@@ -23,11 +23,18 @@ class CuxDBCriteria{
     public function addInCondition(string $column, array $values, string $defaultOperator = "AND"){
         $ops = array();
         $params = array();
+        
+        // borderline condition :)
+        if (empty($values)){
+            $values[] = -1;
+        }
+        
         foreach ($values as $i => $value){
             $param = ":".$this->paramName().$i;
             $params[] = $param;
             $this->params[$param] = $value;
         }
+        
         $this->addCondition($column." IN (".implode(",", $params).")", $defaultOperator);
     }
     
