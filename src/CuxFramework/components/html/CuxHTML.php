@@ -158,7 +158,7 @@ class CuxHTML extends CuxBaseObject {
     public static function beginForm(string $action = "", string $method = "POST", array $props = array()){
         $props["method"] = $method;
         $props["action"] = $action;
-        return static::tag("form", "", $props);
+        return static::beginTag("form", $props);
     }
     
     public static function endForm(){
@@ -526,9 +526,15 @@ class CuxHTML extends CuxBaseObject {
     
     public static function activeTextarea(CuxObject $model, string $attribute, array $props = array()){
         if (!isset($props["id"])){
-            $props["id"] = $model->getAttributeId($attribute);
+            $props["id"] = $model->getAttribute($attribute);
         }
         return static::textarea($model->getAttributeName($attribute), $model->getAttribute($attribute), $props);
+    }
+    
+    public static function activeCheckbox(CuxObject $model, string $attribute, array $props = array()){
+        $value = isset($props["value"]) ? $props["value"] : 1;
+        $checked = $model->getAttribute($attribute) != false;
+        return static::checkbox($model->getAttributeName($attribute), $value, $checked, $props);
     }
     
     public static function activeCheckboxlist(CuxObject $model, string $attribute, array $elements = array(), array $props = array()){
