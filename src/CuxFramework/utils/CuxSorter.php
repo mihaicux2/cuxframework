@@ -36,9 +36,9 @@ class CuxSorter {
         } else {
             $this->_sortFields = array(); // unset previous model sort fields
             foreach ($sortFields as $alias => $field) {
-                if ($this->_model->hasAttribute($field)) {
+//                if ($this->_model->hasAttribute($field)) {
                     $this->_sortFields[$alias] = $field;
-                }
+//                }
             }
         }
     }
