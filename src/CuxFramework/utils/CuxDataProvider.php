@@ -14,6 +14,8 @@ abstract class CuxDataProvider {
     private $_tableClass = "table table-striped table-hover table-fixed-layout";
     private $_tHeadClass ="thead-light";
     
+    private $_showFilter = false;
+    
     abstract function render(): string;
     
     public function __construct(array $options = array()){
@@ -38,6 +40,18 @@ abstract class CuxDataProvider {
             $this->setTHeadClass($options["tHeadClass"]);
         }
         
+        if (isset($options["showFilter"]) && is_bool($options["showFilter"])){
+            $this->setShowFilter($options["showFilter"]);
+        }
+        
+    }
+    
+    public function setShowFilter(bool $showFilter){
+        $this->_showFilter = $showFilter;
+    }
+    
+    public function getShowFilter(): bool{
+        return $this->_showFilter;
     }
     
     public function setHeader(string $header){

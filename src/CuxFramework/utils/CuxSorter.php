@@ -135,9 +135,9 @@ class CuxSorter {
         if (!empty($params)){
             $paramsArr = array();
             foreach ($params as $key => $val){
-                if ($key == $sortField){
-                    $sortOrder = ($sortData["sortOrder"] == "asc") ? "desc" : "asc";
-                }
+//                if ($key == $sortField){
+//                    $sortOrder = ($sortData["sortOrder"] == "asc") ? "desc" : "asc";
+//                }
                 if ($key == $this->_sortParam) continue;
                 if (!is_array($val)){
                     $path .= "/{$key}/{$val}";

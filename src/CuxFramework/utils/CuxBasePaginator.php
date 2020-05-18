@@ -12,6 +12,7 @@ abstract class CuxBasePaginator {
     
     protected $_page = 1;
     protected $_totalPages = 1;
+    protected $_totalResults = 0;
     protected $_basePath;
     protected $_pageParam = "page";
     protected $_texts = array();
@@ -51,6 +52,17 @@ abstract class CuxBasePaginator {
     
     public function getPage(): int {
         return $this->_page;
+    }
+    
+    public function setTotalResults(int $totalResults){
+        if ($totalResults < 0){
+            $totalResults = 0;
+        }
+        $this->_totalResults = $totalResults;
+    }
+    
+    public function getTotalResults(): int {
+        return $this->_totalResults;
     }
     
     public function setTotalPages(int $totalPages) {

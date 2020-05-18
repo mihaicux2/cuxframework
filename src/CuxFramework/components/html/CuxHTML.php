@@ -146,6 +146,9 @@ class CuxHTML extends CuxBaseObject {
      * @return string
      */
     public static function beginTag(string $tagName, array $props = array()): string {
+        if (isset($props["name"]) && !isset($props["id"])) {
+            $props["id"] = CuxSlug::slugify($props["name"], "_", false);
+        }
         return "<" . $tagName . static::renderAttributes($props) . ">";
     }
 
