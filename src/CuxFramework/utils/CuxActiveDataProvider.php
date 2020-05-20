@@ -183,8 +183,20 @@ class CuxActiveDataProvider extends CuxDataProvider {
                                 }
                             }
                             break;
-                        case "text":
                         case "list":
+                            $val = trim(Cux::getInstance()->request->getParam($columnDetails["key"]));
+                            if ($val) {
+                                $this->_criteria->addCondition("{$column} LIKE :{$key}_val");
+                                $this->_criteria->params[":{$key}_val"] = "%{$val}%";
+
+                                $this->_filter[] = array(
+                                    "field" => $this->_model->getAttributeLabel($column),
+                                    "operator" => ":",
+                                    "value" => isset($columnDetails["options"]) && isset($columnDetails["options"][$val]) ? $columnDetails["options"][$val] : $val
+                                );
+                            }
+                            break;
+                        case "text":
                         default:
                             $val = trim(Cux::getInstance()->request->getParam($columnDetails["key"]));
                             if ($val) {
