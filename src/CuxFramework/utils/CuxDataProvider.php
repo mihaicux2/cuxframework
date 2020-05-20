@@ -16,6 +16,8 @@ abstract class CuxDataProvider {
     
     private $_showFilter = false;
     
+    private $_isMobile = false;
+    
     abstract function render(): string;
     
     public function __construct(array $options = array()){
@@ -40,10 +42,22 @@ abstract class CuxDataProvider {
             $this->setTHeadClass($options["tHeadClass"]);
         }
         
+        if (isset($options["isMobile"]) && is_bool($options["isMobile"])){
+            $this->setIsMobile($options["isMobile"]);
+        }
+        
         if (isset($options["showFilter"]) && is_bool($options["showFilter"])){
             $this->setShowFilter($options["showFilter"]);
         }
         
+    }
+    
+    public function setIsMobile(bool $isMobile){
+        $this->_isMobile = $isMobile;
+    }
+    
+    public function getIsMobile(): bool{
+        return $this->_isMobile;
     }
     
     public function setShowFilter(bool $showFilter){
