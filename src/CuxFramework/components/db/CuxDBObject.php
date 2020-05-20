@@ -787,6 +787,7 @@ abstract class CuxDBObject extends CuxObject {
 
                                 break;
                             case static::BELONGS_TO:
+                                $keys2 = array();
                                 foreach ($ret as $pkTmp => $ob1) {
                                     if ($ob1->hasAttribute($relations[$related]["key"][0])) {
                                         $keys2[] = $ob1->getAttribute($relations[$related]["key"][0]);
