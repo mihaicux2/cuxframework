@@ -1,0 +1,12 @@
+body {
+  padding-top: 5rem;
+}
+.footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 60px;
+    padding-top:20px;
+    background-color: #f5f5f5;
+}

@@ -267,7 +267,7 @@ class Cux extends CuxSingleton {
     }
     
     private function getFullyQualifiedModuleName($moduleName, $relative=false){
-        return ($relative) ? "modules\\".ucfirst($moduleName)."Module" : "CuxFramework\\modules\\".ucfirst($moduleName)."Module";
+        return ($relative) ? "modules\\".$moduleName."\\".ucfirst($moduleName)."Module" : "CuxFramework\\modules\\".$moduleName."\\".ucfirst($moduleName)."Module";
     }
     
     private function isModuleRelative($moduleName){
@@ -316,11 +316,11 @@ class Cux extends CuxSingleton {
         return isset($this->_components[$name]);
     }
     
-    public function getModule(): \CuxFramework\modules\CuxDefaultModule{
+    public function getModule(): \CuxFramework\modules\cuxDefault\CuxDefaultModule{
         return $this->_module;
     }
     
-    public function getController(): \CuxFramework\controllers\cuxDefault\CuxDefaultController{
+    public function getController(): \CuxFramework\modules\cuxDefault\controllers\CuxDefaultController{
         return $this->_controller;
     }
     

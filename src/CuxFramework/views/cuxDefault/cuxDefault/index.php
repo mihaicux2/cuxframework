@@ -1,3 +1,1 @@
-<div class="col-md-12">
-<h1>Welcome to your first CuxFramework application</h1>
-</div>
+<h1 class="mt-5">Welcome to your first CuxFramework application</h1>

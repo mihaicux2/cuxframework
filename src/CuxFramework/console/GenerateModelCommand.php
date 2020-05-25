@@ -10,10 +10,10 @@ class GenerateModelCommand extends CuxCommand{
     
     public $modelName;
     public $tableName;
-    public $withRelations = false;
-    public $translate = false;
+    public $withRelations = true;
+    public $translate = true;
     public $translationCategory = "entities";
-    public $template = "CuxDBModel.tpl";
+    public $template = "";
     public $baseModel = "CuxDBObject";
     public $outputDir = "models";
     
@@ -24,6 +24,11 @@ class GenerateModelCommand extends CuxCommand{
         if (!$this->tableName){
             echo $this->getColoredString("You must privide at least the tableName parameter", "red", "black").PHP_EOL;
             return;
+        }
+        
+        if (!$this->template){
+            $frameworkPath = "vendor".DIRECTORY_SEPARATOR."mihaicux".DIRECTORY_SEPARATOR."cuxframework".DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR."CuxFramework".DIRECTORY_SEPARATOR;
+            $this->template = $frameworkPath."CuxDBModel.tpl";
         }
         
         if (!file_exists($this->template) || !is_readable($this->template)){

@@ -21,6 +21,8 @@ class CuxDBLogger extends CuxLogger {
             $d = new \DateTime(date('Y-m-d H:i:s.' . $micro, $t));
             
             $tableName = Cux::getInstance()->{$this->dbConnection}->quoteTableName($this->logTable);
+            $dbName = Cux::getInstance()->{$this->dbConnection}->quoteTableName(Cux::getInstance()->{$this->dbConnection}->getDBName());
+            
             $sql = "INSERT INTO {$dbName}.{$tableName} (log_time, level, message, context)
                     VALUES (:log_time, :level, :message, :context)";
             $stmt = Cux::getInstance()->{$this->dbConnection}->prepare($sql);
