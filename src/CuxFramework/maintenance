@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+
+<?php
+
+include("vendor/autoload.php");
+
+use CuxFramework\utils\Cux;
+use CuxFramework\console;
+
+$config = require_once('config/config_console.php');
+
+Cux::config($config);
+
+if ($argc < 2){
+    echo "Usage: ".basename(__FILE__)." commandName <arg1<, arg2...<,argc-1>...>\n";
+    return;
+}
+
+$commandA = $command = "console\\".ucfirst($argv[1])."Command"; // check in the project directory
+$commandB = "CuxFramework\\console\\".ucfirst($argv[1])."Command"; // check in the framework directory
+
+$args = array_slice($argv, 2);
+
+if (class_exists($commandA) && is_subclass_of($commandA, "CuxFramework\utils\CuxBaseObject")){
+    $command = $commandA;
+}
+elseif(class_exists($commandB) && is_subclass_of($commandB, "CuxFramework\utils\CuxBaseObject")){
+    $command = $commandB;
+}
+else{
+    
+    $frameworkCommands = array_splice(scandir("vendor/mihaicux/cuxframework/src/CuxFramework/console"), 2); // remove "." & "..";
+    $commands = array_splice(scandir("console"), 2); // remove "." & "..";
+    
+    $availableCommands = array_map(function($name){
+        return lcfirst(mb_substr($name, 0, -11)); // remove "Command.php"
+    }, array_merge($frameworkCommands, $commands));
+    
+    $availableCommands = array_filter($availableCommands, function($name){
+        return $name != "cux";
+    });
+    
+    echo "Command not found. Available commands: ".PHP_EOL.PHP_EOL;
+    foreach ($availableCommands as $name){
+        echo "\t - {$name}".PHP_EOL;
+    }
+    echo PHP_EOL;
+    return;
+}
+
+$commandInstance = new $command();
+$commandInstance->run($args);

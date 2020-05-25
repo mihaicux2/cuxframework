@@ -56,7 +56,17 @@ abstract class CuxCommand extends CuxBaseObject{
         echo $this->getColoredString(Cux::translate("core.commands", "Executing command {name}...", array("{name}" => $name), "Message shown while executing console commands"), "light_cyan", "black").PHP_EOL.PHP_EOL;
     }
     
-    protected function parseArguments($args) {
+    protected function parseArguments(array $args = array()) {
+        
+        if (!empty($args)){
+            foreach ($args as $arg) {
+                if ($arg == "help"){
+                    echo $this->help();
+                    exit();
+                }
+            }
+        }
+        
         parse_str(implode('&', $args), $args);
         foreach ($args as $name => $value) {
             if (property_exists($this, $name))
@@ -288,6 +298,13 @@ abstract class CuxCommand extends CuxBaseObject{
     
     abstract public function run(array $args);
     
-    
+    public function help(): string{
+        $str = "";
+        
+        $str .= $this->getColoredString("                  CuxCommand BASE                    ", "light_green", "black").PHP_EOL.PHP_EOL;
+        $str .= $this->getColoredString("    This is the base class for console commands    ", "blue", "yellow").PHP_EOL;
+        
+        return $str;
+    }
 
 }
