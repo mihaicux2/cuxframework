@@ -1,6 +1,20 @@
 <?php
 
 return array(
+    'core.dataProvider' =>
+    array(
+        'Choose' => 'Alegeti',
+        'and' => 'si',
+        'Yes' => 'Da',
+        'No' => 'Nu',
+        'Page' => 'Pagina',
+        'Total results' => 'Rezultate',
+        'Search' => 'Cautare',
+        'Reset' => 'Resetare',
+        'Sort by / filter' => 'Ordonare dupa / filtrare',
+        'Close' => 'Inchide',
+        'No data to show' => 'Niciun rezultat',
+    ),
     'core.errors' =>
     array(
         'Extension not found: {extension}' => 'Extensie ceruta nu este inrcacata: {extension}',
@@ -22,6 +36,7 @@ return array(
         'Invalid attribute: {attr}!' => 'Attribut invalid: {attr}!',
         '{attr} must match {attr2}' => '{attr} trebuie sa fie identic cu {attr2}',
         '{attr} is empty!' => '{attr} este necompletat!',
+        '{attr} is not unique!' => '{attr} nu este unic!',
         'Invalid action' => 'Actiune invalida',
         'Invalid controller' => 'Controller invalid',
         'Invalid URL' => 'URL Invalid',

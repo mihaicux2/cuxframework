@@ -158,7 +158,8 @@ class CuxObject extends CuxBaseObject{
         return array();
     }
     
-    public function validate(){
+    public function validate(array $fields = array()): bool{
+        $fields = array_flip($fields);
         $ret = true;
         $rules = $this->rules();
         if (!empty($rules)){
@@ -168,7 +169,7 @@ class CuxObject extends CuxBaseObject{
                     $validator->config($rule["params"]);
                 }
                 foreach ($rule["fields"] as $field){
-                    if (!$validator->validate($this, $field)){
+                    if ((empty($fields) || isset($fields[$field])) && !$validator->validate($this, $field)){
                         $ret = false;
                     }
                 }

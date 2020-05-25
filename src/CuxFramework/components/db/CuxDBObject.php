@@ -21,30 +21,28 @@ abstract class CuxDBObject extends CuxObject {
     abstract public function relations(): array;
 
     private static $_instances = array();
-    
     private $dbConnection;
-    
-    public function __sleep()
-    {
+
+    public function __sleep() {
         return array('_attributes', '_errors', '_hasErrors', '_relations', '_with', '_isNewRecord');
     }
-    
+
     /**
      * This method can be overridden by extending classes. It's useful if you want to have both master and slave connections
      * @return \CuxFramework\components\db\PDOWrapper
      */
-    public function getDBConnection(): PDOWrapper{
+    public function getDBConnection(): PDOWrapper {
         if (!$this->dbConnection) {
             $this->dbConnection = Cux::getInstance()->db;
         }
         return $this->dbConnection;
     }
-    
+
     public function setDBConnection(PDOWrapper $dbConnection) {
         $this->dbConnection = $dbConnection;
         return $this;
     }
-    
+
     public function __construct() {
         $columnMap = $this->getTableSchema();
 
@@ -131,10 +129,10 @@ abstract class CuxDBObject extends CuxObject {
     }
 
     public function with(array $rels = null): CuxDBObject {
-        if (is_null($rels) || empty($rels)){
+        if (is_null($rels) || empty($rels)) {
             return $this;
         }
-        
+
         $relations = $this->relations();
         foreach ($rels as $relation) {
 
@@ -147,10 +145,9 @@ abstract class CuxDBObject extends CuxObject {
             );
             $relatedParts = array_slice($relatedParts, 1);
             foreach ($relatedParts as $depth => $related2) {
-                if (!isset($relationsPath[$depth]["relations"][$related2])) {           
+                if (!isset($relationsPath[$depth]["relations"][$related2])) {
                     $className = get_class($this);
                     throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
-                    
                 }
                 $relationsPath[$depth + 1] = array(
                     "class" => $relationsPath[$depth]["relations"][$related2]["class"],
@@ -163,8 +160,8 @@ abstract class CuxDBObject extends CuxObject {
         return $this;
     }
 
-    public function getPDOType($type){
-        switch ($type){
+    public function getPDOType($type): int {
+        switch ($type) {
             case "integer":
                 return PDO::PARAM_INT;
                 break;
@@ -172,11 +169,11 @@ abstract class CuxDBObject extends CuxObject {
                 return PDO::PARAM_STR;
                 break;
             default:
-                return false;
+                return PDO::PARAM_NULL;
         }
     }
-    
-    public function getByPk($key) {
+
+    public function getByPk($key): CuxDBObject {
 
         $columnMap = $this->getTableSchema();
         $pk = $columnMap["primaryKey"];
@@ -218,19 +215,19 @@ abstract class CuxDBObject extends CuxObject {
         return null;
     }
 
-    public function isNewRecord() {
+    public function isNewRecord(): bool {
         return $this->_isNewRecord;
     }
 
-    protected function getTableSchema() {
+    protected function getTableSchema(): array {
         return $this->getDbConnection()->getTableSchema($this->tableName());
     }
 
-    protected function getColumnMap() {
+    protected function getColumnMap(): array {
         return $this->getDbConnection()->getColumnMap($this->tableName());
     }
 
-    protected function quoteValue($name) {
+    protected function quoteValue($name): string {
         return strpos($name, "'") !== false ? $name : "'" . $name . "'";
     }
 
@@ -242,17 +239,17 @@ abstract class CuxDBObject extends CuxObject {
             if (isset($relations[$related])) {
                 $ob = $relations[$related]["class"];
                 $crit = new CuxDBCriteria();
-                if (isset($relations[$related]["via"])){
+                if (isset($relations[$related]["via"])) {
                     $obInstance = $ob::getInstance();
                     $pk = $ob::getInstance()->getPk();
                     $pkKeys = array_keys($pk);
-                    $where =  (isset($relations[$related]["via"]["condition"])) ? (" AND ".$relations[$related]["via"]["condition"]) : "";
-                    $crit->join[] = "JOIN ".$relations[$related]["via"]["table"]." t1 ON t1.".$relations[$related]["via"]["keys"]["to"]." = ".$ob::getInstance()->tableName().".".$pkKeys[0].$where;
+                    $where = (isset($relations[$related]["via"]["condition"])) ? (" AND " . $relations[$related]["via"]["condition"]) : "";
+                    $crit->join[] = "JOIN " . $relations[$related]["via"]["table"] . " t1 ON t1." . $relations[$related]["via"]["keys"]["to"] . " = " . $ob::getInstance()->tableName() . "." . $pkKeys[0] . $where;
                 }
-                if (isset($relations[$related]["condition"])){
+                if (isset($relations[$related]["condition"])) {
                     $crit->addCondition($relations[$related]["condition"]);
                 }
-                
+
                 switch ($relations[$related]["type"]) {
                     case static::HAS_ONE:
                         $relPk = $ob::getInstance()->getPkName();
@@ -295,7 +292,7 @@ abstract class CuxDBObject extends CuxObject {
                         $i = 0;
                         foreach ($crtPk as $key => $pk) {
                             $param = ":" . $crit->paramName();
-                            if (isset($relations[$related]["via"])){
+                            if (isset($relations[$related]["via"])) {
                                 $crit->addCondition("t1." . $relations[$related]["key"][$i] . "=" . $param);
                             } else {
                                 $crit->addCondition($ob::getInstance()->tableName() . "." . $relations[$related]["key"][$i] . "=" . $param);
@@ -320,7 +317,7 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    protected function getColumnsForQuery($alias = FALSE) {
+    protected function getColumnsForQuery($alias = FALSE): array {
         $columnMap = $this->getTableSchema();
         $cols2 = array_keys($columnMap["columns"]);
         $cols = array();
@@ -461,7 +458,7 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function save($fields = array()) {
+    public function save($fields = array()): bool {
         return $this->isNewRecord() ? $this->insert($fields) : $this->update($fields);
     }
 
@@ -498,7 +495,7 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function beforeInsert($fields = array()) {
+    public function beforeInsert($fields = array()): bool {
         return true;
     }
 
@@ -506,7 +503,7 @@ abstract class CuxDBObject extends CuxObject {
         $this->_isNewRecord = false;
     }
 
-    public function beforeUpdate($fields = array()) {
+    public function beforeUpdate($fields = array()): bool {
         return true;
     }
 
@@ -619,20 +616,20 @@ abstract class CuxDBObject extends CuxObject {
      */
     public function findByCondition(CuxDBCriteria $crit = null) {
 
-        if (is_null($crit)){
+        if (is_null($crit)) {
             $crit = new CuxDBCriteria();
         }
-        
+
         $columnMap = $this->getTableSchema();
 
         $query = "SELECT " . implode(", ", $crit->select ? $crit->select : $this->getColumnsForQuery())
                 . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
-        
-        if (!empty($crit->join)){
-            $query .= " ".implode(" ", $crit->join);
+
+        if (!empty($crit->join)) {
+            $query .= " " . implode(" ", $crit->join);
         }
-        
-        $query .=  " WHERE " . $crit->condition;
+
+        $query .= " WHERE " . $crit->condition;
         if ($crit->order) {
             $query .= " ORDER BY " . $crit->order;
         }
@@ -667,11 +664,11 @@ abstract class CuxDBObject extends CuxObject {
 
         $query = "SELECT COUNT(*) AS total"
                 . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
-        
-        if (!empty($crit->join)){
-            $query .= " ".implode(" ", $crit->join);
+
+        if (!empty($crit->join)) {
+            $query .= " " . implode(" ", $crit->join);
         }
-        
+
         $query .= " WHERE " . $crit->condition;
 
         $stmt = $this->getDbConnection()->prepare($query);
@@ -692,19 +689,19 @@ abstract class CuxDBObject extends CuxObject {
 
     public function findAllByCondition(CuxDBCriteria $crit = null): array {
 
-        if (is_null($crit)){
+        if (is_null($crit)) {
             $crit = new CuxDBCriteria();
         }
-        
+
         $columnMap = $this->getTableSchema();
 
         $ret = array();
 
         $query = "SELECT " . implode(", ", $this->getColumnsForQuery())
                 . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
-        
-        if (!empty($crit->join)){
-            $query .= " ".implode(" ", $crit->join);
+
+        if (!empty($crit->join)) {
+            $query .= " " . implode(" ", $crit->join);
         }
 
         $query .= " WHERE " . $crit->condition;
@@ -712,7 +709,7 @@ abstract class CuxDBObject extends CuxObject {
             $query .= " ORDER BY " . $crit->order;
         }
         $query .= " LIMIT " . $crit->limit . " OFFSET " . $crit->offset;
-        
+
         $stmt = $this->getDbConnection()->prepare($query);
         if (!empty($crit->params)) {
             foreach ($crit->params as $key => $value) {
@@ -843,10 +840,10 @@ abstract class CuxDBObject extends CuxObject {
 
     public function findAllByCondition2(CuxDBCriteria $crit = null) {
 
-        if (is_null($crit)){
+        if (is_null($crit)) {
             $crit = new CuxDBCriteria();
         }
-        
+
         $columnMap = $this->getTableSchema();
 
         $ret = array();
@@ -1039,20 +1036,20 @@ abstract class CuxDBObject extends CuxObject {
         unset($new);
         return $this;
     }
-    
+
     public function arrayListByCondition(string $key, string $val, CuxDBCriteria $crit = null): array {
 
-        if (is_null($crit)){
+        if (is_null($crit)) {
             $crit = new CuxDBCriteria();
         }
 
         $ret = array();
 
-        $query = "SELECT " . $key . " AS `key`, ". $val . " AS `val`"
-                     . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
-        
-        if (!empty($crit->join)){
-            $query .= " ".implode(" ", $crit->join);
+        $query = "SELECT " . $key . " AS `key`, " . $val . " AS `val`"
+                . " FROM " . $this->getDbConnection()->quoteTableName(static::tableName());
+
+        if (!empty($crit->join)) {
+            $query .= " " . implode(" ", $crit->join);
         }
 
         $query .= " WHERE " . $crit->condition;
@@ -1060,7 +1057,7 @@ abstract class CuxDBObject extends CuxObject {
             $query .= " ORDER BY " . $crit->order;
         }
         $query .= " LIMIT " . $crit->limit . " OFFSET " . $crit->offset;
-        
+
         $stmt = $this->getDbConnection()->prepare($query);
         if (!empty($crit->params)) {
             foreach ($crit->params as $key => $value) {
