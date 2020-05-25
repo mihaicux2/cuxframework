@@ -166,7 +166,7 @@ RewriteEngine On
 
 RewriteBase /
 
-# Add framework dependant assets (bootstrap, jquery, font-awesome, etc.)
+# Add framework dependent assets (bootstrap, jquery, font-awesome, etc.)
 RewriteRule ^cux-framework/assets/(.*)$ vendor/mihaicux/cuxframework/src/CuxFramework/assets/$1 [L]
 
 # Do not enable rewriting for files or directories that exist
