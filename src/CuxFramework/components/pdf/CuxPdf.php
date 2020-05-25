@@ -94,7 +94,7 @@ class CuxPdf extends CuxBaseObject {
     /**
      * @var string css file to prepend to the PDF
      */
-    public $cssFile = 'css/mpdf-bootstrap.css';
+    public $cssFile = 'vendor/mihaicux/cuxframework/src/CuxFramework/assets/css/mpdf-bootstrap.css';
 
     /**
      * @var string additional inline css to append after the cssFile
@@ -149,6 +149,22 @@ class CuxPdf extends CuxBaseObject {
             'margin_footer' => $this->marginFooter,
             'orientation' => $this->orientation
         ));
+        
+        $fontdata['fontawesome'] = [
+            'R' => __DIR__ . '/../../assets/font-awesome/fonts/fontawesome-webfont.ttf',
+            'I' => __DIR__ . '/../../assets/font-awesome/fonts/fontawesome-webfont.ttf',
+        ];
+        
+        foreach ($fontdata as $f => $fs) {
+            $this->_mpdf->fontdata[$f] = $fs;
+            foreach (['R', 'B', 'I', 'BI'] as $style) {
+                if (isset($fs[$style]) && $fs[$style]) {
+                    $this->_mpdf->available_unifonts[] = $f . trim($style, 'R');
+                }
+            }
+        }
+        $this->_mpdf->default_available_fonts = $this->_mpdf->available_unifonts;
+        
     }
     
     public function output(string $content = '', string $file = '', $dest = self::DEST_BROWSER){
@@ -161,8 +177,10 @@ class CuxPdf extends CuxBaseObject {
             if (!empty($this->cssInline)){
                 $this->_mpdf->WriteHTML($this->cssInline, 1);
             }
+            $this->_mpdf->WriteHTML('.fa, .fas { font-family: taiheritagepro;}',1);
             $this->_mpdf->WriteHTML($content, 2);
         } else {
+            $this->_mpdf->WriteHTML('.fa, .fas { font-family: garuda;}',1);
             $this->_mpdf->WriteHTML($content);
         }
         
