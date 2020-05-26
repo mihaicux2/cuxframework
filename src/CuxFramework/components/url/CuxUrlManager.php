@@ -19,6 +19,7 @@ class CuxUrlManager extends CuxBaseObject {
         
         $request = Cux::getInstance()->request;
         $crtPath = $request->getPath();
+        
 //        if (!empty($crtPath) && $crtPath != "/"){
 ////            $defaultRoute = new CuxRoute($this->defaultAction, $this->defaultAction, $request);
 //            $defaultRoute = new CuxRoute($crtPath, $crtPath, $request, $crtPath);
@@ -34,8 +35,18 @@ class CuxUrlManager extends CuxBaseObject {
         
         if (!$this->_crtRoute){
             if (!empty($crtPath) && $crtPath != "/"){
+                if (substr($crtPath, 0, 1) == "/"){
+                    $crtPath = substr($crtPath, 1);
+                }
+                $pathParts = explode("/", $crtPath);
+                if (count($pathParts) >= 2){
+                    $routePath = "/".implode("/", array_slice($pathParts, 0, 3)); // build the module/controller/action path :)
+                }
+                else{
+                    $routePath = $crtPath;
+                }
 //                $this->addRoute($this->defaultAction, $this->defaultAction, $request, $crtPath);
-                $this->addRoute($crtPath, $crtPath, $request, $crtPath);
+                $this->addRoute($routePath, $routePath, $request);
             } else {
                 $this->addRoute($this->defaultAction, $this->defaultAction, $request, $this->defaultAction);
             }
