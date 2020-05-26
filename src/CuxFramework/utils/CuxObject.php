@@ -83,7 +83,7 @@ class CuxObject extends CuxBaseObject{
         }
     }
     
-    public function hasAttribute($attribute){
+    public function hasAttribute($attribute): bool{
         return array_key_exists($attribute, $this->_attributes);
     }
     
@@ -94,7 +94,7 @@ class CuxObject extends CuxBaseObject{
         return null;
     }
     
-    public function setAttribute(string $attribute, $value){
+    public function setAttribute(string $attribute, $value): ?CuxObject{
         if (!$this->hasAttribute($attribute)){
             $className = get_class($this);
             throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
@@ -103,7 +103,7 @@ class CuxObject extends CuxBaseObject{
         return $this;
     }
     
-    public function getAttributes(){
+    public function getAttributes(): array{
         return $this->_attributes;
     }
     
@@ -138,15 +138,15 @@ class CuxObject extends CuxBaseObject{
         $this->_errors = array();
     }
     
-    public function getErrors(){
+    public function getErrors(): array{
         return $this->_errors;
     }
     
-    public function hasError($field){
+    public function hasError($field): bool{
         return isset($this->_errors[$field]);
     }
     
-    public function hasErrors(){
+    public function hasErrors(): bool{
         return $this->_hasErrors;
     }
     

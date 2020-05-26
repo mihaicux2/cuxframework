@@ -120,7 +120,7 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function setAttribute(string $attribute, $value): CuxObject {
+    public function setAttribute(string $attribute, $value): ?CuxObject {
         $columnMap = $this->getTableSchema();
         if (isset($columnMap["columns"][$attribute])) {
             return parent::setAttribute($attribute, $value);
@@ -173,7 +173,7 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
 
-    public function getByPk($key): CuxDBObject {
+    public function getByPk($key): ?CuxDBObject {
 
         $columnMap = $this->getTableSchema();
         $pk = $columnMap["primaryKey"];
@@ -534,7 +534,7 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function findByAttributes(array $attributes) {
+    public function findByAttributes(array $attributes): ?CuxDBObject {
 
         $conditions = array();
         foreach ($attributes as $column => $value) {
@@ -614,7 +614,7 @@ abstract class CuxDBObject extends CuxObject {
     /**
      * @param mixed $condition
      */
-    public function findByCondition(CuxDBCriteria $crit = null) {
+    public function findByCondition(CuxDBCriteria $crit = null): ?CuxDBObject {
 
         if (is_null($crit)) {
             $crit = new CuxDBCriteria();
@@ -838,7 +838,7 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function findAllByCondition2(CuxDBCriteria $crit = null) {
+    public function findAllByCondition2(CuxDBCriteria $crit = null): array {
 
         if (is_null($crit)) {
             $crit = new CuxDBCriteria();
@@ -1025,7 +1025,7 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
-    public function refresh() {
+    public function refresh(): CuxDBObject {
         if ($this->isNewRecord()) {
             return $this;
         }
