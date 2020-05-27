@@ -266,6 +266,7 @@ class CuxHTML extends CuxBaseObject {
         if (!isset($props["alt"])) {
             $props["alt"] = "";
         }
+        $props["src"] = $src;
         return static::tag("img", "", $props);
     }
 
