@@ -196,6 +196,11 @@ class Cux extends CuxSingleton {
                     "class" => 'CuxFramework\components\url\CuxUrlManager'
                 ));
             }
+            if (!isset($config["components"]) || !isset($config["components"]["clientScript"])){
+                $this->loadComponent("clientScript", array(
+                    "class" => 'CuxFramework\components\clientScript\CuxClientScript'
+                ));
+            }
             if (!isset($config["components"]) || !isset($config["components"]["layout"])){
                 $this->loadComponent("layout", array(
                     "class" => 'CuxFramework\components\layout\CuxLayout'
@@ -423,6 +428,15 @@ class Cux extends CuxSingleton {
         } else {
             Cux::getInstance()->redirect("/", 302);
         }
+    }
+    
+    /**
+     * Get the relative path for the framework
+     * Should return "vendor/mihaicux/cuxframework/src/CuxFramework"
+     * @return string
+     */
+    public static function getFrameworkPath(): string{
+        return "vendor".DIRECTORY_SEPARATOR."mihaicux".DIRECTORY_SEPARATOR."cuxframework".DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR."CuxFramework".DIRECTORY_SEPARATOR;
     }
     
 }

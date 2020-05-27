@@ -73,7 +73,7 @@ class CuxDefaultController extends CuxBaseObject {
         
         $this->_action = $action;
         if (!$this->pageTitle) {
-            $this->pageTitle = $actionName;
+            $this->pageTitle = ucfirst($actionName);
         }
 
         Cux::getInstance()->layout->setPageTitle($this->pageTitle);
@@ -91,15 +91,15 @@ class CuxDefaultController extends CuxBaseObject {
     }
 
     public function actionIndex($params) {
-        $this->render("index");
+        echo  $this->render("index");
     }
 
-    protected function render($view, $params = array()) {
-        echo Cux::getInstance()->layout->render($view, $params);
+    public function render(string $view, array $params = array(), bool $includeScripts = true): string{
+        return Cux::getInstance()->layout->render($view, $params, $includeScripts);
     }
 
-    protected function renderPartial($view, $params = array()) {
-        echo Cux::getInstance()->layout->renderPartial($view, $params);
+    public function renderPartial(string $view, array $params = array(), bool $includeScripts = true): string{
+        return Cux::getInstance()->layout->renderPartial($view, $params, $includeScripts);
     }
 
     protected function _output($filename) {
