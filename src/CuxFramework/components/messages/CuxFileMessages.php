@@ -19,12 +19,13 @@ class CuxFileMessages extends CuxBaseMessages {
     private function loadMessages($lang){
         
         $messages = Cux::getInstance()->cache->get("messages.$lang");
+        
         if (!$messages){
             $messages = array();
             $this->_messages[$lang] = $messages;
             
              // load base messages
-            $langFile = "vendor/mihaicux/cuxframework/src/CuxFramework/components/messages/i18n/{$lang}.php";
+            $langFile = Cux::getFrameworkPath()."components/messages/i18n/{$lang}.php";
             
             if (file_exists($langFile) && is_readable($langFile)){
                 $messages = array_merge($messages, require($langFile));

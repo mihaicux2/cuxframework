@@ -41,6 +41,17 @@ return array(
         'Invalid controller' => 'Controller invalid',
         'Invalid URL' => 'URL Invalid',
         'Invalid module' => 'Modul invalid',
+        'Error/exception' => 'Eroare/exceptie',
+        'Login required!' => 'Autentificare necesara!',
+        'Your request could not be processed correctly' => 'Cererea dumneavoastra nu a putut fi procesata corect',
+        'Please click {here} to return to the main page' => 'Va rugam apasati {here} pentru a reveni la pagina principala',
+        'here' => 'aici',
+        'Error/exception in file {file}, line {line}' => 'Exceptie in fisierul {file}, linia {line}',
+        'File' => 'Fisier',
+        'Line' => 'Linia',
+        'Class' => 'Clasa',
+        'Method' => 'Metoda',
+        'Arguments' => 'Argumente',
     ),
     'core.commands' =>
     array(

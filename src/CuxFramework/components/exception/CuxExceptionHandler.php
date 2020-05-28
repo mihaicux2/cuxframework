@@ -91,7 +91,7 @@ class CuxExceptionHandler extends CuxBaseObject{
         Cux::log(CuxLogger::ERROR, $ex->getMessage(), $exArray);
         
         if (Cux::getInstance()->isWebApp() && Cux::getInstance()->hasComponent("layout")){
-            Cux::getInstance()->layout->setPageTitle("Exceptie/eroare #".$ex->getCode());
+            Cux::getInstance()->layout->setPageTitle(Cux::translate("core.errors", "Error/exception", array(), "Page title for error pages")." #".$ex->getCode());
         }
         
         if (Cux::getInstance()->isWebApp() && Cux::getInstance()->hasComponent("request") && Cux::getInstance()->request->isAjax()){
@@ -99,7 +99,7 @@ class CuxExceptionHandler extends CuxBaseObject{
         }
         else{
             if ($ex->getCode() == 401){ // login required
-                Cux::getInstance()->user->setFlashMessage("info", "Login required!");
+                Cux::getInstance()->user->setFlashMessage("info", Cux::translate("core.errors", "Login required!", array(), "Message shown on pages with insufficient privileges"));
                 Cux::getInstance()->user->setFlashMessage("httpStatus", $ex->getCode());
                 Cux::getInstance()->redirect("/login");
             }
