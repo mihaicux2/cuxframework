@@ -324,7 +324,7 @@ class CuxHTML extends CuxBaseObject {
         }
 
         if (!isset($props["id"])) {
-            $props["id"] = CuxSlug::slugify($name);
+            $props["id"] = CuxSlug::slugify($name, "_", false);
         }
 
         return static::tag("input", "", $props);
@@ -471,7 +471,7 @@ class CuxHTML extends CuxBaseObject {
         }
 
         if (!$props["id"]) {
-            $props["id"] = CuxSlug::slugify($name);
+            $props["id"] = CuxSlug::slugify($name, "_", false);
         }
 
         if (!isset($props["pattern"])) {
@@ -537,7 +537,7 @@ class CuxHTML extends CuxBaseObject {
         }
 
         if (!$props["id"]) {
-            $props["id"] = CuxSlug::slugify($name);
+            $props["id"] = CuxSlug::slugify($name, "_", false);
         }
 
         if (!isset($props["pattern"])) {
@@ -629,7 +629,7 @@ class CuxHTML extends CuxBaseObject {
 
         foreach ($elements as $key => $val) {
             $itemProps = $props;
-            $itemProps["id"] = CuxSlug::slugify($name . "_" . $key);
+            $itemProps["id"] = CuxSlug::slugify($name . "_" . $key, "_", false);
             $itemProps["label"] = $val;
             $itemProps["for"] = $itemProps["id"];
             $ret .= static::radio($name, $val, ($value == $key), $itemProps);
@@ -672,7 +672,7 @@ class CuxHTML extends CuxBaseObject {
 
         foreach ($elements as $key => $val) {
             $itemProps = $props;
-            $itemProps["id"] = CuxSlug::slugify($name . "_" . $key);
+            $itemProps["id"] = CuxSlug::slugify($name . "_" . $key, "_", false);
             $itemProps["label"] = $val;
             $itemProps["for"] = $itemProps["id"];
             $ret .= static::checkbox($checkboxName, $val, ($value == $key), $itemProps);
@@ -831,7 +831,7 @@ class CuxHTML extends CuxBaseObject {
         $value = isset($props["value"]) ? $props["value"] : 1;
         $checked = $model->getAttribute($attribute) != false;
         $attrName = $model->getAttributeName($attribute);
-        $attrId = CuxSlug::slugify($attrName);
+        $attrId = CuxSlug::slugify($attrName, "_", false);
         $ret = static::checkbox($attrName, $value, $checked, $props);
         if (!isset($props["no_default"])) {
             $ret = static::hiddentInput($attrName, 0, array("id" => $attrId . "_default")) . "" . $ret;

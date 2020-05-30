@@ -76,7 +76,7 @@ class GenerateModelCommand extends CuxCommand{
             if ($properties["phpType"] == "integer" || $properties["phpType"] == "double"){
                 $rules["numeric"][$column] = $column;
             }
-            if ($properties["phpType"] == "string" && $properties["size"]){
+            if ($properties["phpType"] == "string" && isset($properties["size"])){
                 $rules["length"][$properties["size"]][$column] = $column;
             }
             $props[] = $properties["phpType"]." $".$column;
@@ -195,7 +195,7 @@ class GenerateModelCommand extends CuxCommand{
 //        $imagePath = "$imageDir$pk.jpg";
         if (!is_dir($this->outputDir) or !is_writable($this->outputDir)) {
             $this->getColoredString("Please make sure the output directory exists and is writable: {$this->outputDir}", "red", "black").PHP_EOL;
-        } elseif (is_file($imagePath) and !is_writable($imagePath)) {
+        } elseif (is_file($this->outputDir) and !is_writable($this->outputDir)) {
             // Error if the file exists and isn't writable.
         }
         
@@ -250,6 +250,26 @@ class GenerateModelCommand extends CuxCommand{
 
     protected function quoteValue($name) {
         return strpos($name, "'") !== false ? $name : "'" . $name . "'";
+    }
+    
+    public function help(): string{
+         $str = "";
+        
+        $str .= $this->getColoredString("                  GenerateModel Command                    ", "light_green", "black").PHP_EOL.PHP_EOL;
+        $str .= $this->getColoredString("    This command is used to generate ActiveRecord models for existing database tables ", "blue", "yellow").PHP_EOL;
+        $str .= "Mandatory parameters: ".PHP_EOL;
+        $str .= "\ttableName - String. The name of the database table to be mapped";
+        $str .= "Optional parameters: ".PHP_EOL;
+        $str .= "\tmodelName - String. The name of the generated model. By default, it's generated using the camelCase transformation for the given table name".PHP_EOL;
+        $str .= "\twithRelations - Bool, defaults to 1. This will also generate any existing database relations for the given table name".PHP_EOL;
+        $str .= "\ttranslate - Bool, defaults to 1. Attribute labels will be generated using the `Cux::translate()` method".PHP_EOL.PHP_EOL;
+        $str .= "\ttranslationCategory - String, defaults to 'entities'. The translation category for the attribute labels. This has effect only if the `translate` parameter is set to 1".PHP_EOL.PHP_EOL;
+        $str .= "\ttemplate - String, defaults to 'CuxDBModel.tpl'. The template file for the generated file".PHP_EOL.PHP_EOL;
+        $str .= "\tbaseModel - String, defaults to 'CuxDBObject'. The base ActiveRecord class that the model will inherit".PHP_EOL.PHP_EOL;
+        $str .= "\toutputDir - String, defaults to 'models'. The location for the generated file".PHP_EOL.PHP_EOL;
+        $str .= "Usage example: ./maintenance generateModel tableName=app_log outputDir=models".PHP_EOL;
+        
+        return $str;
     }
 
 }

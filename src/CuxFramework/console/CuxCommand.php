@@ -43,7 +43,7 @@ abstract class CuxCommand extends CuxBaseObject{
         $this->background_colors['light_gray'] = '47';
 
         // register shutdown behaviour
-        if (php_sapi_name() == "cli") {
+        if (Cux::getInstance()->isConsoleApp()) {
             // In cli-mode
             $this->registerShutdownFunctions();
             $this->clrScr();
@@ -53,7 +53,9 @@ abstract class CuxCommand extends CuxBaseObject{
         $names = explode("\\", $fullClassName);
         $name = lcfirst(substr(end($names), 0, -7));
         
-        echo $this->getColoredString(Cux::translate("core.commands", "Executing command {name}...", array("{name}" => $name), "Message shown while executing console commands"), "light_cyan", "black").PHP_EOL.PHP_EOL;
+//        if (Cux::getInstance()->isConsoleApp()){
+//            echo $this->getColoredString(Cux::translate("core.commands", "Executing command {name}...", array("{name}" => $name), "Message shown while executing console commands"), "light_cyan", "black").PHP_EOL.PHP_EOL;
+//        }
     }
     
     protected function parseArguments(array $args = array()) {
@@ -111,7 +113,7 @@ abstract class CuxCommand extends CuxBaseObject{
     }
 
     public function scriptEnd() {
-        if (!$this->fromInterface) {
+        if (Cux::getInstance()->isConsoleApp()) {
             $stats = $this->getScriptStats();
             echo PHP_EOL;
             
@@ -141,7 +143,7 @@ abstract class CuxCommand extends CuxBaseObject{
     }
     
     public function scriptKillSignal($sig) {
-        if (!$this->fromInterface) {
+        if (Cux::getInstance()->isConsoleApp()) {
             switch ($sig) {
                 case SIGINT:
                     echo "\n" . $this->getColoredString("Received signal: SIGINT. Process interrupted", "purple", "yellow") . "\n";
@@ -159,12 +161,12 @@ abstract class CuxCommand extends CuxBaseObject{
 
     public function usleep($microseconds) {
         if (!is_int($microseconds) || $microseconds < 0) {
-            if (!$this->fromInterface) {
+            if (Cux::getInstance()->isConsoleApp()) {
                 echo "\n" . $this->getColoredString("The input parameter '\$microseconds' must be a positive integer", "yellow") . "\n";
             }
             return;
         }
-        if (!$this->fromInterface) {
+        if (Cux::getInstance()->isConsoleApp()) {
             echo "\n" . $this->getColoredString("Sleeping for $microseconds microseconds", "yellow") . "\n";
         }
         usleep($microseconds);
@@ -174,12 +176,12 @@ abstract class CuxCommand extends CuxBaseObject{
 
     public function sleep($seconds) {
         if (!is_int($seconds) || $seconds < 0) {
-            if (!$this->fromInterface) {
+            if (Cux::getInstance()->isConsoleApp()) {
                 echo "\n" . $this->getColoredString("The input parameter '\$seconds' must be a positive integer", "yellow") . "\n";
             }
             return;
         }
-        if (!$this->fromInterface) {
+        if (Cux::getInstance()->isConsoleApp()) {
             echo "\n" . $this->getColoredString("Sleeping for $seconds seconds", "yellow") . "\n";
         }
         sleep($seconds);
@@ -189,6 +191,11 @@ abstract class CuxCommand extends CuxBaseObject{
 
     // Returns colored string
     public function getColoredString($string, $foreground_color = null, $background_color = null) {
+        
+        if (Cux::getInstance()->isWebApp()){
+            return $string;
+        }
+        
         $colored_string = "";
 
         // Check if given foreground color found

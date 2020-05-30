@@ -186,4 +186,18 @@ class ExportTranslationsCommand extends CuxCommand{
         return $list;
     }
     
+    public function help(): string{
+         $str = "";
+        
+        $str .= $this->getColoredString("                  ExportTranslations Command                    ", "light_green", "black").PHP_EOL.PHP_EOL;
+        $str .= $this->getColoredString("    This command is used to parse the source code and export texts (to be) translated ", "blue", "yellow").PHP_EOL;
+        $str .= "Optional parameters: ".PHP_EOL;
+        $str .= "\toutputFile - String, defaults to 'messages.xlsx'. The location and name for the generated XLSX file".PHP_EOL;
+        $str .= "\toutputDir - String, defaults to 'i18n'. The location for the existing translations".PHP_EOL;
+        $str .= "\tincludeVendor - Bool, defaults to 0. Parse the framework sourcecode".PHP_EOL.PHP_EOL;
+        $str .= "Usage example: ./maintenance exportTranslations outputFile=messages2.xlsx translationsDir=i18n includeVendor=0".PHP_EOL;
+        
+        return $str;
+    }
+    
 }

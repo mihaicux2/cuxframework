@@ -18,4 +18,15 @@ class ResetCacheCommand extends CuxCommand{
         
     }
 
+    public function help(): string{
+         $str = "";
+        
+        $str .= $this->getColoredString("                  ResetCache Command                    ", "light_green", "black").PHP_EOL.PHP_EOL;
+        $str .= $this->getColoredString("    This command is used to clear th cache data   ", "blue", "yellow").PHP_EOL;
+        $str .= "No parameters are required for this command".PHP_EOL.PHP_EOL;
+        $str .= "Usage example: ./maintenance resetCache".PHP_EOL;
+        
+        return $str;
+    }
+    
 }

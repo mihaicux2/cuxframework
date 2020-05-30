@@ -192,4 +192,19 @@ class ImportTranslationsCommand extends CuxCommand{
         return $list;
     }
     
+    public function help(): string{
+         $str = "";
+        
+        $str .= $this->getColoredString("                  ImportTranslations Command                    ", "light_green", "black").PHP_EOL.PHP_EOL;
+        $str .= $this->getColoredString("    This command is used to parse the translations file (XLSX) and generate the translations file(s) ", "blue", "yellow").PHP_EOL;
+        $str .= "Mandatory parameters: ".PHP_EOL;
+        $str .= "\tinputFile - String. The location and name for the XLSX file to be parsed".PHP_EOL;
+        $str .= "Optional parameters: ".PHP_EOL;
+        $str .= "\toutputDir - String, defaults to 'i18n'. The location for the existing translations".PHP_EOL;
+        $str .= "\tbackupFirst - Bool, defaults to 1. Make back-up copies for the existing translation files".PHP_EOL.PHP_EOL;
+        $str .= "Usage example: ./maintenance importTranslations inputFile=messages2.xlsx".PHP_EOL;
+        
+        return $str;
+    }
+    
 }
