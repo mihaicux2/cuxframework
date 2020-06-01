@@ -1,6 +1,6 @@
 <?php
 
-namespace components\session;
+namespace CuxFramework\components\session;
 
 use CuxFramework\utils\CuxBaseObject;
 

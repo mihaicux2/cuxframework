@@ -8,8 +8,19 @@ abstract class CuxCache  extends CuxBaseObject {
     
     public $key = "defaultEncryptionKey"; // you should change this
     public $keyPrefix = "";
+    public $useEncryption = true;
     
-    abstract protected function buildKey(string $key): string;
+    protected function buildKey(string $key): string {
+        return $this->keyPrefix . $this->encrypt($key, $this->key);
+    }
+    
+    protected function buildKeys(array $keys) {
+        $ret = array();
+        foreach ($keys as $key) {
+            $ret[] = $this->buildKey($key);
+        }
+        return $ret;
+    }
     
     /**
      * Checks wether the cache contains a specific key
@@ -78,6 +89,20 @@ abstract class CuxCache  extends CuxBaseObject {
      * @return boolean whether the flush operation was successful.
      */
     abstract public function flush(): bool;
+    
+    protected function decrypt($edata, $password) {
+        if ($this->useEncryption){
+            return parent::decrypt($edata, $password);
+        }
+        return $edata;
+    }
+
+    protected function encrypt($data, $password) {
+        if ($this->useEncryption){
+            return parent::encrypt($data, $password);
+        }
+        return $data;
+    }
     
 }
 

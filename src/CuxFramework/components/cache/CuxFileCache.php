@@ -15,18 +15,6 @@ class CuxFileCache extends CuxCache {
         parent::config($config);
     }
 
-    protected function buildKey(string $key): string {
-        return $this->keyPrefix . $this->encrypt($key, $this->key);
-    }
-
-    private function buildKeys(array $keys) {
-        $ret = array();
-        foreach ($keys as $key) {
-            $ret[] = $this->buildKey($key);
-        }
-        return $ret;
-    }
-
     /**
      * Fetches a directory to store the cache data
      *

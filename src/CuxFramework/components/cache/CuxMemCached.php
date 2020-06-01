@@ -23,18 +23,6 @@ class CuxMemCached extends CuxCache {
         }
     }
 
-    protected function buildKey(string $key): string {
-        return $this->keyPrefix . $this->encrypt($key, $this->key);
-    }
-
-    private function buildKeys(array $keys) {
-        $ret = array();
-        foreach ($keys as $key) {
-            $ret[] = $this->buildKey($key);
-        }
-        return $ret;
-    }
-
     public function exists(string $key): bool {
         return true;
     }
