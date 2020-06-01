@@ -432,7 +432,7 @@ class Cux extends CuxSingleton {
     
     /**
      * Get the relative path for the framework
-     * Should return "vendor/mihaicux/cuxframework/src/CuxFramework"
+     * Should return "vendor/mihaicux/cuxframework/src/CuxFramework/"
      * @return string
      */
     public static function getFrameworkPath(): string{

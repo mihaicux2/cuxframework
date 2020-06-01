@@ -1,11 +1,16 @@
 $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
 
-    for (var i = setTimeout(function () {}, 0); i > 0; i--) {
-        window.clearInterval(i);
-        window.clearTimeout(i);
-        if (window.cancelAnimationFrame)
-            window.cancelAnimationFrame(i);
+    try {
+        $.unblockUI();
+    } catch (e) {
     }
+
+//    for (var i = setTimeout(function () {}, 0); i > 0; i--) {
+//        window.clearInterval(i);
+//        window.clearTimeout(i);
+//        if (window.cancelAnimationFrame)
+//            window.cancelAnimationFrame(i);
+//    }
 
     switch (jqxhr.status) {
         case 401:
@@ -19,11 +24,6 @@ $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
         default:
             alert(jqxhr.responseText);
             break;
-    }
-
-    try {
-        $.unblockUI();
-    } catch (e) {
     }
 
 });

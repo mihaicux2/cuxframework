@@ -38,7 +38,7 @@ class {modelName} extends {baseModel}{
         return parent::beforeInsert($fields);
     }
     
-    public function beforeUpdate($fields = array()): boolean {
+    public function beforeUpdate($fields = array()): bool {
         return parent::beforeUpdate($fields);
     }
     

@@ -34,7 +34,7 @@ class ToolsController extends CuxDefaultController {
             $frameworkCommands = array_map(function($name) use ($frameworkPath){
                 return array(
                     "name" => lcfirst(mb_substr($name, 0, -11)), // remove "Command.php"
-                    "fullPath" => $frameworkPath.DIRECTORY_SEPARATOR.$name,
+                    "fullPath" => $frameworkPath.$name,
                     "coreCommand" => true
                 );
             }, $frameworkCommands);

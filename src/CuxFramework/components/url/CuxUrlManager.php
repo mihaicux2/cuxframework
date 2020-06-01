@@ -60,7 +60,7 @@ class CuxUrlManager extends CuxBaseObject {
 
     public function addRoute(string $route, string $match, CuxRequest $request, string $requestPath = null){
         $route = new CuxRoute($route, $match, $request, $requestPath);
-        if ($route->isRouteMatched()){
+        if (!$this->_crtRoute && $route->isRouteMatched()){ // first matched is the current route :)
             $this->_crtRoute = $route;
         }
         $this->_routes[] = $route;
