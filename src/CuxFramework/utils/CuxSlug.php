@@ -1,16 +1,33 @@
 <?php
 
+/**
+ * CuxSlug class file
+ */
+
 namespace CuxFramework\utils;
 
 use CuxFramework\utils\CuxSingleton;
 
+/**
+ * Simple class that can be used to generate URL-friendly and camelCase strings
+ */
 class CuxSlug extends CuxSingleton {
 
+    /**
+     * Setup instance properties
+     * @param array $config
+     */
     public static function config(array $config) {
         $ref = static::getInstance();
         CuxBase::config($ref, $config);
     }
 
+    /**
+     * Convert strings to camelCase notation
+     * @param string $str The text to be converted
+     * @param array $noStrip The list of non-alpha-numerical characters to be allowed
+     * @return string
+     */
     public static function camelCase(string $str, array $noStrip = []): string {
         // non-alpha and non-numeric characters become spaces
         $str = preg_replace('/[^a-z0-9' . implode("", $noStrip) . ']+/i', ' ', $str);
@@ -23,7 +40,13 @@ class CuxSlug extends CuxSingleton {
         return $str;
     }
     
-    // convert text to slugs
+    /**
+     * Convert strings to Slug notation
+     * @param string $text The text to be converted
+     * @param string $separator Word separator
+     * @param bool $toLowerCase Turn the resulting text to lower case
+     * @return string
+     */
     static public function slugify(string $text, string $separator = '_', bool $toLowerCase = true): string {
 
         $matrix = array(
@@ -65,8 +88,13 @@ class CuxSlug extends CuxSingleton {
         return trim($text, $separator);
     }
     
-    // convert text to URL-friendly string
-    public static function seourelize($string, $sufix = ''): string {
+    /**
+     * Convert strings to URL-friendly notation
+     * @param string $string The text to be converted
+     * @param string $suffix Add a suffix to the resulting text
+     * @return string
+     */
+    public static function seourelize(string $string, $suffix = ''): string {
         $string = static::convertEncoding($string);
 
         $string = strip_tags($string);
@@ -85,9 +113,14 @@ class CuxSlug extends CuxSingleton {
         $string = preg_replace('|-+|', '-', $string);
         $string = trim($string, '-');
 
-        return $string . $sufix;
+        return $string . $suffix;
     }
 
+    /**
+     * Map cyrillic characters to latin counter-parts
+     * @param type $text The text to be converted
+     * @return string
+     */
     public static function convertEncoding($text = ""): string {
         $text = static::remove_accents($text);
 
@@ -98,7 +131,12 @@ class CuxSlug extends CuxSingleton {
         return $text;
     }
 
-    public static function seems_utf8($str): bool {
+    /**
+     * Checks if a string is UTF-8 encoded
+     * @param string $str The string to be checked
+     * @return bool
+     */
+    public static function seems_utf8(string $str): bool {
         $length = strlen($str);
         for ($i = 0; $i < $length; $i++) {
             $c = ord($str[$i]);
@@ -262,7 +300,13 @@ class CuxSlug extends CuxSingleton {
         return $string;
     }
 
-    public static function asort(&$items, $order = "asc") {
+    /**
+     * Sorts an array with respect to the URL-friendly converted content
+     * @param array $items
+     * @param string $order
+     * @return int
+     */
+    public static function asort(array &$items, string $order = "asc") {
 
         if (!is_array($items)) {
             return false;
@@ -284,7 +328,14 @@ class CuxSlug extends CuxSingleton {
         });
     }
 
-    public static function sortByProperty(&$items, $property, $order = "asc") {
+    /**
+     * Sorts a multidimensional array by a given property, with respect to the URL-friendly converted content
+     * @param array $items
+     * @param string $property
+     * @param string $order
+     * @return boolean
+     */
+    public static function sortByProperty(array &$items, string $property, string $order = "asc") {
         if (!is_array($items)) {
             return false;
         }

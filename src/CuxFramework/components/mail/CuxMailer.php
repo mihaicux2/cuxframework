@@ -1,33 +1,114 @@
 <?php
 
+/**
+ * CuxMailer class file
+ */
+
 namespace CuxFramework\components\mail;
 
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\CuxBase;
 use PHPMailer\PHPMailer\PHPMailer;
 
+/**
+ * Simple PHPMailer wrapper that can be used to send emails
+ */
 class CuxMailer extends CuxBaseObject {
     
+    /**
+     * Send mail FROM this address
+     * @var string
+     */
     public $from;
-    public $replyTo = false;
+    
+    /**
+     * REPLY TO this address
+     * @var string
+     */
+    public $replyTo = "";
+    
+    /**
+     * Send mails connecting to a "to-be-defined" SMTP server
+     * @var bool 
+     */
     public $smtp = false;
-    public $host = false;
-    public $port = false;
+    
+    /**
+     * SMTP server host
+     * @var string
+     */
+    public $host = "";
+    
+    /**
+     * SMTP sever port
+     * @var int
+     */
+    public $port;
+    
+    /**
+     * Is the SMTP connection SSL secured
+     * @var bool
+     */
     public $smtpSecure = false;
+    
+    /**
+     * SMTP connection username
+     * @var string
+     */
     public $username = "";
+    
+    /**
+     * SMTP connection password
+     * @var string
+     */
     public $password = "";
     
+    /**
+     * The list of mail recipients
+     * @var arary
+     */
     private $_to = array();
+    
+    /**
+     * The list of carbon copy mail recipients
+     * @var array
+     */
     private $_cc = array();
+    
+    /**
+     * The list of blind carbon copy mail recipients
+     * @var array 
+     */
     private $_bcc = array();
     
-    private $_subject = false;
-    private $_body = false;
+    /**
+     * The subject of the mail to be sent
+     * @var string
+     */
+    private $_subject = "";
     
+    /**
+     * The content of the mail to be sent
+     * @var string
+     */
+    private $_body = "";
+    
+    /**
+     * The list of headers to be used while sending the mail
+     * @var string
+     */
     private $_headers = array();
     
+    /**
+     * The PHPMailer object instance
+     * @var PHPMailer\PHPMailer\PHPMailer 
+     */
     private $_mail;
     
+    /**
+     * Setup the class instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
         
@@ -52,6 +133,7 @@ class CuxMailer extends CuxBaseObject {
      * Add recipient(s) for the email
      * ie: "Mihail Cuculici <mihai.cuculici@gmail.com>"
      * @param string|array $to The email address(es) that will receive the email
+     * @return \CuxFramework\components\mail\CuxMailer
      */
     public function addTo($to = array()): CuxMailer{
         if (is_array($to) && !empty($to)){
@@ -82,6 +164,11 @@ class CuxMailer extends CuxBaseObject {
         return $this;
     }
     
+    /**
+     * Send emails on behalf of (this value)
+     * @param string $from The email address that is used for sending the mail
+     * @return \CuxFramework\components\mail\CuxMailer
+     */
     public function setFrom($from): CuxMailer{
 
         $this->from = $from;
@@ -100,6 +187,7 @@ class CuxMailer extends CuxBaseObject {
     /**
      * Add Carbon Copy recipient(s) for the email
      * @param string|array $cc The email address(es) that will receive the email
+     * @return \CuxFramework\components\mail\CuxMailer
      */
     public function addCC($cc = array()): CuxMailer{
         if (is_array($cc) && !empty($cc)){
@@ -133,6 +221,7 @@ class CuxMailer extends CuxBaseObject {
     /**
      * Add Blind Carbon Copy recipient(s) for the email
      * @param string|array $bcc The email address(es) that will receive the email
+     * @return \CuxFramework\components\mail\CuxMailer
      */
     public function addBCC($bcc = array()): CuxMailer{
         if (is_array($bcc) && !empty($bcc)){
@@ -163,12 +252,22 @@ class CuxMailer extends CuxBaseObject {
         return $this;
     }
     
+    /**
+     * Set the mail subject
+     * @param string $subject The subject of the mail to be sent
+     * @return \CuxFramework\components\mail\CuxMailer
+     */
     public function setSubject(string $subject): CuxMailer{
         $this->_subject = $subject;
         $this->_mail->Subject = $subject;
         return $this;
     }
     
+    /**
+     * Set the mail content
+     * @param string $body The content of the mail to be sent
+     * @return \CuxFramework\components\mail\CuxMailer
+     */
     public function setBody($body): CuxMailer{
         $this->_body = $body;
         $this->_mail->Body = $body;
@@ -176,11 +275,20 @@ class CuxMailer extends CuxBaseObject {
         return $this;
     }
     
+    /**
+     * Adds header information to the mail to be sent
+     * @param string $header Header details
+     * @return \CuxFramework\components\mail\CuxMailer
+     */
     public function addHeader($header): CuxMailer{
         $this->_headers[] = $header;
         return $this;
     }
     
+    /**
+     * Build and format all the headers needed for the mail to be sent
+     * @return string
+     */
     public function getFormatedHeaders(): string{
         $headers  = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -208,6 +316,10 @@ class CuxMailer extends CuxBaseObject {
         return $headers;
     }
     
+    /**
+     *  Send the mail to the recipient/list of recipients
+     * @return bool True if the mail has been sent successfully
+     */
     public function send(): bool{
         
         return ($this->smtp) ? $this->_mail->send() : mail(implode(", ", $this->_to), $this->_subject, $this->_body, $this->getFormatedHeaders());

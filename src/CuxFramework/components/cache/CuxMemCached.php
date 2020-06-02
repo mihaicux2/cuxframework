@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * CuxMemCached class file
+ */
+
 namespace CuxFramework\components\cache;
 
 use CuxFramework\utils\CuxBase;
@@ -7,6 +11,69 @@ use CuxFramework\utils\Cux;
 
 /**
  * Cache class that uses Memcached to store data
+ * 
+ * Usage example <b>(direct initialization)</b>:
+ * 
+ * <code>
+ * <?php<br />
+ * use CuxFramework\components\cache\CuxMemCached;<br />
+ * $cache = new CuxFileCache();<br />
+ * $cache->config(array(<br />
+ *      "lifeTime" => 1800, // 30 minutes cache lifeTime<br />
+ *      "servers" => array(<br />
+ *          array(<br />
+ *               "host" => "localhost",<br />
+ *               "port" => 11211<br />
+ *          )<br />
+ *      )<br />
+ * ));<br />
+ * $data = $cache->get("cachedData");<br />
+ * if (!$data){<br />
+ *     $data = "stored data";<br />
+ *     $cache->set("cachedData", $data, 600); // store the data for 10 minutes<br />
+ * }
+ * ?>
+ * </code>
+ * 
+ * 
+ * Usage example <b>(framework usage)</b>:
+ * 
+ * <i>config.php</i>
+ * 
+ * <code>
+ * <?php<br />
+ * "components" => array(<br />
+ *     ... <br />
+ *     "cache" => array( <br />
+ *           'class' => 'CuxFramework\components\cache\CuxMemCached', <br />
+ *           'params' => array( <br />
+ *               "lifeTime" => 1800 <br />
+ *               "servers" => array(<br />
+ *                   array(<br />
+ *                       "host" => "localhost",<br />
+ *                       "port" => 11211<br />
+ *                    )<br />
+ *               )<br />
+ *           ) <br />
+ *       ) <br />
+ * ) <br />
+ * ?>
+ * </code>
+ * 
+ * <i>test.php</i>
+ * 
+ * <code>
+ * <?php<br />
+ * use CuxFramework\components\utils\Cux;<br />
+ * 
+ * $cache = Cux::getInstance()->cache();<br />
+ * $data = $cache->get("cachedData");<br />
+ * if (!$data){<br />
+ *     $data = "stored data";<br />
+ *     $cache->set("cachedData", $data, 600); // store the data for 10 minutes<br />
+ * }
+ * ?>
+ * </code>
  */
 class CuxMemCached extends CuxCache {
 
@@ -61,7 +128,11 @@ class CuxMemCached extends CuxCache {
      * @param integer $duration the number of seconds in which the cached value will expire. 0 means never expire.
      * @return boolean true if the value is successfully stored into cache, false otherwise
      */
-    public function set(string $key, $value, int $duration): bool {
+    public function set(string $key, $value, int $duration = null): bool {
+        if (!$duration) {
+            $duration = $this->lifeTime;
+        }
+        
         return $this->_memcached->set($this->buildKey($key), $value, $duration);
     }
 
@@ -71,7 +142,11 @@ class CuxMemCached extends CuxCache {
      * @param integer $duration the number of seconds in which the cached values will expire. 0 means never expire.
      * @return array list of failed keys
      */
-    public function setValues(array $data, int $duration): array {
+    public function setValues(array $data, int $duration = null): array {
+        if (!$duration) {
+            $duration = $this->lifeTime;
+        }
+        
         $hashedData = array();
         foreach ($data as $key => $value) {
             $hashedData[$this->buildKey($key)] = $value;

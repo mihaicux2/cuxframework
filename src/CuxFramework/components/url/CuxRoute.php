@@ -1,27 +1,94 @@
 <?php
 
+/**
+ * CuxRoute class file
+ */
+
 namespace CuxFramework\components\url;
 
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\components\request\CuxRequest;
 use CuxFramework\utils\Cux;
 
+/**
+ * URL Route class
+ * The urlManages uses a predefined list of URL Routes to identify and map the current request
+ */
 class CuxRoute {
     
+    /**
+     * The Route pattern to be matched against the current URL request
+     * @var string
+     */
     private $_routePattern;
+    
+    /**
+     * The Route real path, if request matches the pattern
+     * @var string 
+     */
     private $_rewritePattern;
+    
+    /**
+     * The current URL request path
+     * @var string
+     */
     private $_requestPath;
+    
+    /**
+     * The Route pattern, after pre-processing (replace app patterns to php patterns - i.e. <d+> => (/[0-9]+)/</code>
+     * @var string
+     */
     private $_processedPattern;
+    
+    /**
+     * The URL request path after pre-processing
+     * @var string
+     */
     private $_processedPath;
+    
+    /**
+     * The URL request full path
+     * @var string
+     */
     private $_processedRequest;
+    
+    /**
+     * Formatted URL request
+     * @var string
+     */
     private $_prettyRequest;
     
+    /**
+     * The list of URL request parameters, after the route matching process
+     * @var array
+     */
     private $_params;
     
+    /**
+     * If the Route matches the current URL request, set the matched pattern
+     * @var string 
+     */
     private $_matchedPattern = null;
+    
+    /**
+     * If the Route matches the current URL request, set the matched path
+     * @var string 
+     */
     private $_matchedPath = null;
+    
+    /**
+     * If the Route matches the current URL request, set the matched route
+     * @var string 
+     */
     private $_routePath = null;
     
+    /**
+     * Class constructor
+     * @param string $routePattern The pattern to be matched
+     * @param string $rewritePattern If match, this is the real route
+     * @param CuxRequest $request The current URL request
+     * @param string $requestPath If defined, override the $request->getPath() with this value
+     */
     public function __construct(string $routePattern, string $rewritePattern, CuxRequest $request, string $requestPath = null) {
         
         $this->setRoutePattern($routePattern);
@@ -38,6 +105,10 @@ class CuxRoute {
         
     }
     
+    /**
+     * Get the formatted details about the current URL Request, as processed by the current Route
+     * @return array
+     */
     public function getDetails(){
         return array(
             "routePatterm" => $this->_routePattern,
@@ -53,26 +124,51 @@ class CuxRoute {
         );
     }
     
+    /**
+     * Check if the current Route matched the URL request
+     * @return bool
+     */
     public function isRouteMatched(): bool{
         return !is_null($this->_matchedPattern);
     }
     
+    /**
+     * Setter for the $_routePattern property
+     * @param string $routePattern
+     */
     public function setRoutePattern(string $routePattern){
         $this->_routePattern = $routePattern;
     }
     
+    /**
+     * Getter for the $_routePattern property
+     * @return string
+     */
     public function getRoutePattern(): string{
         return $this->_routePattern;
     }
     
+    /**
+     * Setter for the $_rewritePattern property
+     * @param string $rewritePattern
+     */
     public function setRewritePattern(string $rewritePattern){
         $this->_rewritePattern = $rewritePattern;
     }
     
+    /**
+     * Getter for the $__rewritePattern property
+     * @return string
+     */
     public function getRewritePattern(): string{
         return $this->_rewritePattern;
     }
     
+    /**
+     * Process the app Route pattern to PHP RegExp pattern
+     * @param string $route
+     * @return string
+     */
     private function processPattern(string $route): string {
         $route = str_replace(array("[", "]"), array("\\[", "\\]"), $route);
         $route = preg_replace("/<d(\+*)>/i", "([0-9]\$1)", $route);
@@ -80,6 +176,10 @@ class CuxRoute {
         return "|" . str_replace("/", "\\/", trim($route)) . "|im";
     }
     
+    /**
+     * Check if the current Route matches the URL request
+     * @return bool
+     */
     public function matchesUrl(): bool {
         $ret = preg_match($this->_processedPattern, $this->_requestPath, $matches);
         if ($ret){
@@ -120,6 +220,11 @@ class CuxRoute {
         return $ret;
     }
     
+    /**
+     * Get the path form a request ( without the extra query params )
+     * @param string $path
+     * @return string
+     */
     public function getPath(string $path): string{
          if (($pos = strpos($path, "?")) !== false) {
              return substr($path, 0, $pos);
@@ -127,6 +232,11 @@ class CuxRoute {
          return $path;
     }
     
+    /**
+     * Get the request params
+     * @param string $path
+     * @return array
+     */
     public function getParams(string $path): array {
         $ret = array();
         if (($pos = strpos($path, "?")) !== false) {

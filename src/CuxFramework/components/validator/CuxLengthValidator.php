@@ -1,11 +1,28 @@
 <?php
 
+/**
+ * CuxLengthValidator class file
+ */
+
 namespace CuxFramework\components\validator;
 
 use CuxFramework\utils\Cux;
 
+/**
+ * Simple class that checks if the value of a given property from a given object has a length that matches the specified parameters/props<br />
+ * Predefined $_props keys:<br />
+ *     * "minLength" - optional<br />
+ *     * "maxLength" - optional <br />
+ * At least one of the $_props parameters must be specified
+ */
 class CuxLengthValidator extends CuxBaseValidator {
 
+    /**
+     * Validate a given attribute from the given object instance
+     * @param mixed $obj The object to be validated
+     * @param string $attr The name of the attribute to be validated
+     * @return bool True if the validation test passed
+     */
     public function validate($obj, string $attr): bool {
         
         if (is_object($obj)) {

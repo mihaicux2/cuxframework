@@ -1,12 +1,25 @@
 <?php
 
+/**
+ * CuxUniqueValidator class file
+ */
+
 namespace CuxFramework\components\validator;
 
 use CuxFramework\utils\Cux;
 use CuxFramework\components\db\CuxDBCriteria;
 
+/**
+ * Simple class that checks if the given property of a given object is already present in the database
+ */
 class CuxUniqueValidator extends CuxBaseValidator{
     
+    /**
+     * Validate a given attribute from the given object instance
+     * @param mixed $obj The object to be validated
+     * @param string $attr The name of the attribute to be validated
+     * @return bool True if the validation test passed
+     */
     public function validate($obj, string $attr): bool {
         
         if (is_object($obj)){

@@ -32,6 +32,12 @@ abstract class CuxCache  extends CuxBaseObject {
     public $useEncryption = true;
     
     /**
+     * Default cache life time
+     * @var int
+     */
+    public $lifeTime = 3600;
+    
+    /**
      * Using the predefined $keyPrefix prefix and $key encryption key, builds an encrypted version of a given (string) key
      * @param string $key The key to be mapped/encrypted
      * @return string
@@ -81,7 +87,7 @@ abstract class CuxCache  extends CuxBaseObject {
      * @param integer $duration the number of seconds in which the cached value will expire. 0 means never expire.
      * @return boolean true if the value is successfully stored into cache, false otherwise
      */
-    abstract public function set(string $key, $value, int $duration): bool;
+    abstract public function set(string $key, $value, int $duration = null): bool;
     
     /**
      * Stores multiple key-value pairs in cache.
@@ -89,7 +95,7 @@ abstract class CuxCache  extends CuxBaseObject {
      * @param integer $duration the number of seconds in which the cached values will expire. 0 means never expire.
      * @return array list of failed keys
      */
-    abstract public function setValues(array $data, int $duration): array;
+    abstract public function setValues(array $data, int $duration = null): array;
     
     /**
      * Stores a value identified by a key into cache if the cache does not contain this key.

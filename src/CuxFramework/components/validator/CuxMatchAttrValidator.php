@@ -1,11 +1,28 @@
 <?php
 
+/**
+ * CuxMatchAttrValidator class file
+ */
+
 namespace CuxFramework\components\validator;
 
 use CuxFramework\utils\Cux;
 
+/**
+ * Simple class that checks if two properties for a given object have the same value<br />
+ * Predefined $_props keys:<br />
+ *     * "field" - mandatory <br />
+ * 
+ * Useful for password confirmation scenarios
+ */
 class CuxMatchAttrValidator extends CuxBaseValidator{
     
+    /**
+     * Validate a given attribute from the given object instance
+     * @param mixed $obj The object to be validated
+     * @param string $attr The name of the attribute to be validated
+     * @return bool True if the validation test passed
+     */
     public function validate($obj, string $attr): bool {
         
         if (is_object($obj)){

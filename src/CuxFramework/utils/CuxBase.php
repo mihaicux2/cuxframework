@@ -11,7 +11,13 @@ namespace CuxFramework\utils;
  */
 class CuxBase {
 
-    public static function config(&$object, $properties) {
+    /**
+     * Setup $object properties
+     * @param mixed $object The object to be configured 
+     * @param array $properties The list of properties
+     * @return mixed The $object itself. This is useless, as the input parameter is sent by reference :)))
+     */
+    public static function config(&$object, array $properties = array()) {
         foreach ($properties as $name => $value) {
             $object->$name = $value;
         }
