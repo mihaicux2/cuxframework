@@ -211,6 +211,7 @@ abstract class CuxDBObject extends CuxObject {
         if (isset($columnMap["columns"][$attribute])) {
             return parent::setAttribute($attribute, $value);
         }
+        $className = get_class($this);
         throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
     }
 
