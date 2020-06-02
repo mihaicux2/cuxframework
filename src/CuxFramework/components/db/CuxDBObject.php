@@ -212,7 +212,7 @@ abstract class CuxDBObject extends CuxObject {
             return parent::setAttribute($attribute, $value);
         }
         $className = get_class($this);
-        throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
+        throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $attribute), "Message shown when trying to access invalid class properties"), 503);
     }
 
     /**
@@ -240,7 +240,7 @@ abstract class CuxDBObject extends CuxObject {
             foreach ($relatedParts as $depth => $related2) {
                 if (!isset($relationsPath[$depth]["relations"][$related2])) {
                     $className = get_class($this);
-                    throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
+                    throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $related2), "Message shown when trying to access invalid class properties"), 503);
                 }
                 $relationsPath[$depth + 1] = array(
                     "class" => $relationsPath[$depth]["relations"][$related2]["class"],
