@@ -1,16 +1,32 @@
 <?php
 
+/**
+ * Base class for any extending classes to be instantiated
+ */
+
 namespace CuxFramework\utils;
 
-class CuxBaseObject {
+/**
+ * Abstract Class that is set to work as a base/starting point for the framework components
+ */
+abstract class CuxBaseObject {
 
+    /**
+     * Setup class properties using this method
+     * @param array $properties The list of properties to be set
+     */
     public function config(array $properties) {
         foreach ($properties as $name => $value) {
             $this->$name = $value;
         }
     }
 
-    // AES 256 decrypt
+    /**
+     * Decrypts an encrypted string (AES-256)
+     * @param string $edata The encrypted data
+     * @param string $password The encryption key
+     * @return string
+     */
     protected function decrypt($edata, $password) {
         $data = base64_decode($edata);
         $salt = substr($data, 0, 16);
@@ -31,7 +47,12 @@ class CuxBaseObject {
         return unserialize(openssl_decrypt($ct, 'AES-256-CBC', $key, true, $iv));
     }
 
-    // AES 256 encrypt
+    /**
+     * Encrypts a given plain string (AES-256)
+     * @param string $data The data to be encrypted
+     * @param type $password The encryption key
+     * @return string
+     */
     protected function encrypt($data, $password) {
         
         $data = serialize($data);
@@ -55,6 +76,10 @@ class CuxBaseObject {
         return base64_encode($salt . $encrypted_data);
     }
     
+    /**
+     * Returns the class base name - regardless of the current namespace
+     * @return string
+     */
     public function getShortName(){
         return (new \ReflectionClass($this))->getShortName();
     }

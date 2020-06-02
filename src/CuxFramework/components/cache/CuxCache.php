@@ -1,19 +1,50 @@
 <?php
 
+/**
+ * CuxCache abstract class file
+ */
+
 namespace CuxFramework\components\cache;
 
 use CuxFramework\utils\CuxBaseObject;
 
+/**
+ * Base class for the caching system
+ */
 abstract class CuxCache  extends CuxBaseObject {
     
+    /**
+     * The encryption key that will be used for the cache key mapping/encryption
+     * @var string
+     */
     public $key = "defaultEncryptionKey"; // you should change this
+    
+    /**
+     * Prefix all cache keys with this
+     * @var string
+     */
     public $keyPrefix = "";
+    
+    /**
+     * Encrypt the cache keys
+     * @var type 
+     */
     public $useEncryption = true;
     
+    /**
+     * Using the predefined $keyPrefix prefix and $key encryption key, builds an encrypted version of a given (string) key
+     * @param string $key The key to be mapped/encrypted
+     * @return string
+     */
     protected function buildKey(string $key): string {
         return $this->keyPrefix . $this->encrypt($key, $this->key);
     }
     
+    /**
+     * Builds mapped/encrypted keys from a given array of string keys
+     * @param array $keys The list of keys to be mapped/encrypted
+     * @return type
+     */
     protected function buildKeys(array $keys) {
         $ret = array();
         foreach ($keys as $key) {
@@ -90,6 +121,12 @@ abstract class CuxCache  extends CuxBaseObject {
      */
     abstract public function flush(): bool;
     
+    /**
+     * Decrypts an encrypted string
+     * @param string $edata The encrypted data
+     * @param string $password The encryption key
+     * @return string
+     */
     protected function decrypt($edata, $password) {
         if ($this->useEncryption){
             return parent::decrypt($edata, $password);
@@ -97,6 +134,12 @@ abstract class CuxCache  extends CuxBaseObject {
         return $edata;
     }
 
+    /**
+     * Encrypts a given plain string
+     * @param string $data The data to be encrypted
+     * @param type $password The encryption key
+     * @return string
+     */
     protected function encrypt($data, $password) {
         if ($this->useEncryption){
             return parent::encrypt($data, $password);

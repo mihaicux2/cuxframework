@@ -1,16 +1,40 @@
 <?php
 
+/**
+ * CuxCommand abstract class file
+ */
+
 namespace CuxFramework\console;
 
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 
+/**
+ * Abstract class to be used as a starting point for Console Commands
+ */
 abstract class CuxCommand extends CuxBaseObject{
     
+    /**
+     * A list of bash codes that can be used to output RGB background for texts in the terminal
+     * @var array
+     */
     private $foreground_colors = array();
+    
+    /**
+     * A list of bash codes that can be used to output RGB texts in the terminal
+     * @var array
+     */
     private $background_colors = array();
+    
+    /**
+     * The Console Command start time, in microseconds
+     * @var int
+     */
     private $startTime = null;
     
+    /**
+     * Class constructor. 
+     */
     public function __construct() {
         
         $this->startTime = microtime(true);
@@ -58,6 +82,10 @@ abstract class CuxCommand extends CuxBaseObject{
 //        }
     }
     
+    /**
+     * Parse bash arguments and setup the Command parameters
+     * @param array $args
+     */
     protected function parseArguments(array $args = array()) {
         
         if (!empty($args)){
@@ -76,7 +104,10 @@ abstract class CuxCommand extends CuxBaseObject{
         }
     }
     
-    // remember to call this method if the command is called from the terminal(/console)
+    /**
+     * PHP script shut down handler. 
+     * Handles  script end and also process interruptions
+     */
     public function registerShutdownFunctions() {
 
         register_shutdown_function(array($this, "scriptEnd"));
@@ -88,7 +119,11 @@ abstract class CuxCommand extends CuxBaseObject{
         pcntl_signal(SIGHUP, array($this, 'scriptKillSignal'));
     }
 
-    public function getScriptStats() {
+    /**
+     * Returns the Command execution status ( execution time, arguments & memory usage)
+     * @return array
+     */
+    public function getScriptStats(): array {
 
         $endTime = microtime(true);
         $secs = $endTime - $this->startTime;
@@ -112,6 +147,9 @@ abstract class CuxCommand extends CuxBaseObject{
         );
     }
 
+    /**
+     * Method called on execution end
+     */
     public function scriptEnd() {
         if (Cux::getInstance()->isConsoleApp()) {
             $stats = $this->getScriptStats();
@@ -138,11 +176,18 @@ abstract class CuxCommand extends CuxBaseObject{
         }
     }
     
+    /**
+     * Clear terminal
+     */
     protected function clrScr(){
         echo chr(27).chr(91).'H'.chr(27).chr(91).'J';   //^[H^[J  
     }
     
-    public function scriptKillSignal($sig) {
+    /**
+     * Process interruption/signal handler
+     * @param type $sig
+     */
+    public function scriptKillSignal(int $sig) {
         if (Cux::getInstance()->isConsoleApp()) {
             switch ($sig) {
                 case SIGINT:
@@ -159,7 +204,11 @@ abstract class CuxCommand extends CuxBaseObject{
         exit(); // this will call the registered shut down function (if any is defined)
     }
 
-    public function usleep($microseconds) {
+    /**
+     * Process usleep method
+     * @param int $microseconds
+     */
+    public function usleep(int $microseconds) {
         if (!is_int($microseconds) || $microseconds < 0) {
             if (Cux::getInstance()->isConsoleApp()) {
                 echo "\n" . $this->getColoredString("The input parameter '\$microseconds' must be a positive integer", "yellow") . "\n";
@@ -174,7 +223,11 @@ abstract class CuxCommand extends CuxBaseObject{
         gc_collect_cycles();
     }
 
-    public function sleep($seconds) {
+    /**
+     * Process sleep method
+     * @param int $seconds
+     */
+    public function sleep(int $seconds) {
         if (!is_int($seconds) || $seconds < 0) {
             if (Cux::getInstance()->isConsoleApp()) {
                 echo "\n" . $this->getColoredString("The input parameter '\$seconds' must be a positive integer", "yellow") . "\n";
@@ -189,8 +242,14 @@ abstract class CuxCommand extends CuxBaseObject{
         gc_collect_cycles();
     }
 
-    // Returns colored string
-    public function getColoredString($string, $foreground_color = null, $background_color = null) {
+    /**
+     * Returns bash code to print RGB messages (text foreground and background)
+     * @param string $string The message to be printed
+     * @param string $foreground_color The text color
+     * @param string $background_color The text background color
+     * @return string
+     */
+    public function getColoredString(string $string, string $foreground_color = null, string $background_color = null): string {
         
         if (Cux::getInstance()->isWebApp()){
             return $string;
@@ -213,35 +272,64 @@ abstract class CuxCommand extends CuxBaseObject{
         return $colored_string;
     }
 
-    // Returns all foreground color names
-    public function getForegroundColors() {
+    /**
+     * Getter for the $foreground_colors attribute
+     * @return array
+     */
+    public function getForegroundColors(): array {
         return array_keys($this->foreground_colors);
     }
 
-    // Returns all background color names
-    public function getBackgroundColors() {
+    /**
+     * Getter for the $background_colors attribute
+     * @return array
+     */
+    public function getBackgroundColors(): array {
         return array_keys($this->background_colors);
     }
 
-    public function printMessage($message){
+    /**
+     * Output a given message with the execution timestamp
+     * @param string $message
+     */
+    public function printMessage(string $message){
         echo "[ ".date("Y-m-d H:i:s")." ]: ".$message.PHP_EOL;
     }
     
+    /**
+     * Delete and unset a given variable
+     * @param mixed $var
+     */
     protected static final function delete(&$var) {
         $var = null;
         unset($var);
         gc_collect_cycles();
     }
 
-    protected final function intOnly($var) {
+    /**
+     * Checks if a given variable has a value that is a valid integer, greater than 0
+     * @param mixed $var
+     * @return bool
+     */
+    protected final function intOnly($var): bool {
         return (int) $var > 0;
     }
 
-    protected final function ipOnly($var) {
+    /**
+     * Checks if a given string is a valid IP address
+     * @param string $var
+     * @return bool
+     */
+    protected final function ipOnly(string $var): bool {
         return preg_match('/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/', $var);
     }
 
-    protected function normalizeName($name) {
+    /**
+     * Remove unwanted characters from a given string
+     * @param string $name
+     * @return string
+     */
+    protected function normalizeName(string $name): string {
 
         $name = preg_replace('~[^\\pL\d]+~u', '-', $name);
 
@@ -264,15 +352,29 @@ abstract class CuxCommand extends CuxBaseObject{
         return $name;
     }
 
-    protected function getDate($datetime){
+    /**
+     * Get the DATE from a given timestamp
+     * @param string $datetime
+     * @return string
+     */
+    protected function getDate(string $datetime): string{
         return trim($datetime) ? date("Y-m-d", strtotime($datetime)) : " ";
     }
     
-    protected function getTime($datetime){
+    /**
+     * Get the TIME from a given timestamp
+     * @param string $datetime
+     * @return string
+     */
+    protected function getTime(string $datetime): string{
         return trim($datetime) ? date("H:i:s", strtotime($datetime)) : " ";
     }
     
-    protected function cleanValue(&$str) {
+    /**
+     * Remove unwanted characters from a given string
+     * @param string $str
+     */
+    protected function cleanValue(string &$str) {
 //        $str = preg_replace('~[^\\pL\d\ ]+~u', '-', $str);
 //        $str = trim($str, '-');
         $str = iconv('utf-8', 'us-ascii//TRANSLIT', $str);
@@ -281,12 +383,21 @@ abstract class CuxCommand extends CuxBaseObject{
             $str = " ";
     }
     
-    protected function convert($size) {
+    /**
+     * Output memory size in a human readable form
+     * @param int $size The memory size
+     * @return string
+     */
+    protected function convert(int $size): string {
         if (!$size) return "0b";
         $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
         return sprintf("%.2f %s", $size / pow(1024, ($i = floor(log($size, 1024)))), ' ' . $unit[$i]);
     }
     
+    /**
+     * Get the SWAP Memory used by the current process
+     * @return string
+     */
     protected function getSwapMemoryUsage(){
         if (PHP_OS == "Linux"){
             $systemStatus = trim(str_replace("VmSwap: ", "", preg_replace('!\s+!', ' ', shell_exec("grep VmSwap /proc/".$this->pID."/status"))));
@@ -295,6 +406,11 @@ abstract class CuxCommand extends CuxBaseObject{
         return "can't do";
     }
     
+    /**
+     * Swap the values of two variables
+     * @param mixed $a
+     * @param mixed $b
+     */
     protected function swap(&$a, &$b){
         $x = $a;
         $a = $b;
@@ -303,8 +419,16 @@ abstract class CuxCommand extends CuxBaseObject{
         unset($x);
     }
     
+    /**
+     * RUN/Execute the Console Command
+     * @param array $args The list 
+     */
     abstract public function run(array $args);
     
+    /**
+     * Get the Console Command description & usage info
+     * @return string
+     */
     public function help(): string{
         $str = "";
         

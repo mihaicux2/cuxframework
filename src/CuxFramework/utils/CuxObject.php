@@ -1,25 +1,64 @@
 <?php
 
+/**
+ * CuxObject class file
+ */
+
 namespace CuxFramework\utils;
 
 use CuxFramework\utils\CuxSlug;
 
+/**
+ * Class used as a starting point for all of the framework's components
+ */
 class CuxObject extends CuxBaseObject{
 
+    /**
+     * The list of public accessible component attributes
+     * @var array
+     */
     protected $_attributes = array();
+    
+    /**
+     * The list of errors, mapped using the public accessible component attributes
+     * @var array
+     */
     protected $_errors = array();
+    
+    /**
+     * Checks if the current instance of CuxObject has errors for any of the public accessible component attributes
+     * @var bool
+     */
     protected $_hasErrors = false;
     
+    /**
+     * The list of labels, mapped using the public accessible component attributes
+     * @var array
+     */
     static protected $_labels;
     
+    /**
+     * Setup the class attributes
+     * @param array $properties
+     */
     public function config(array $properties) {
         $this->config($properties);
     }
 
-    public static function className() {
+    /**
+     * Get the current object instance's class name
+     * @return string
+     */
+    public static function className(): string {
         return get_called_class();
     }
     
+    /**
+     * Magic getter for the public accessible component attributes
+     * @param string $name
+     * @return mixed
+     * @throws \Exception
+     */
     public function __get(string $name){
         $getter = "get".$name;
         if (method_exists($this, $getter)){
@@ -35,6 +74,12 @@ class CuxObject extends CuxBaseObject{
         throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
     }
     
+    /**
+     * Magic setter for the public accessible component attributes
+     * @param string $name
+     * @param mixed $value
+     * @throws \Exception
+     */
     public function __set(string $name, $value){
         $setter = "set" . $name;
         if (method_exists($this, $setter)) {
@@ -52,6 +97,11 @@ class CuxObject extends CuxBaseObject{
         }
     }
     
+    /**
+     *  Magic "check" method for the public accessible component attributes
+     * @param string $name
+     * @return boolean
+     */
     public function __isset(string $name) {
         $getter = "get" . $name;
         if (method_exists($this, $getter)) {
@@ -66,6 +116,11 @@ class CuxObject extends CuxBaseObject{
         return false;
     }
 
+    /**
+     * Magic "delete" method for the public accessible component attributes
+     * @param string $name
+     * @throws \Exception
+     */
     public function __unset(string $name) {
         $setter = "set" . $name;
         if (method_exists($this, $setter)) {
@@ -83,18 +138,35 @@ class CuxObject extends CuxBaseObject{
         }
     }
     
-    public function hasAttribute($attribute): bool{
+    /**
+     * Checks if the class contains the given attribute
+     * @param string $attribute
+     * @return bool
+     */
+    public function hasAttribute(string $attribute): bool{
         return array_key_exists($attribute, $this->_attributes);
     }
     
-    public function getAttribute($attribute){
+    /**
+     * Get the attribute, using the public accessible component attributes
+     * @param string $attribute
+     * @return mixed
+     */
+    public function getAttribute(string $attribute){
         if (isset($this->_attributes[$attribute])){
             return $this->_attributes[$attribute];
         }
         return null;
     }
     
-    public function setAttribute(string $attribute, $value): ?CuxObject{
+    /**
+     * Setter for the public accessible component attributes
+     * @param string $attribute
+     * @param mixed $value
+     * @return \CuxFramework\utils\CuxObject
+     * @throws \Exception
+     */
+    public function setAttribute(string $attribute, $value): CuxObject{
         if (!$this->hasAttribute($attribute)){
             $className = get_class($this);
             throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
@@ -103,10 +175,19 @@ class CuxObject extends CuxBaseObject{
         return $this;
     }
     
+    /**
+     * Multiple getter for the public accessible component attributes
+     * @return array
+     */
     public function getAttributes(): array{
         return $this->_attributes;
     }
     
+    /**
+     * Multiple setter for the public accessible component attributes
+     * @param type $attributes
+     * @return type
+     */
     public function setAttributes($attributes){
         if (!is_array($attributes) || empty($attributes)){
             return;
@@ -116,48 +197,91 @@ class CuxObject extends CuxBaseObject{
         }
     }
     
-    public function addError($field, $message){
+    /**
+     * Sets an error for a given attribute
+     * @param string $field
+     * @param string $message
+     */
+    public function addError(string $field, string $message){
         $this->_errors[$field] = $message;
         $this->_hasErrors = true;
     }
     
-    public function setErrors($errors) {
+    /**
+     * Multiple error setter
+     * @param type $errors
+     */
+    public function setErrors(array $errors) {
         foreach ($errors as $attribute => $error) {
             $this->addError($attribute, $error);
         }
     }
     
-    public function clearError($field){
+    /**
+     * Remove errors for a given attribute
+     * @param type $field
+     */
+    public function clearError(string $field){
         if ($this->hasError($attribute)) {
             $this->_errors[$attribute] = null;
             unset($this->_errors[$attribute]);
         }
     }
     
+    /**
+     * Removes all the errors
+     */
     public function clearErrors(){
         $this->_errors = array();
     }
     
+    /**
+     * Multiple getter for the class instance errors
+     * @return array
+     */
     public function getErrors(): array{
         return $this->_errors;
     }
     
-    public function hasError($field): bool{
+    /**
+     * Checks whether a given attribute has errors
+     * @param string $field
+     * @return bool
+     */
+    public function hasError(string $field): bool{
         return isset($this->_errors[$field]);
     }
     
+    /**
+     * Checks if any attribute has errors
+     * @return bool
+     */
     public function hasErrors(): bool{
         return $this->_hasErrors;
     }
     
-    public function getError($field){
+    /**
+     * Getter for a given attribute errors
+     * @param type $field
+     * @return mixed
+     */
+    public function getError(string $field){
         return $this->hasError($field) ? $this->_errors[$field] : false;
     }
 
-    public function rules(){
+    /**
+     * Use this method to setup validation rules for the public accessible component attributes
+     * @return array
+     */
+    public function rules(): array{
         return array();
     }
     
+    /**
+     * Validate a list/all public accessible component attributes
+     * @param array $fields
+     * @return bool
+     */
     public function validate(array $fields = array()): bool{
         $fields = array_flip($fields);
         $ret = true;
@@ -178,40 +302,80 @@ class CuxObject extends CuxBaseObject{
         return $ret;
     }
     
-    public function labels(){
+    /**
+     * Use this method to setup labels for the public accessible component attributes
+     * @return array
+     */
+    public function labels(): array{
         return array();
     }
     
-    public function getLabel($field){
+    /**
+     * Get the label for a given attribute
+     * @param string $field
+     * @return string
+     */
+    public function getLabel(string $field): string{
         if (!static::$_labels){
             static::$_labels = $this->labels();
         }
         return isset(static::$_labels[$field]) ? static::$_labels[$field] : $this->generateAttributeLabel($field);
     }
     
-    public function getAttributeLabel($attribute){
+    /**
+     * Alias for the "getLabel" method
+     * @param string $attribute
+     * @return string
+     */
+    public function getAttributeLabel(string $attribute): string{
         return $this->getLabel($attribute);
     }
     
-    public function getAttributeId($attribute){
+    /**
+     * Generate a valid HTML id string for a given attribute
+     * @param string $attribute
+     * @return string
+     */
+    public function getAttributeId(string $attribute): string{
 //        return CuxSlug::slugify(get_class($this)."_".$attribute);
         return $this->getShortName()."_".$attribute;
     }
     
-    public function getAttributeName($attribute){
+    /**
+     * Generate a valid HTML name string for a given attribute
+     * @param string $attribute
+     * @return string
+     */
+    public function getAttributeName(string $attribute): string{
 //        return CuxSlug::slugify(get_class($this))."[".CuxSlug::slugify($attribute)."]";
         return $this->getShortName()."[".$attribute."]";
     }
     
-    public function generateAttributeLabel($name) {
+    /**
+     * Generate a valid name for a given label
+     * @param string $name
+     * @return string
+     */
+    public function generateAttributeLabel(string $name): string {
         return ucwords(trim(strtolower(str_replace(array('-', '_', '.'), ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name)))));
     }
     
-    public function compareIgnoreCase($a, $b){
+    /**
+     * Compare two strings, case-insensitive
+     * @param string $a
+     * @param string $b
+     * @return bool
+     */
+    public function compareIgnoreCase(string $a, string $b): bool{
         return strtolower(trim($a)) == strtolower(trim($b));
     }
     
-    public function validEmailAddress($address){
+    /**
+     * Checks if a given string is a valid email address
+     * @param string $address
+     * @return mixed
+     */
+    public function validEmailAddress(string $address){
         return filter_var($address, FILTER_VALIDATE_EMAIL);
     }
     

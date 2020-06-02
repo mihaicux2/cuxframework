@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * CuxRequest class file
+ */
+
 namespace CuxFramework\components\request;
 use CuxFramework\utils\Cux;
 
@@ -16,18 +20,42 @@ use CuxFramework\utils\Cux;
 
 use CuxFramework\utils\CuxBaseObject;
 
+/**
+ * Simple class that handles HTTP request details
+ */
 class CuxRequest extends CuxBaseObject {
 
+    /**
+     * Current HTTP request path
+     * @var string
+     */
     private $_path;
+    
+    /**
+     * Current HTTP request parameters
+     * @var array
+     */
     private $_params;
+    
+    /**
+     * Current executing script name
+     * @var string
+     */
     private $_scriptName;
     
+    /**
+     * Setup instance parameters
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
         
         $this->preProcessRequest();
     }
 
+    /**
+     * Process the current HTTP request to store details
+     */
     private function preProcessRequest(){
         $uri = $this->getUri();
         $queryInRequest = strpos($uri, "?");
@@ -69,7 +97,7 @@ class CuxRequest extends CuxBaseObject {
     /**
      * Returns the detailed City information found in the GeoIP Database
      * 
-     * @param hostname The hostname or IP address whose record is to be looked-up.
+     * @param string $hostname The hostname or IP address whose record is to be looked-up.
      * @return array Informations about the city, country, etc. of the current visitor
      */
     public function getVisitorInfo(string $hostname = "") {
@@ -249,6 +277,10 @@ class CuxRequest extends CuxBaseObject {
         return $this->_params;
     }
     
+    /**
+     * Get PATH details about the current request
+     * @return string
+     */
     public function getPath(): string{
         
          try {
@@ -260,6 +292,10 @@ class CuxRequest extends CuxBaseObject {
         return $this->_path;
     }
     
+    /**
+     * Get MVC details about the current request (fallback: getPath)
+     * @return string
+     */
     public function getRoutePath(): string{
         try {
             $route = Cux::getInstance()->urlManager->getMatchedRoute();
@@ -270,6 +306,10 @@ class CuxRequest extends CuxBaseObject {
         return $this->getPath();
     }
     
+    /**
+     * Getter for the $_scriptName property
+     * @return string
+     */
     public function getScriptName(): string{
         return $this->_scriptName;
     }
@@ -283,6 +323,10 @@ class CuxRequest extends CuxBaseObject {
         return $_POST;
     }
     
+    /**
+     * Get details about the current HTTP request
+     * @return array
+     */
     public function getURLInfo(): array{
         return $params = array(
             "scheme" => $this->getServerValue("REQUEST_SCHEME"), // http, https
@@ -291,6 +335,10 @@ class CuxRequest extends CuxBaseObject {
         );
     }
     
+    /**
+     * Get the current application URL endpoint
+     * @return string
+     */
     public function getBaseURL(): string{
         $params = $this->getURLInfo();
         return $params["scheme"]."://".$params["serverName"].(!in_array($params["port"], array(80, 443)) ? (":".$params["port"]) : "");

@@ -1,50 +1,182 @@
 <?php
 
+/**
+ * Framework core component file
+ */
+
 namespace CuxFramework\utils;
 
 use CuxFramework\components\log\CuxLogger;
 
+/**
+ * This is the framework's main class and it's core component.
+ */
 class Cux extends CuxSingleton {
 
+    /**
+     * The framework version
+     * @var string
+     */
     public $version = "1.0.0";
+    
+    /**
+     * Running app name
+     * @var string
+     */
     public $appName = "Cux PHP Framework";
+    
+    /**
+     * Salt to be used by the encryption components
+     * @var string
+     */
     public $encryptionSalt = "klM1$%#@!F@#N.:]"; // random 16bytes salt. This should really be changed from the config file
+    
+    /**
+     * The app author
+     * @var array
+     */
     public $author = array(
         "name" => "Mihail Cuculici",
         "email" => "mihai.cuculici@gmail.com"
     );
+    
+    /**
+     * Set to true for debugging purposes. Disable debug for the production environment
+     * @var bool
+     */
     public $debug = false;
     
+    /**
+     * The default app language
+     * @var string
+     */
     public $language = "en";
     
+    /**
+     * The default app HTML charset
+     * @var string
+     */
     public $charset = "UTF-8";
     
+    /**
+     * A list of callbacks that can be used during  run-time
+     * Ex:
+     * .....
+     * "missingTranslation" => function($params){
+     *     echo "Translation missing: ";
+     *     print_r($params);
+     * }
+     * @var array
+     */
     public $events = array();
     
+    /**
+     * The list of components to be used by the framework.
+     * The list should include (and auto-loads if missing) components like "cache", "messages", "session", etc.
+     * @var array
+     */
     private $_components = array();
     
+    /**
+     * A list of callbacks that can be used before and after the actual run-time.
+     * Each of these functions receives the current date-time, in microseconds
+     * Ex:
+     * "behaviours" => array(
+     *     "beforeRun" => function($t){
+     *          $micro = sprintf("%06d", ($t - floor($t)) * 1000000);
+     *          $d = new \DateTime(date('Y-m-d H:i:s.' . $micro, $t));
+     *          echo "Start time:".$d->format("Y-m-d H:i:s.u");
+     *      },
+     *     "afterRun" => function($t){
+     *          $micro = sprintf("%06d", ($t - floor($t)) * 1000000);
+     *          $d = new \DateTime(date('Y-m-d H:i:s.' . $micro, $t));
+     *          echo "End time:".$d->format("Y-m-d H:i:s.u");
+     *     }
+     * @var array
+     */
     private $_behaviours = array();
 
+    /**
+     * The request start time in microseconds
+     * @var int
+     */
     private $startTime;
+    
+    /**
+     * The request end time in microseconds
+     * @var int
+     */
     private $endTime;
     
+    /**
+     * The current running module
+     * @var \CuxFramework\modules\cux\CuxModule
+     */
     private $_module;
+    
+    /**
+     * The current running controller
+     * @var \CuxFramework\modules\cux\controllers\CuxController 
+     */
     private $_controller;
+    
+    /**
+     * The curent action to be run by the current controller
+     * @var string
+     */
     private $_action;
+    
+    /**
+     * The (short) name of the current module
+     * @var string 
+     */
     private $_moduleName;
+    
+    /**
+     * The (short) name of the current controller
+     * @var string
+     */
     private $_controllerName;
+    
+    /**
+     * The (short) name of the current action
+     * @var string
+     */
     private $_actionName;
     
+    /**
+     * Checks if the app runs in Web or CLI mode
+     * @var bool 
+     */
     private $_console = false;
     
+    /**
+     * The list of application parameters ( to be used throughout the application )
+     * @var array
+     */
     private $_params = array();
     
+    /**
+     * Handler for the predefined $_events list
+     * @param string $eventName
+     * @param array $params
+     */
     public function raiseEvent($eventName, $params = array()){
         if (isset($this->events[$eventName])){
             $this->events[$eventName]($params);
         }
     }
     
+    /**
+     * Translates a given message using the "messages" component
+     * Ex:
+     *    Cux::translate("myCategory", "This text is translated by {user}", array("{user}" => "MihaiCux", "This text appears on the homepage");
+     * @param string $category The text's category
+     * @param string $message The message to be translated
+     * @param array $params The list of parameters for the text to be translated
+     * @param string $context
+     * @return string
+     */
     public static function translate($category, $message, $params = array(), $context = ""){
         
         $ref = static::getInstance();
@@ -61,38 +193,93 @@ class Cux extends CuxSingleton {
         return $message;
     }
     
+    /**
+     * Log messages with EMERGENCY level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function emergency($message, array $context = array()): bool {
         return static::log(CuxLogger::EMERGENCY, $message, $context);
     }
     
+    /**
+     * Log messages with ALERT level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function alert($message, array $context = array()): bool {
         return static::log(CuxLogger::ALERT, $message, $context);
     }
     
+    /**
+     * Log messages with CRITICAL level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function critical($message, array $context = array()): bool {
         return static::log(CuxLogger::CRITICAL, $message, $context);
     }
     
+    /**
+     * Log messages with ERROR level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function error($message, array $context = array()): bool {
         return static::log(CuxLogger::ERROR, $message, $context);
     }
     
+    /**
+     * Log messages with WARNING level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function warning($message, array $context = array()): bool {
         return static::log(CuxLogger::WARNING, $message, $context);
     }
     
+    /**
+     * Log messages with NOTICE level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function notice($message, array $context = array()): bool {
         return static::log(CuxLogger::NOTICE, $message, $context);
     }
     
+    /**
+     * Log messages with INFO level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function info($message, array $context = array()): bool {
         return static::log(CuxLogger::INFO, $message, $context);
     }
     
+    /**
+     * Log messages with DEBUG level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function debug($message, array $context = array()): bool {
         return static::log(CuxLogger::DEBUG, $message, $context);
     }
     
+    /**
+     * Logs messages with given level, using the defined "logger" components
+     * @param int $level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public static function log(int $level, string $message, array $context = array()): bool{
         $ret = true;
     
@@ -107,6 +294,10 @@ class Cux extends CuxSingleton {
         return $ret;
     }
     
+    /**
+     * Setup method for the framework's main component
+     * @param array $config
+     */
     public static function config(array $config) {
         $ref = static::getInstance();
         $ref->startTime = microtime(true);
@@ -136,22 +327,43 @@ class Cux extends CuxSingleton {
         
     }
     
-    public function isConsoleApp(){
+    /**
+     * Returns true if the application runs in CLI mode ( from the console )
+     * @return bool
+     */
+    public function isConsoleApp(): bool{
         return $this->_console;
     }
     
-    public function isWebApp(){
+    /**
+     * Returns true if the application runs under a web server
+     * @return bool
+     */
+    public function isWebApp(): bool{
         return !$this->_console;
     }
     
-    public function getParams(){
+    /**
+     * Returns the list of application parameters
+     * @return array
+     */
+    public function getParams(): array{
         return $this->_params;
     }
     
+    /**
+     * Returns a certain parameter the list of applications parameter
+     * @param string $paramName
+     * @return mixed
+     */
     public function getParam(string $paramName){
         return isset($this->_params[$paramName]) ? $this->_params[$paramName] : null;
     }
     
+    /**
+     * Just for fun :)
+     * @return string
+     */
     public function poweredBy(): string {
         $ret = "Cux PHP Framework";
         if ($this->version){
@@ -160,10 +372,18 @@ class Cux extends CuxSingleton {
         return $ret;
     }
     
+    /**
+     * Just for fun
+     * @return string
+     */
     public function copyright(): string {
         return "<a href='mailto:".$this->author["email"]."'>".$this->author["name"]."</a> ".date("Y");
     }
     
+    /**
+     * If missing from the application configuration, this method loads the default core components
+     * @param array $config
+     */
     public function loadDefaultComponents(array $config){
         if (!isset($config["components"]) || !isset($config["components"]["exceptionHandler"])){
             $this->loadComponent("exceptionHandler", array(
@@ -180,12 +400,12 @@ class Cux extends CuxSingleton {
                 "class" => 'CuxFramework\components\messages\CuxFileMessages'
             ));
         }
-        if (!isset($config["components"]) || !isset($config["components"]["traffic"])){
+        if ($this->isWebApp()){
+            if (!isset($config["components"]) || !isset($config["components"]["traffic"])){
             $this->loadComponent("traffic", array(
                 "class" => 'CuxFramework\components\traffic\CuxNullTraffic'
             ));
         }
-        if ($this->isWebApp()){
             if (!isset($config["components"]) || !isset($config["components"]["request"])){
                 $this->loadComponent("request", array(
                     "class" => 'CuxFramework\components\request\CuxRequest'
@@ -207,14 +427,22 @@ class Cux extends CuxSingleton {
                 ));
             }
         }
-        
         if (!isset($config["components"]) || !isset($config["components"]["user"])){
             $this->loadComponent("user", array(
                 "class" => 'CuxFramework\components\user\CuxUser'
             ));
         }
+        if (!isset($config["components"]) || !isset($config["components"]["session"])){
+            $this->loadComponent("session", array(
+                "class" => 'CuxFramework\components\session\CuxFileSession'
+            ));
+        }
     }
     
+    /**
+     * Application's main function. This loads the MVC login and executes the matched Module->Controller->Action
+     * @throws \Exception
+     */
     public function run(){
         $this->beforeRun();
         
@@ -265,33 +493,61 @@ class Cux extends CuxSingleton {
         $this->afterRun();
     }
     
-    private function loadModule($moduleName){
+    /**
+     * Loads the defined module in the $_module property
+     * @param string $moduleName
+     */
+    private function loadModule(string $moduleName){
         $module = ($this->isModuleRelative($moduleName)) ? $this->getFullyQualifiedModuleName($moduleName, true) : $this->getFullyQualifiedModuleName($moduleName);
         $moduleInstance = new $module();
         $this->_module = $moduleInstance;
     }
     
-    private function getFullyQualifiedModuleName($moduleName, $relative=false){
+    /**
+     * Returns the (namespace) location  for a given module
+     * @param string $moduleName
+     * @param bool $relative
+     * @return string
+     */
+    private function getFullyQualifiedModuleName(string $moduleName, bool $relative=false): string{
         return ($relative) ? "modules\\".$moduleName."\\".ucfirst($moduleName)."Module" : "CuxFramework\\modules\\".$moduleName."\\".ucfirst($moduleName)."Module";
     }
     
-    private function isModuleRelative($moduleName){
+    /**
+     * Checks if a module is application-dependent or part of the framework's core
+     * @param string $moduleName
+     * @return bool
+     */
+    private function isModuleRelative(string $moduleName): bool{
         $fullyQualifiedNameRelative = $this->getFullyQualifiedModuleName($moduleName, true);
         return (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxBaseObject"));
     }
     
-    public function moduleExists($moduleName){
+    /**
+     * Checks if a given module exista and can be loaded
+     * @param string $moduleName
+     * @return bool
+     */
+    public function moduleExists($moduleName): bool{
         $fullyQualifiedName = $this->getFullyQualifiedModuleName($moduleName);
         $fullyQualifiedNameRelative = $this->getFullyQualifiedModuleName($moduleName, true);
         return (class_exists($fullyQualifiedName) && is_subclass_of($fullyQualifiedName, "CuxFramework\utils\CuxBaseObject")) || (class_exists($fullyQualifiedNameRelative) && is_subclass_of($fullyQualifiedNameRelative, "CuxFramework\utils\CuxBaseObject"));
     }
     
+    /**
+     * Method executed before the MVC logic.
+     * Calls/executes the "beforeRun" behavior
+     */
     public function beforeRun(){
         if (isset($this->_behaviours["beforeRun"]) && !empty($this->_behaviours["beforeRun"])){
             $this->_behaviours["beforeRun"]($this->startTime);
         }
     }
 
+    /**
+     * Method executed after the MVC logic
+     * Calls/executes the "afterRun" behavior
+     */
     public function afterRun(){
         $this->endTime = microtime(true);
         if (isset($this->_behaviours["afterRun"]) && !empty($this->_behaviours["afterRun"])){
@@ -299,7 +555,12 @@ class Cux extends CuxSingleton {
         }
     }
     
-    public function loadComponent($cName, $config) {
+    /**
+     * Loads a given class as a framework component
+     * @param string $cName
+     * @param array $config
+     */
+    public function loadComponent(string $cName, array $config = array()) {
         if (!isset($config["params"])){
             $config["params"] = array();
         }
@@ -317,26 +578,51 @@ class Cux extends CuxSingleton {
         }
     }
 
-    public function hasComponent($name) {
+    /**
+     * Checks whether a given component is loaded in the framework's running instance
+     * @param string $name
+     * @return bool
+     */
+    public function hasComponent(string $name): bool {
         return isset($this->_components[$name]);
     }
     
-    public function getModule(): \CuxFramework\modules\cuxDefault\CuxDefaultModule{
+    /**
+     * Gets the current loaded MVC module
+     * @return \CuxFramework\modules\cux\CuxModule
+     */
+    public function getModule(): \CuxFramework\modules\cux\CuxModule{
         return $this->_module;
     }
     
-    public function getController(): \CuxFramework\modules\cuxDefault\controllers\CuxDefaultController{
+    /**
+     * Gets the current loaded MVC controller
+     * @return \CuxFramework\modules\cux\controllers\CuxController
+     */
+    public function getController(): \CuxFramework\modules\cux\controllers\CuxController{
         return $this->_controller;
     }
     
+    /**
+     * Gets the current loaded MVC action (with the "action" prefix)
+     * @return string
+     */
     public function getAction(): string{
         return $this->_action;
     }
     
+    /**
+     * Gets the current loaded MVC action (without the "action" prefix)
+     * @return string
+     */
     public function getActionName(): string{
         return $this->_actionName;
     }
     
+    /**
+     * Gets the list of parameters to that will be added to the current MVC action
+     * @return array
+     */
     public function getActionParams(): array{
         $controller = $this->getController();
         if ($controller){
@@ -345,6 +631,12 @@ class Cux extends CuxSingleton {
         return array();
     }
 
+    /**
+     * Magic getter for loaded components
+     * @param string $name
+     * @return mixed
+     * @throws \Exception
+     */
     public function __get(string $name) {
         if (isset($this->_components[$name])) {
             return $this->_components[$name];
@@ -356,17 +648,32 @@ class Cux extends CuxSingleton {
         }
     }
 
+    /**
+     * Get the framework's relative path
+     * @return string
+     */
     public function basePath(): string{
         return realpath(__DIR__.DIRECTORY_SEPARATOR."../../../"); // we are in the "vendor/mihaicux/cuxframework/src/CuxFramework/utils" folder
 //        return realpath("");
     }
     
+    /**
+     * HTTP header redirection
+     * @param string $location
+     * @param int $status
+     */
     public function redirect(string $location, int $status=302){
         header("Location: $location", true, $status);
         exit();
     }
  
-    public function timeEllapsed($dateTime, $full = true): string{
+    /**
+     * Calculates the elapsed time based on a given timestamp
+     * @param string $dateTime
+     * @param bool $full
+     * @return string
+     */
+    public function timeEllapsed(string $dateTime, $full = true): string{
         
         $ret = array();
         
@@ -421,6 +728,10 @@ class Cux extends CuxSingleton {
         
     }
     
+    /**
+     * HTTP header redirection to the previous page.
+     * Redirects to homepage ("/") if no previous page is found
+     */
     public function goBack(){
         if (($redirectLink = Cux::getInstance()->session->get("redirectLink")) !== FALSE && !is_null($redirectLink)) {
             Cux::getInstance()->session->set("redirectLink", null);

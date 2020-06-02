@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * CuxBaseClientScript abstract class file
+ */
+
 namespace CuxFramework\components\clientScript;
 
 use CuxFramework\utils\CuxBaseObject;
@@ -7,7 +11,7 @@ use CuxFramework\utils\Cux;
 use CuxFramework\components\html\CuxHTML;
 
 /**
- * Simple class used to manage all the JS and CSS scripts
+ * Simple base class used to manage all the JS and CSS scripts
  */
 abstract class CuxBaseClientScript extends CuxBaseObject {
     
@@ -16,43 +20,110 @@ abstract class CuxBaseClientScript extends CuxBaseObject {
     const POSITION_END = 2; // add scripts at the bottom of the <body> tag
     const POSITION_READY = 3; // add JS at the "document.ready" event
     
+    /**
+     * The list of JS files to be included in the resulting HTML page
+     * @var array
+     */
     protected $_jsFiles = array();
+    
+    /**
+     * The list of CSS files to be included in the resulting HTML page
+     * @var array
+     */
     protected $_cssFiles = array();
     
+    /**
+     * The list of CSS (<style> tags ) styles to be included in the resulting HTML page
+     * @var array
+     */
     protected $_styles = array();
+    
+    /**
+     * The list of JS (<script> tags ) scripts to be included in the resulting HTML page
+     * @var array
+     */
     protected $_scripts = array();
     
+    /**
+     * The list of available script loading positions (in the resulting HTML page)
+     * @var array
+     */
     protected static $_scriptPositions = null;
     
+    /**
+     * Setup class properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }
     
+    /**
+     * Get labels for the defined available script positions
+     * @return array
+     */
     public static function getScriptPositions(): array {
         if (is_null(static::$_scriptPositions)) {
             static::$_scriptPositions = array(
                 self::POSITION_HEAD => "head",
-                self::POSITION_BEGIN => "head",
-                self::POSITION_END => "head",
-                self::POSITION_READY => "head",
+                self::POSITION_BEGIN => "begin",
+                self::POSITION_END => "end",
+                self::POSITION_READY => "ready",
             );
         }
         return static::$_scriptPositions;
     }
     
+    /**
+     * Check if a given script position is valid
+     * @param int $position
+     * @return bool
+     */
     protected function checkPosition(int $position): bool {
         $scriptPositions = static::getScriptPositions();
         return isset($scriptPositions[$position]);
     }
     
+    /**
+     * Store a certain CSS style to be rendered at a given position in the resulting HTML page
+     * @param string $id The CSS content id
+     * @param string $cssContent The CSS itself
+     * @param int $position Where to render the CSS content
+     * @param $media Apply the CSS content to certain media types (i.e. "all", "print", etc.)
+     * @return bool True if registration is successfull
+     */
     abstract public function registerCSS(string $id, string $cssContent, int $position = self::POSITION_END, string $media = "all"): bool;
     
+    /**
+     * Store a certain JS script to be rendered at a given position in the resulting HTML page
+     * @param string $id The JS content id
+     * @param string $jsContent The javaScript itself
+     * @param int $position Where to render the JS content
+     * @return bool True if registration is successfull
+     */
     abstract public function registerJS(string $id, string $jsContent, int $position = self::POSITION_END): bool;
     
+    /**
+     * @param string $filePath The URL for the registered CSS file
+     * @param int $position Where to load the CSS file
+     * @param array $props A list of properties for the resulting HTML tag ( <style> )
+     * @return bool True if registration is successfull
+     */
     abstract public function registerCSSFile(string $filePath, int $position = self::POSITION_HEAD, array $props = array()): bool;
     
+    /**
+     * @param string $filePath The URL for the registered JS file
+     * @param int $position Where to load the JS file
+     * @param array $props A list of properties for the resulting HTML tag ( <script> )
+     * @return bool True if registration is successfull
+     */
     abstract public function registerJSFile(string $filePath, int $position = self::POSITION_HEAD, array $props = array()): bool;
     
+    /**
+     * Renders all the scripts (JS and CSS) for a certain HTML position
+     * @param int $position Where to load the content
+     * @return string The resulting HTML content
+     */
     protected function renderPart(int $position): string{
         if (!$this->checkPosition($position)) return "";
         
@@ -100,14 +171,35 @@ abstract class CuxBaseClientScript extends CuxBaseObject {
         
     }
     
+    /**
+     * Render all the scripts for the HEAD position
+     * @return string
+     */
     abstract public function renderHead(): string;
     
+    /**
+     * Render all the scripts for the BEGIN position
+     * @return string
+     */
     abstract public function renderBegin(): string;
     
+    /**
+     * Render all the scripts for the END position
+     * @return string
+     */
     abstract public function renderEnd(): string;
     
+    /**
+     * Render all the scripts for the READY position
+     * @return string
+     */
     abstract public function renderReady(): string;
     
+    /**
+     * Update a given HTML content, adding all the registered scripts in their corresponding positions
+     * @params $htmlOutput The HTML to be enriched by the existing scripts
+     * @return string The enriched HTML content
+     */
     abstract public function processOutput(string $htmlOutput): string;
     
 }

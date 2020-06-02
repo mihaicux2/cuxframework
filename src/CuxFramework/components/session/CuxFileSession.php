@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Class for the default PHP Session handler
+ */
+
 namespace CuxFramework\components\session;
 
 use CuxFramework\utils\CuxBaseObject;

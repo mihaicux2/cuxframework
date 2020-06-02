@@ -22,11 +22,11 @@ class {modelName} extends {baseModel}{
         return {pk};
     }
     
-    public function rules() {
+    public function rules(): array {
         return {rules};
     }
     
-    public function labels() {
+    public function labels(): array {
         return {labels};
     }
     

@@ -1,28 +1,68 @@
 <?php
 
+/**
+ * CuxDBObject abstract class file
+ */
+
 namespace CuxFramework\components\db;
 
 use CuxFramework\utils\Cux;
 use CuxFramework\utils\CuxObject;
 use PDO;
 
+/**
+ * Abstract class to be used as a base for the extending ActiveRecord classes
+ */
 abstract class CuxDBObject extends CuxObject {
 
     const HAS_ONE = 1; // current relation columns must match the related object's primary key
     const BELONGS_TO = 2; // current object primary key must match the related object's columns
     const HAS_MANY = 3; // current object primary key must match the related object's columns
 
+    /**
+     * A list of relations between different ActiveRecord classes (mappings for the Database structure)
+     * @var array
+     */
     protected $_relations = array();
+    
+    /**
+     * If defined, the loaded ActiveRecords will contain the defined required relation ActiveRecord objects
+     * @var array
+     */
     protected $_with = array();
+    
+    /**
+     * Flag to tell if the current ActiveRecord instance has a Database record or not
+     * @var bool
+     */
     protected $_isNewRecord = true;
 
+    /**
+     * Get the current ActiveRecord Database table name
+     */
     abstract public static function tableName(): string;
 
+    /**
+     * The list of database relations, as defined by the ActiveRecord setup
+     */
     abstract public function relations(): array;
 
+    /**
+     * Singleton behavior that disallows multiple instances of the same class to co-exist
+     * @var array
+     */
     private static $_instances = array();
+    
+    /**
+     * The Connection used when translating properties between the DataBase and the current ActiveRecord object
+     * @var \CuxFramework\components\db\PDOWrapper 
+     */
     private $dbConnection;
 
+    /**
+     * Magic method that is used for the object (de/)serialization
+     * @return array
+     */
     public function __sleep() {
         return array('_attributes', '_errors', '_hasErrors', '_relations', '_with', '_isNewRecord');
     }
@@ -38,11 +78,19 @@ abstract class CuxDBObject extends CuxObject {
         return $this->dbConnection;
     }
 
+    /**
+     * Setter for the DabaBase connection
+     * @param \CuxFramework\components\db\PDOWrapper $dbConnection
+     * @return $this
+     */
     public function setDBConnection(PDOWrapper $dbConnection) {
         $this->dbConnection = $dbConnection;
         return $this;
     }
 
+    /**
+     * Class constructor
+     */
     public function __construct() {
         $columnMap = $this->getTableSchema();
 
@@ -51,6 +99,10 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
 
+    /**
+     * Singleton implementation to prevent multiple instances of the same class to be loaded in the same time
+     * @return \CuxFramework\components\db\CuxDBObject
+     */
     final public static function getInstance(): CuxDBObject {
         $calledClass = get_called_class();
 
@@ -61,6 +113,12 @@ abstract class CuxDBObject extends CuxObject {
         return self::$_instances[$calledClass];
     }
 
+    /**
+     * Magic "getter" for the existing relations
+     * @param string $name
+     * @return mixed
+     * @throws \Exception
+     */
     public function __get(string $name) {
         try {
             return parent::__get($name);
@@ -72,6 +130,12 @@ abstract class CuxDBObject extends CuxObject {
         throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => get_class($this), "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
     }
 
+    /**
+     * Magic "setter" for the existing relations
+     * @param string $name
+     * @param mixed $value
+     * @throws \Exception
+     */
     public function __set(string $name, $value) {
         try {
             parent::__set($name, $value);
@@ -84,6 +148,11 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
 
+    /**
+     * Magic "check" for existing relations
+     * @param string $name
+     * @return boolean
+     */
     public function __isset(string $name) {
         if (!parent::__isset($name)) {
             return isset($this->_relations[$name]);
@@ -103,11 +172,21 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
 
+    /**
+     * Get the ActiveRecord class name for a given relation
+     * @param string $name
+     * @return string
+     */
     public function getRelationClassName(string $name): string {
         $relations = $this->relations();
         return isset($relations[$name]) ? $relations[$name]["class"] : null;
     }
 
+    /**
+     * Check if the given relation exists
+     * @param string $related
+     * @return bool
+     */
     public function hasRelation(string $related): bool {
         if (isset($this->_relations[$related])) {
             return true;
@@ -120,14 +199,27 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function setAttribute(string $attribute, $value): ?CuxObject {
+    /**
+     * Setter for attributes
+     * @param string $attribute
+     * @param type $value
+     * @return CuxObject
+     * @throws \Exception
+     */
+    public function setAttribute(string $attribute, $value): CuxObject {
         $columnMap = $this->getTableSchema();
         if (isset($columnMap["columns"][$attribute])) {
             return parent::setAttribute($attribute, $value);
         }
-        return null;
+        throw new \Exception(Cux::translate("core.errors", "Undefined property: {class}.{attribute}", array("{class}" => $className, "{attribute}" => $name), "Message shown when trying to access invalid class properties"), 503);
     }
 
+    /**
+     * Load the "_with" property in order to avoid lazy loading
+     * @param array $rels
+     * @return \CuxFramework\components\db\CuxDBObject
+     * @throws \Exception
+     */
     public function with(array $rels = null): CuxDBObject {
         if (is_null($rels) || empty($rels)) {
             return $this;
@@ -160,6 +252,11 @@ abstract class CuxDBObject extends CuxObject {
         return $this;
     }
 
+    /**
+     * Get the PDO type for existing database columns
+     * @param type $type
+     * @return int
+     */
     public function getPDOType($type): int {
         switch ($type) {
             case "integer":
@@ -173,6 +270,11 @@ abstract class CuxDBObject extends CuxObject {
         }
     }
 
+    /**
+     * Try to get a database record based on it's primary key value
+     * @param type $key
+     * @return \CuxFramework\components\db\CuxDBObject|null
+     */
     public function getByPk($key): ?CuxDBObject {
 
         $columnMap = $this->getTableSchema();
@@ -215,23 +317,46 @@ abstract class CuxDBObject extends CuxObject {
         return null;
     }
 
+    /**
+     * Check if the current ActiveRecord instance has a database record already associated
+     * @return bool
+     */
     public function isNewRecord(): bool {
         return $this->_isNewRecord;
     }
 
+    /**
+     * Get the database table structure for the current ActiveRecord
+     * @return array
+     */
     protected function getTableSchema(): array {
         return $this->getDbConnection()->getTableSchema($this->tableName());
     }
 
+    /**
+     * Get the database table columns for the current ActiveRecord
+     * @return array
+     */
     protected function getColumnMap(): array {
         return $this->getDbConnection()->getColumnMap($this->tableName());
     }
 
-    protected function quoteValue($name): string {
+    /**
+     * Quote a string value to avoid SQL injection
+     * @param string $name
+     * @return string
+     */
+    protected function quoteValue(string $name): string {
         return strpos($name, "'") !== false ? $name : "'" . $name . "'";
     }
 
-    public function getRelation($related) {
+    /**
+     * Get the relating ActiveRecord based on the existing database "relations"
+     * @param sting $related
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getRelation(string $related) {
         if (isset($this->_relations[$related])) {
             return $this->_relations[$related];
         } else {
@@ -317,7 +442,12 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    protected function getColumnsForQuery($alias = FALSE): array {
+    /**
+     * Get the list of columns to be gathered from the database
+     * @param bool $alias
+     * @return array
+     */
+    protected function getColumnsForQuery(bool $alias = FALSE): array {
         $columnMap = $this->getTableSchema();
         $cols2 = array_keys($columnMap["columns"]);
         $cols = array();
@@ -348,7 +478,13 @@ abstract class CuxDBObject extends CuxObject {
         return $cols;
     }
 
-    protected function insert($fields = array()): bool {
+    /**
+     * Adds a new database record
+     * @param array $fields
+     * @return bool
+     * @throws \Exception
+     */
+    protected function insert(array $fields = array()): bool {
         if (!$this->beforeInsert($fields))
             return false;
 
@@ -396,7 +532,13 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    protected function update($fields = array()): bool {
+    /**
+     * Updates a database record
+     * @param array $fields
+     * @return bool
+     * @throws \Exception
+     */
+    protected function update(array $fields = array()): bool {
         if (!$this->beforeUpdate($fields))
             return false;
 
@@ -458,10 +600,20 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function save($fields = array()): bool {
+    /**
+     * Insert/update a database record
+     * @param array $fields
+     * @return bool
+     */
+    public function save(array $fields = array()): bool {
         return $this->isNewRecord() ? $this->insert($fields) : $this->update($fields);
     }
 
+    /**
+     * Delete a database record
+     * @return bool
+     * @throws \Exception
+     */
     public function delete(): bool {
         if (!$this->beforeDelete())
             return false;
@@ -495,35 +647,68 @@ abstract class CuxDBObject extends CuxObject {
         return false;
     }
 
-    public function beforeInsert($fields = array()): bool {
+    /**
+     * Method called before the database insert
+     * @param array $fields
+     * @return bool
+     */
+    public function beforeInsert(array $fields = array()): bool {
         return true;
     }
 
-    public function afterInsert($fields = array()) {
+    /**
+     * Method called after the database insert
+     * @param array $fields
+     */
+    public function afterInsert(array $fields = array()) {
         $this->_isNewRecord = false;
     }
 
-    public function beforeUpdate($fields = array()): bool {
+    /**
+     * Method called before the database update
+     * @param array $fields
+     * @return bool
+     */
+    public function beforeUpdate(array $fields = array()): bool {
         return true;
     }
-
-    public function afterUpdate($fields = array()) {
+    
+    /**
+     * Method called after the database update
+     * @param array $fields
+     */
+    public function afterUpdate(array $fields = array()) {
         
     }
 
+    /**
+     * Method called before the database deletion
+     * @return bool
+     */
     public function beforeDelete(): bool {
         return true;
     }
 
+    /**
+     * Method called after the database deletion
+     */
     public function afterDelete() {
         
     }
 
+    /**
+     * Get the database table primary key(s) name(s)
+     * @return array
+     */
     public function getPkName(): array {
         $columnMap = $this->getTableSchema();
         return $columnMap["primaryKey"];
     }
 
+    /**
+     * Get the database table primary key(s) value(s)
+     * @return array
+     */
     public function getPk(): array {
         $columnMap = $this->getTableSchema();
         $pk = $columnMap["primaryKey"];
@@ -534,6 +719,11 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
+    /**
+     * Load a database record as ActiveRecord, based on a list of attributes
+     * @param array $attributes
+     * @return \CuxFramework\components\db\CuxDBObject|null
+     */
     public function findByAttributes(array $attributes): ?CuxDBObject {
 
         $conditions = array();
@@ -571,6 +761,11 @@ abstract class CuxDBObject extends CuxObject {
         return null;
     }
 
+    /**
+     * Load multiple database records as ActiveRecord, based on a list of attributes
+     * @param array $attributes
+     * @return array
+     */
     public function findAllByAttributes(array $attributes): array {
 
         $ret = array();
@@ -612,7 +807,9 @@ abstract class CuxDBObject extends CuxObject {
     }
 
     /**
-     * @param mixed $condition
+     * Load a database record as ActiveRecord, based on a given CuxDBCriteria
+     * @param \CuxFramework\components\db\CuxDBCriteria $crit
+     * @return \CuxFramework\components\db\CuxDBObject|null
      */
     public function findByCondition(CuxDBCriteria $crit = null): ?CuxDBObject {
 
@@ -659,6 +856,11 @@ abstract class CuxDBObject extends CuxObject {
         return null;
     }
 
+    /**
+     * Count the total database records based on a given CuxDBCriteria
+     * @param \CuxFramework\components\db\CuxDBCriteria $crit
+     * @return int
+     */
     public function countAllByCondition(CuxDBCriteria $crit): int {
         $ret = 0;
 
@@ -687,6 +889,11 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
+    /**
+     * Load multiple database records as ActiveRecord, based on a given CuxDBCriteria
+     * @param \CuxFramework\components\db\CuxDBCriteria $crit
+     * @return array
+     */
     public function findAllByCondition(CuxDBCriteria $crit = null): array {
 
         if (is_null($crit)) {
@@ -838,6 +1045,11 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
+    /**
+     * Load multiple database records as ActiveRecord, based on a given CuxDBCriteria
+     * @param \CuxFramework\components\db\CuxDBCriteria $crit
+     * @return array
+     */
     public function findAllByCondition2(CuxDBCriteria $crit = null): array {
 
         if (is_null($crit)) {
@@ -1025,6 +1237,10 @@ abstract class CuxDBObject extends CuxObject {
         return $ret;
     }
 
+    /**
+     * Reload the current ActiveRecord instance, based on it's database corresponding record
+     * @return \CuxFramework\components\db\CuxDBObject
+     */
     public function refresh(): CuxDBObject {
         if ($this->isNewRecord()) {
             return $this;
@@ -1037,6 +1253,13 @@ abstract class CuxDBObject extends CuxObject {
         return $this;
     }
 
+    /**
+     * Generate a key-valued hash array, based on a given CuxDBCriteria
+     * @param string $key
+     * @param string $val
+     * @param \CuxFramework\components\db\CuxDBCriteria $crit
+     * @return array
+     */
     public function arrayListByCondition(string $key, string $val, CuxDBCriteria $crit = null): array {
 
         if (is_null($crit)) {

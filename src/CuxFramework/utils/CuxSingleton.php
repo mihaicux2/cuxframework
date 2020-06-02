@@ -1,17 +1,38 @@
 <?php
 
+/**
+ * SIngleton class file
+ */
+
 namespace CuxFramework\utils;
 
+/**
+ * Class implementing the Singleton pattern 
+ */
 abstract class CuxSingleton {
 
+    /**
+     * The list of loaded classes instances
+     * @var array
+     */
     private static $_instances = array();
 
+    /**
+     * Protected constructor to prevent direct instantiation
+     */
     protected function __construct() {
         
     }
 
+    /**
+     * Metod to be implemented by extending classes
+     */
     abstract public static function config(array $config);
 
+    /**
+     * Singleton pattern instance call
+     * @return \CuxFramework\utils\CuxSingleton
+     */
     final public static function getInstance(): CuxSingleton {
         $calledClass = get_called_class();
 
@@ -22,15 +43,28 @@ abstract class CuxSingleton {
         return self::$_instances[$calledClass];
     }
 
+    /**
+     * Prevent instantiation via clone methods
+     * @throws \Exception
+     */
     private final function __clone() {
         throw new \Exception("Folosind Singleton, clonarea obiectelor este interzisa!", 503);
     }
 
+    /**
+     * Prevent instantiation via wake up  methods
+     * @throws \Exception
+     */
     private final function __wakeup() {
         throw new \Exception("Folosind Singleton, deserializarea obiectelor este interzisa!", 503);
     }
     
-    // AES 256 decrypt
+    /**
+     * Decrypts an encrypted string (AES-256)
+     * @param string $edata The encrypted data
+     * @param string $password The encryption key
+     * @return string
+     */
     protected function decrypt($edata, $password) {
         $data = base64_decode($edata);
         $salt = substr($data, 0, 16);
@@ -51,7 +85,12 @@ abstract class CuxSingleton {
         return unserialize(openssl_decrypt($ct, 'AES-256-CBC', $key, true, $iv));
     }
 
-    // AES 256 encrypt
+    /**
+     * Encrypts a given plain string (AES-256)
+     * @param string $data The data to be encrypted
+     * @param type $password The encryption key
+     * @return string
+     */
     protected function encrypt($data, $password) {
         
         $data = serialize($data);

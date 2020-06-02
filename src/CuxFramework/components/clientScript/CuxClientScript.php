@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * CuxClientScript class file
+ */
+
 namespace CuxFramework\components\clientScript;
 
 use CuxFramework\utils\CuxBaseObject;

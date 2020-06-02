@@ -1,13 +1,24 @@
 <?php
 
+/**
+ * CuxExceptionHandler class file
+ */
+
 namespace CuxFramework\components\exception;
 
 use CuxFramework\utils\Cux;
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\components\log\CuxLogger;
 
+/**
+ * PHP Error/Exception handler
+ */
 class CuxExceptionHandler extends CuxBaseObject{
     
+    /**
+     * Setup class instance properties & error&exception handlers
+     * @param array $config The list of class instance properties to be set
+     */
     public function config(array $config) {
         parent::config($config);
         
@@ -16,6 +27,15 @@ class CuxExceptionHandler extends CuxBaseObject{
         
     }
     
+    /**
+     * Error handler
+     * @param int $code The error code
+     * @param string $message The error message
+     * @param string $file The file that triggered the error
+     * @param int $line The line in the file that triggered the error
+     * @return mixed
+     * @throws \ErrorException
+     */
     public function handleError(int $code, string $message, string $file, int $line){
         if (!(error_reporting() & $code)){
             return null;
@@ -73,7 +93,10 @@ class CuxExceptionHandler extends CuxBaseObject{
         throw new \ErrorException($prefix.$message, 504, $code, $file, $line);
     }
     
-    // also TypeError & other PHP data types
+    /**
+     * Handle all the errors/exceptions raised/thrown by the running code
+     * @param mixed (Exception, TypeError, etc.) $ex
+     */
     public function handleException(/*\Exception*/ $ex){
         
         http_response_code((int)$ex->getCode());
