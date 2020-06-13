@@ -1,9 +1,22 @@
 <?php
 
+/**
+ * CuxDBTraffic class file
+ * 
+ * @package Components
+ * @subpackage PDF
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\pdf;
 
 use CuxFramework\utils\CuxBaseObject;
 
+/**
+ * Simple class that acts as a simple MPDF wrapper
+ */
 class CuxPdf extends CuxBaseObject {
     
     // mode
@@ -133,6 +146,10 @@ class CuxPdf extends CuxBaseObject {
      */
     private $_mpdf;
     
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
         
@@ -167,6 +184,13 @@ class CuxPdf extends CuxBaseObject {
         
     }
     
+    /**
+     * Generate a PDF file based on the input arguments
+     * @param string $content The HTML content to be converted
+     * @param string $file The generated PDF file name 
+     * @param type $dest Where to store/send the generated file
+     * @return mixed
+     */
     public function output(string $content = '', string $file = '', $dest = self::DEST_BROWSER){
         
         if (!empty($this->cssFile) || !empty($this->cssInline)) {

@@ -1,7 +1,14 @@
 <?php
 
 /**
- * CuxDBObject abstract class file
+ * CuxDBObject class file
+ * 
+ * @package Components
+ * @subpackage DB
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ * 
  */
 
 namespace CuxFramework\components\db;
@@ -160,6 +167,11 @@ abstract class CuxDBObject extends CuxObject {
         return true;
     }
 
+    /**
+     * Magic method to delete a given relation
+     * @param string $name
+     * @throws \Exception
+     */
     public function __unset(string $name) {
         try {
             parent::__unset($name);
@@ -276,7 +288,7 @@ abstract class CuxDBObject extends CuxObject {
      * @param type $key
      * @return \CuxFramework\components\db\CuxDBObject|null
      */
-    public function getByPk($key): ?CuxDBObject {
+    public function getByPk($key) {
 
         $columnMap = $this->getTableSchema();
         $pk = $columnMap["primaryKey"];
@@ -725,7 +737,7 @@ abstract class CuxDBObject extends CuxObject {
      * @param array $attributes
      * @return \CuxFramework\components\db\CuxDBObject|null
      */
-    public function findByAttributes(array $attributes): ?CuxDBObject {
+    public function findByAttributes(array $attributes) {
 
         $conditions = array();
         foreach ($attributes as $column => $value) {
@@ -812,7 +824,7 @@ abstract class CuxDBObject extends CuxObject {
      * @param \CuxFramework\components\db\CuxDBCriteria $crit
      * @return \CuxFramework\components\db\CuxDBObject|null
      */
-    public function findByCondition(CuxDBCriteria $crit = null): ?CuxDBObject {
+    public function findByCondition(CuxDBCriteria $crit = null) {
 
         if (is_null($crit)) {
             $crit = new CuxDBCriteria();

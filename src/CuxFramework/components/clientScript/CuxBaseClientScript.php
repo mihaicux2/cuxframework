@@ -2,6 +2,12 @@
 
 /**
  * CuxBaseClientScript abstract class file
+ * 
+ * @package Components
+ * @subpackage ClientScript
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
  */
 
 namespace CuxFramework\components\clientScript;
@@ -104,6 +110,7 @@ abstract class CuxBaseClientScript extends CuxBaseObject {
     abstract public function registerJS(string $id, string $jsContent, int $position = self::POSITION_END): bool;
     
     /**
+     * Register a new CSS file that will be included in the generated HTML layout.
      * @param string $filePath The URL for the registered CSS file
      * @param int $position Where to load the CSS file
      * @param array $props A list of properties for the resulting HTML tag ( <style> )
@@ -112,6 +119,7 @@ abstract class CuxBaseClientScript extends CuxBaseObject {
     abstract public function registerCSSFile(string $filePath, int $position = self::POSITION_HEAD, array $props = array()): bool;
     
     /**
+     * Register a new JS file that will be included in the generated HTML layout.
      * @param string $filePath The URL for the registered JS file
      * @param int $position Where to load the JS file
      * @param array $props A list of properties for the resulting HTML tag ( <script> )

@@ -1,10 +1,23 @@
 <?php
 
+/**
+ * CuxTraffic abstract class file
+ * 
+ * @package Components
+ * @subpackage Traffic
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\traffic;
 
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 
+/**
+ * Abstract class that serves as a starting point for storing all the website requests
+ */
 abstract class CuxTraffic extends CuxBaseObject {
     
     /**
@@ -13,12 +26,24 @@ abstract class CuxTraffic extends CuxBaseObject {
      */
     public $ignoredIPs = array();
     
+    /**
+     * If set to true, ignore (do not store/process) AJAX requests
+     * @var bool
+     */
     public $ignoreAjax = true;
     
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }
  
+    /**
+     * Get details about the current website visitor: user id, request date, user IP, user country, request body, etc.
+     * @return array
+     */
     public function getVisitorsInfo(){
         $visitorInfo = Cux::getInstance()->request->getVisitorInfo();
         if (is_null($visitorInfo)) {
@@ -62,10 +87,18 @@ abstract class CuxTraffic extends CuxBaseObject {
         );
     }
     
+    /**
+     * Check if the current request should be ignored ( not processed/stored)
+     * @return bool
+     */
     public function ignoreRequest(){
         return ((Cux::getInstance()->request->isAjax() && $this->ignoreAjax) || in_array(Cux::getInstance()->request->getIp(), $this->ignoredIPs));
     }
     
+    /**
+     * Abstract method that should be implemented by the extending classes
+     * Process/store current request details
+     */
     abstract public function logRequest();
     
 }

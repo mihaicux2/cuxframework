@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * CuxHTML class file
+ * 
+ * @package Components
+ * @subpackage HTML
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\html;
 
 use CuxFramework\utils\CuxBaseObject;
@@ -44,6 +54,10 @@ class CuxHTML extends CuxBaseObject {
         "track" => 1
     ];
 
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }

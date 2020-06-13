@@ -1,4 +1,13 @@
 <?php
+/**
+ * CuxExporter class file
+ * 
+ * @package Components
+ * @subpackage Export
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
 
 namespace CuxFramework\components\export;
 
@@ -16,16 +25,44 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\CuxBase;
 
+/**
+ * Class used as a minimum wrapper for the Spout EXCEL document writer
+ */
 class CuxExporter extends CuxBaseObject {
 
+    /**
+     * Excel style for simple bordered data
+     * @var Box\Spout\Common\Entity\Style 
+     */
     private static $_borderedStyle;
+    
+    /**
+     * Excel style for ERROR data
+     * @var Box\Spout\Common\Entity\Style
+     */
     private static $_errorStyle;
+    
+    /**
+     * Excel style for HEADER data
+     * @var Box\Spout\Common\Entity\Style
+     */
     private static $_headerStyle;
 
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }
 
+    /**
+     * Generate an EXCEL file writer
+     * @param string $fileName
+     * @param string $type
+     * @param bool $directDownload
+     * @return WriterMultiSheetsAbstract
+     */
     public function createWriter(string $fileName, string $type = Type::XLSX, bool $directDownload = true): WriterMultiSheetsAbstract {
         $writer = WriterFactory::createFromType(Type::XLSX);
         if ($directDownload) {
@@ -36,6 +73,10 @@ class CuxExporter extends CuxBaseObject {
         return $writer;
     }
 
+    /**
+     * Getter for the $_borderdStyle property
+     * @return Style
+     */
     public function getBorderedStyle(): Style {
         if (is_null(static::$_borderedStyle)) {
             $border = (new BorderBuilder())
@@ -54,6 +95,10 @@ class CuxExporter extends CuxBaseObject {
         return static::$_borderedStyle;
     }
 
+    /**
+     * Getter for the $_errorStyle property
+     * @return Style
+     */
     public function getErrorStyle(): Style {
         if (is_null(static::$_errorStyle)) {
             $border = (new BorderBuilder())
@@ -75,6 +120,10 @@ class CuxExporter extends CuxBaseObject {
         return static::$_errorStyle;
     }
     
+    /**
+     * Getter for the $_headerStyle property
+     * @return Style
+     */
     public function getHeaderStyle(): Style {
         if (is_null(static::$_headerStyle)){
             $border = (new BorderBuilder())
@@ -94,6 +143,12 @@ class CuxExporter extends CuxBaseObject {
         return static::$_headerStyle;
     }
 
+    /**
+     * Create a new EXCEL row, using the provided cell data
+     * @param array $rowData
+     * @param Style $style
+     * @return type
+     */
     public function createRowFromArray(array $rowData = array(), Style $style = null) {
         return WriterEntityFactory::createRowFromArray($rowData, $style);
     }

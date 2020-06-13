@@ -1,12 +1,29 @@
 <?php
 
+/**
+ * CuxDBTraffic class file
+ * 
+ * @package Components
+ * @subpackage Traffic
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\traffic;
 
 use CuxFramework\utils\Cux;
 use CuxFramework\models\WebTraffic;
 
+/**
+ * Simple class that stores the current request details in the database
+ */
 class CuxDBTraffic extends CuxTraffic {
 
+    /**
+     * Process/store current request details
+     * Saves request details in the database
+     */
     public function logRequest(){
         
         if ($this->ignoreRequest())

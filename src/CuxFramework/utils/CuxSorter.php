@@ -1,32 +1,91 @@
 <?php
 
+/**
+ * CuxSorter class file
+ * 
+ * @package Utils
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\utils;
 
 use CuxFramework\utils\CuxObject;
 use CuxFramework\components\db\CuxDBCriteria;
 use CuxFramework\components\html\CuxHTML;
 
+/**
+ * Class that can be used to setup the sorting criteria ( CuxFramework\components\db\CuxDBCriteria object ) for a given ActiveRecord model ( CuxFramework\utils\CuxObject )
+ */
 class CuxSorter {
 
+    /**
+     * Base model for the sorting setup
+     * @var CuxFramework\utils\CuxObject
+     */
     private $_model;
+    
+    /**
+     * The resulting DB sorting criteria
+     * @var CuxFramework\components\db\CuxDBCriteria 
+     */
     private $_crit;
+    
+    /**
+     * The $_GET parameter to be used for the ( to be- ) generated sort links
+     * @var string
+     */
     private $_sortParam = "sort";
-    private $_sortField;
-    private $_sortOrder;
+//    private $_sortField;
+//    private $_sortOrder;
+    
+    /**
+     * Initial sort is based on this value
+     * @var string 
+     */
     private $_defaultSortField;
+    
+    /**
+     * Initial sort order is based in this value. This should be "ASC" or "DESC"
+     * @var string
+     */
     private $_defaultSortOrder;
+    
+    /**
+     * The list of fields that can stand as a sorting criteria
+     * @var arrary
+     */
     private $_sortFields = array();
+    
+    /**
+     * Flag to tell whether multi-field sorting is supported/allowed
+     * @var bool
+     */
     private $_multiSort = false;
 
+    /**
+     * Class constructor.
+     * Initial instance setup and setter for the $_model property
+     * @param CuxObject $model
+     */
     public function __construct(CuxObject $model) {
         $this->_model = $model;
         $this->setSortFields();
     }
 
+    /**
+     * Setter for the $_multiSort property
+     * @param bool $multiSort
+     */
     public function setMultiSort(bool $multiSort) {
         $this->_multiSort = $multiSort;
     }
 
+    /**
+     * Setter for the $_sortFields property
+     * @param array $sortFields
+     */
     public function setSortFields(array $sortFields = null) {
         if (is_null($sortFields)) { // set the fields priovided by the model
             $attributes = $this->_model->getAttributes();
@@ -43,6 +102,10 @@ class CuxSorter {
         }
     }
 
+    /**
+     * Get the list of currently applied sorting criteria
+     * @return array
+     */
     private function getCrtSortDetails() {
         $params = Cux::getInstance()->request->getParams();
         $sort = isset($params[$this->_sortParam]) ? $params[$this->_sortParam] : array();
@@ -79,6 +142,12 @@ class CuxSorter {
         return $ret;
     }
 
+    /**
+     * Setter for the $_defaultSortFIeld and $_defaultSortOrder properties
+     * @param string $sortField
+     * @param string $sortOrder
+     * @return boolean Return true if the provided parameters are valid ( i.e. found in the list of $_sortFields )
+     */
     public function setDefaultSortOrder(string $sortField, string $sortOrder) {
         if (isset($this->_sortFields[$sortField])) {
             $this->_defaultSortField = $sortField;
@@ -88,10 +157,18 @@ class CuxSorter {
         return false;
     }
 
+    /**
+     * Setter for the $_sortParam property
+     * @param string $sortParam
+     */
     public function setSortParam(string $sortParam) {
-        $this->_sortparam = $sortParam;
+        $this->_sortParam = $sortParam;
     }
 
+    /**
+     * Using the current list of sorting criteria, update the DBCriteria object
+     * @param CuxDBCriteria $criteria
+     */
     public function applyCriteria(CuxDBCriteria &$criteria) {
         $this->_crit = $criteria;
 
@@ -111,6 +188,12 @@ class CuxSorter {
         }
     }
 
+    /**
+     * Generate a link based on a given field
+     * @param string $field The field/property to be used as sorting criteria
+     * @param string $content The text to be displayed for the generated link
+     * @return string
+     */
     public function sortLink(string $field, string $content) {
 
         if (!isset($this->_sortFields[$field])) {

@@ -1,13 +1,34 @@
 <?php
 
+/**
+ * CuxFileTraffic class file
+ * 
+ * @package Components
+ * @subpackage Traffic
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\traffic;
 
 use CuxFramework\utils\CuxBase;
 
+/**
+ * Simple class that stores the current request details in a file
+ */
 class CuxFileTraffic extends CuxTraffic {
     
+    /**
+     * The file that will store the request details
+     * @var string
+     */
     public $logFile = false;
     
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
         
@@ -16,6 +37,10 @@ class CuxFileTraffic extends CuxTraffic {
         }
     }
 
+    /**
+     * Process/store current request details
+     * Saves request details in a file
+     */
     public function logRequest(){  
         
         if ($this->ignoreRequest())

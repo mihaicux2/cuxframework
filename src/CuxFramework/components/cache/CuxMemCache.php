@@ -2,6 +2,12 @@
 
 /**
  * CuxMemCache class file
+ * 
+ * @package Components
+ * @subpackage Cache
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
  */
 
 namespace CuxFramework\components\cache;
@@ -71,8 +77,23 @@ use CuxFramework\utils\Cux;
  */
 class CuxMemCache extends CuxCache {
 
+    /**
+     * Instance of the Memcache object
+     * @var Memcache 
+     */
     private $_memcache;
     
+    /**
+     * The list of Memcache servers, defined with "host" and "port" properties
+     * @var array
+     */
+    protected $servers = array();
+    
+    /**
+     * Setup object instance properties
+     * @param array $config
+     * @throws \Exception
+     */
     public function config(array $config) {
         parent::config($config);
         $extension = "memcache";

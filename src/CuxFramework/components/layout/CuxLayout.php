@@ -1,4 +1,13 @@
 <?php
+/**
+ * CuxLayout class file
+ * 
+ * @package Components
+ * @subpackage Layout
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
 
 namespace CuxFramework\components\layout;
 
@@ -7,30 +16,86 @@ use CuxFramework\utils\CuxBase;
 use CuxFramework\utils\Cux;
 use Composer;
 
+/**
+ * Base class that can be used to handle content rendering
+ */
 class CuxLayout extends CuxBaseObject {
 
+    /**
+     * The current Module
+     * @var string
+     */
     private $_moduleName;
+    
+    /**
+     * The current Controller
+     * @var string
+     */
     private $_controllerName;
+    
+    /**
+     * The location of existing view files
+     * @var string 
+     */
     public $viewsFolder = "views";
+    
+    /**
+     * Default layout file
+     * @var string
+     */
     public $layoutName = "main";
+    
+    /**
+     * The location of existing layout files
+     * @var string
+     */
     public $layoutsFolder = "layouts";
+    
+    /**
+     * The extension for the existing view files
+     * @var string
+     */
     public $viewExtension = ".php";
+    
+    /**
+     * To be used for the HTML page title
+     * @var string
+     */
     public $pageTitle = "";
 
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }
 
+    /**
+     * Setter for the $_moduleName property
+     * @param string $moduleName
+     * @return \CuxFramework\components\layout\CuxLayout
+     */
     public function setModuleName(string $moduleName): CuxLayout {
         $this->_moduleName = $moduleName;
         return $this;
     }
 
+    /**
+     * Setter for the $_controllerName property
+     * @param string $controllerName
+     * @return \CuxFramework\components\layout\CuxLayout
+     */
     public function setControllerName(string $controllerName): CuxLayout {
         $this->_controllerName = $controllerName;
         return $this;
     }
 
+    /**
+     * Setter for the $pageTitle property
+     * @param string $title
+     * @return \CuxFramework\components\layout\CuxLayout
+     */
     public function setPageTitle(string $title): CuxLayout {
         $appName = Cux::getInstance()->appName;
         if ($appName) {
@@ -41,6 +106,11 @@ class CuxLayout extends CuxBaseObject {
         return $this;
     }
 
+    /**
+     * Setter for the $layoutName property
+     * @param string $layoutName
+     * @return \CuxFramework\components\layout\CuxLayout
+     */
     public function setLayout(string $layoutName): CuxLayout {
         $this->layoutName = $layoutName;
         return $this;
@@ -137,9 +207,17 @@ class CuxLayout extends CuxBaseObject {
         return $realPath;
     }
 
-    public function render(string $name, array $params = array(), bool $includeScripts = true): string {
+    /**
+     * Full render for a given view ( based on the current $layoutName ), using the provided arguments
+     * @param string $viewName The name of the view to be rendered
+     * @param array $params The list of parameters to be used by/sent to the view file
+     * @param bool $includeScripts Flag to tell the renderer to process the output or not (i.e. include CSS and JS scripts and files )
+     * @return string
+     * @throws \Exception
+     */
+    public function render(string $viewName, array $params = array(), bool $includeScripts = true): string {
         $layoutPath = $this->viewsFolder . DIRECTORY_SEPARATOR . $this->layoutsFolder . DIRECTORY_SEPARATOR . $this->layoutName . $this->viewExtension;
-        $content = $this->renderPartial($name, $params, false);
+        $content = $this->renderPartial($viewName, $params, false);
         $pageTitle = $this->pageTitle;
         ob_start();
         ob_implicit_flush(false);
@@ -164,6 +242,14 @@ class CuxLayout extends CuxBaseObject {
         return $output;
     }
 
+    /**
+     * Render a given view, using the provided arguments
+     * @param string $viewName The name of the view to be rendered
+     * @param array $params The list of parameters to be used by/sent to the view file
+     * @param bool $includeScripts Flag to tell the renderer to process the output or not (i.e. include CSS and JS scripts and files )
+     * @return string
+     * @throws \Exception
+     */
     public function renderPartial(string $viewName, array $params = array(), bool $includeScripts = true): string {
 
         $realPath = $this->getViewRealPath($viewName);

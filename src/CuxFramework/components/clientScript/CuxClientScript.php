@@ -2,6 +2,12 @@
 
 /**
  * CuxClientScript class file
+ * 
+ * @package Components
+ * @subpackage ClientScript
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
  */
 
 namespace CuxFramework\components\clientScript;
@@ -15,22 +21,46 @@ use CuxFramework\components\html\CuxHTML;
  */
 class CuxClientScript extends CuxBaseClientScript {
 
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);        
     }
 
-    private function renderCSSFile(string $filePath, int $position = self::POSITION_HEAD, array $props = array()): string {
+    /**
+     * Render the HTML "link" tag, using the provided arguments
+     * @param string $filePath The URL of the actual CSS file
+     * @param array $props The list of HTML properties for the ( to be- ) generated "link" tag
+     * @return string
+     */
+    private function renderCSSFile(string $filePath, array $props = array()): string {
         $props["rel"] = "stylesheet";
         $props["href"] = $filePath;
         return CuxHTML::tag("link", "", $props);
     }
     
-    private function renderJSFile(string $filePath, int $position = self::POSITION_HEAD, array $props = array()): string {
+    /**
+     * Render the HTML "script" tag, using the provided arguments
+     * @param string $filePath The URL of the actual JS file
+     * @param array $props The list of HTML properties for the ( to be- ) generated "script" tag
+     * @return string
+     */
+    private function renderJSFile(string $filePath, array $props = array()): string {
         $props["type"] = "text/javascript";
         $props["src"] = $filePath;
         return CuxHTML::tag("script", "", $props);
     }
     
+    /**
+     * Store a certain CSS style to be rendered at a given position in the resulting HTML page
+     * @param string $id The CSS content id
+     * @param string $cssContent The CSS itself
+     * @param int $position Where to render the CSS content
+     * @param $media Apply the CSS content to certain media types (i.e. "all", "print", etc.)
+     * @return bool True if registration is successfull
+     */
     public function registerCSS(string $id, string $cssContent, int $position = self::POSITION_END, string $media = "all"): bool {
         
         if (!$this->checkPosition($position))
@@ -49,6 +79,13 @@ class CuxClientScript extends CuxBaseClientScript {
         return true;
     }
 
+    /**
+     * Store a certain JS script to be rendered at a given position in the resulting HTML page
+     * @param string $id The JS content id
+     * @param string $jsContent The javaScript itself
+     * @param int $position Where to render the JS content
+     * @return bool True if registration is successfull
+     */
     public function registerJS(string $id, string $jsContent, int $position = self::POSITION_END): bool {
 
         if (!$this->checkPosition($position))
@@ -79,7 +116,7 @@ class CuxClientScript extends CuxBaseClientScript {
             $this->_cssFiles[$position] = array();
         }
 
-        $this->_cssFiles[$position][] = $this->renderCSSFile($filePath, $position, $props);
+        $this->_cssFiles[$position][] = $this->renderCSSFile($filePath, $props);
 
         return true;
     }
@@ -101,27 +138,48 @@ class CuxClientScript extends CuxBaseClientScript {
             $this->_jsFiles[$position] = array();
         }
 
-        $this->_jsFiles[$position][] = $this->renderJSFile($filePath, $position, $props);
+        $this->_jsFiles[$position][] = $this->renderJSFile($filePath, $props);
 
         return true;
     }
     
+    /**
+     * Render all the scripts (CSS and JS) assigned for the HTML  head DOM part ( <head>list of scripts</head> )
+     * @return string
+     */
     public function renderHead(): string{
         return $this->renderPart(self::POSITION_HEAD);
     }
     
+    /**
+     * Render all the scripts (CSS and JS) assigned for the HTML body DOM part ( <body>list of scripts, OTHER HTML elements</body> )
+     * @return string
+     */
     public function renderBegin(): string{
         return $this->renderPart(self::POSITION_BEGIN);
     }
     
+    /**
+     * Render all the scripts (CSS and JS) assigned at the end of the HTML body DOM part ( <body>OTHER HTML elements, list of scripts</body> )
+     * @return string
+     */
     public function renderEnd(): string{
         return $this->renderPart(self::POSITION_END);
     }
     
+    /**
+     * Renders all the scripts (JS only) assigned at the DOM ready event ( <script>jQuery(document).ready(function(){ .... JS scripts })</script> )
+     * @return string
+     */
     public function renderReady(): string{
         return $this->renderPart(self::POSITION_READY);
     }
     
+    /**
+     * Process assigned scripts and append them to the existing HTML document
+     * @param string $htmlOutput The unprocessed HTML
+     * @return string
+     */
     public function processOutput(string $htmlOutput): string{
         $htmlOutput = str_ireplace("<head>", "<head>\n".$this->renderHead(), $htmlOutput);
         $htmlOutput = str_ireplace("<body>", "<body>\n".$this->renderBegin(), $htmlOutput);

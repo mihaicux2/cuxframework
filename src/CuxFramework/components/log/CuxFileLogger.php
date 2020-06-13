@@ -1,14 +1,40 @@
 <?php
 
+/**
+ * CuxFileLogger class file
+ * 
+ * @package Components
+ * @subpackage Log
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\log;
 
 use CuxFramework\utils\CuxBase;
 
+/**
+ * PSR-4 logging class that stores messages in text files
+ */
 class CuxFileLogger extends CuxLogger {
     
-    public $logFile = false;
+    /**
+     * Where to store log messages
+     * @var string
+     */
+    public $logFile = "";
+    
+    /**
+     * The directory for the stored log messages
+     * @var string
+     */
     public $logDir = "runtime/logs";
     
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
         
@@ -23,6 +49,14 @@ class CuxFileLogger extends CuxLogger {
         }
     }
 
+    /**
+     * 
+     * Log a message with a given logging level
+     * @param int $level The logging level
+     * @param string $message The message to be logged
+     * @param array $context The context for the message to be logged
+     * @return bool
+     */
     public function log(int $level, string $message, array $context = array()): bool{
         if ($this->logLevel & $level){
             switch ($level){

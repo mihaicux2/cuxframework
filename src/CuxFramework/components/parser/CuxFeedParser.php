@@ -1,17 +1,43 @@
 <?php
 
+/**
+ * CuxFeedParser class file
+ * 
+ * @package Components
+ * @subpackage Parser
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\parser;
 
 use CuxFramework\utils\CuxBaseObject;
 
+/**
+ * Simple class that can be used to parse and process RSS feeds
+ */
 class CuxFeedParser extends CuxBaseObject {
     
+    /**
+     * A list of items/posts from a given URL/Path
+     * @var array
+     */
     private $_posts = array();
     
+    /**
+     * Setup the object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }
     
+    /**
+     * Try to parse and process a given RSS feed
+     * @param string $urlOrPath The URL or file path for the feed
+     * @return bool
+     */
     function parse(string $urlOrPath): bool {
         
         if (!($dom = simplexml_load_file($urlOrPath, "SimpleXMLElement", LIBXML_NOCDATA))){
@@ -52,6 +78,10 @@ class CuxFeedParser extends CuxBaseObject {
         
     }
     
+    /**
+     * Getter for the $_posts property
+     * @return array
+     */
     public function getPosts(){
         return $this->_posts;
     }

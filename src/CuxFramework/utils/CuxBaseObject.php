@@ -2,6 +2,11 @@
 
 /**
  * Base class for any extending classes to be instantiated
+ * 
+ * @package Utils
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
  */
 
 namespace CuxFramework\utils;
@@ -27,7 +32,7 @@ abstract class CuxBaseObject {
      * @param string $password The encryption key
      * @return string
      */
-    protected function decrypt($edata, $password) {
+    protected function decrypt(string $edata, string $password) {
         $data = base64_decode($edata);
         $salt = substr($data, 0, 16);
         $ct = substr($data, 16);

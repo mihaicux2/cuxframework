@@ -2,6 +2,12 @@
 
 /**
  * CuxRequest class file
+ * 
+ * @package Components
+ * @subpackage Request
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
  */
 
 namespace CuxFramework\components\request;

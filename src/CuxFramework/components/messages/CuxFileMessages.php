@@ -1,22 +1,51 @@
 <?php
 
+/**
+ * CuxFileMessages class file
+ * 
+ * @package Components
+ * @subpackage Messages
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\messages;
 
 use CuxFramework\utils\CuxSingleton;
 use CuxFramework\utils\CuxBase;
 use CuxFramework\utils\Cux;
 
+/**
+ * Simple i18n class that uses files to store and load translated messages
+ */
 class CuxFileMessages extends CuxBaseMessages {
     
+    /**
+     * The list of ( to be- )translated messages
+     * @var array
+     */
     private $_messages = array();
     
+    /**
+     * The relative path for the translated messages
+     * @var string
+     */
     public $messagesPath = "";
     
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
     }
     
-    private function loadMessages($lang){
+    /**
+     * Load translated messages for a given language
+     * @param string $lang
+     */
+    private function loadMessages(string $lang){
         
         $messages = Cux::getInstance()->cache->get("messages.$lang");
         
@@ -47,14 +76,30 @@ class CuxFileMessages extends CuxBaseMessages {
         
     }
     
+    /**
+     * Get all the translated messages
+     * @return array
+     */
     public function getAllMessages(): array{
         return $this->_messages;
     }
     
+    /**
+     * Get the translated messages for a given language
+     * @param string $lang
+     * @return array
+     */
     public function getLocaleMessages(string $lang): array {
         return isset($this->_messages[$locale]) ? $this->_messages[$locale] : array();
     }
     
+    /**
+     * Translate a given message
+     * @param string $category The category of messages for the current text to be translated
+     * @param string $message The text to be translated
+     * @param string $lang The language for the translation
+     * @param mixed $context The context for the current message
+     */
     public function translate($category, $message, $lang, $context): string{
         
         if (!$lang){

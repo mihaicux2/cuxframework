@@ -1,15 +1,37 @@
 <?php
 
+/**
+ * CuxPaginator class file
+ * 
+ * @package Utils
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\utils;
 
+/**
+ * Class that can be used to render a pagination system / paginator
+ */
 class CuxPaginator extends CuxBasePaginator{
 
+    /**
+     * Class constructor
+     * @param int $page - the current page
+     * @param int $totalPages - total pages
+     * @param string $basePath - the base path for ( to be- ) generated links
+     */
     public function __construct(int $page, int $totalPages, string $basePath = "") {
 
         parent::__construct($page, $totalPages, $basePath);
         
     }
 
+    /**
+     * Actual rendering of the generated page links/buttons
+     * @return string
+     */
     public function render(): string{
         
         if ($this->_totalPages < 2)

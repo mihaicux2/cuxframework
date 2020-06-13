@@ -2,6 +2,12 @@
 
 /**
  * CuxMailer class file
+ * 
+ * @package Components
+ * @subpackage Mail
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
  */
 
 namespace CuxFramework\components\mail;

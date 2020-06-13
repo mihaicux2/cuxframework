@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * CuxActiveDataProvider class file
+ * 
+ * @package Utils
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\utils;
 
 use CuxFramework\utils\Cux;
@@ -7,15 +16,59 @@ use CuxFramework\components\db\CuxDBObject;
 use CuxFramework\components\db\CuxDBCriteria;
 use CuxFramework\components\html\CuxHTML;
 
+/**
+ * ActiveRecord Data Provider class
+ * Receives a list (an array) of models to be rendered
+ */
 class CuxActiveDataProvider extends CuxDataProvider {
 
+    /**
+     * An instance of the Model to be rendered
+     * @var CuxFramework\components\db\CuxDBObject 
+     */
     private $_model;
+    
+    /**
+     * Pagination model to be used for multiple pages listings
+     * @var CuxFramework\utils\CuxPaginator 
+     */
     private $_pager;
+    
+    /**
+     * Sort model to be used for list ordering
+     * @var CuxFramework\utils\CuxSorter
+     */
     private $_sorter;
+    
+    /**
+     * The DBCriteria that selects the list to be rendered
+     * @var CuxFramework\components\db\CuxDBCriteria 
+     */
     private $_criteria;
+    
+    /**
+     * The actual list of ActiveRecord models that will be rendewred
+     * @var array
+     */
     private $_data;
+    
+    /**
+     * Based on the provided columns, this will generate a search form suitable for the model list to be rendered
+     * @var array 
+     */
     private $_filter = array();
+    
+    /**
+     * How many records to be shown on each page
+     * @var int
+     */
     private $_pageSize;
+    
+    /**
+     * The template that will serve as a pattern for the list rendering
+     * Changing the template, you can add or remove data from the final render
+     * @var string
+     */
     private $_template = "<div>{filter}</div>
          <div>{pager}</div>
          <div>{summary}</div>
@@ -25,6 +78,27 @@ class CuxActiveDataProvider extends CuxDataProvider {
          <div>{summary}</div>
          <div>{pager}</div>";
 
+    /**
+     * Class constructor
+     * Use the $options parameters to setup class properties:
+     *  The base options ( as provided for the base class - CuxDataProvider )
+     *     "header" => $this->_header ( string )
+     *     "footer" => $this->_footer ( string )
+     *     "columns" => $this->_columns ( array )
+     *     "tableClass" => $this->_tableClass ( string )
+     *     "tHeadClass" => $this->tHeadClass ( string )
+     *     "isMobile" => $this->_isMobile ( bool )
+     *     "showFilter" => $this->_showFilter ( bool )
+     *   New options:
+     *     "criteria" => $this->_criteria ( should be an instance of CuxFramework\components\db\CuxDBCriteria )
+     *     "pageSize" => $this->_pageSize ( int )
+     *     "pager" => $this->_pager ( should be an instance of CuxFramework\utils\CuxPaginator )
+     *     "template" => $this->_template ( string )
+     *     "sorter" => $this->_sorter ( should be an instance of CuxFramework\utils\CuxSorter )
+     * 
+     * @param \CuxFramework\utils\CuxDbObject $model
+     * @param array $options
+     */
     public function __construct(CuxDbObject $model, array $options = array()) {
         $this->_model = $model;
         parent::__construct($options);
@@ -106,14 +180,25 @@ class CuxActiveDataProvider extends CuxDataProvider {
         $this->_data = $this->_model->findAllByCondition($this->_criteria);
     }
 
+    /**
+     * Setter for the $ _template property
+     * @param string $template
+     */
     public function setTemplate(string $template = "") {
         $this->_template = $template;
     }
 
+    /**
+     * Getter for the $_template property
+     * @return string
+     */
     public function getTemplate(): string {
         return $this->_template;
     }
 
+    /**
+     * Setup/compute the search form and store the processed data in the $_filter property
+     */
     private function setupFilter() {
         if ($this->getShowFilter()) {
             $columns = $this->getColumns();
@@ -227,6 +312,10 @@ class CuxActiveDataProvider extends CuxDataProvider {
         }
     }
 
+    /**
+     * Getter for the $_filter property
+     * @return array
+     */
     public function getFilter(): array {
         if (!empty($this->_filter)) {
             $arr = array();
@@ -238,42 +327,83 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return array();
     }
 
+    /**
+     * Setter for the $_pageSize property
+     * @param int $pageSize
+     */
     public function setPageSize(int $pageSize) {
         $this->_pageSize = $pageSize;
     }
 
+    /**
+     * Getter for the $_pageSize property
+     * @return int
+     */
     public function getPageSize(): int {
         return $this->_pageSize;
     }
 
+    /**
+     * Setter for the $_criteria property
+     * @param CuxDBCriteria $criteria
+     */
     public function setCriteria(CuxDBCriteria $criteria) {
         $this->_criteria = $criteria;
     }
 
+    /**
+     * Getter for the $_criteria property
+     * @return CuxDBCriteria
+     */
     public function getCriteria(): CuxDBCriteria {
         return $this->_criteria;
     }
 
+    /**
+     * Setter for the $_pager property
+     * @param \CuxFramework\utils\CuxBasePaginator $pager
+     */
     public function setPager(CuxBasePaginator $pager) {
         $this->_pager = $pager;
     }
 
+    /**
+     * Getter for the $_pager property
+     * @return \CuxFramework\utils\CuxBasePaginator
+     */
     public function getPager(): CuxBasePaginator {
         return $this->_pager;
     }
 
+    /**
+     * Setter for the $_sorter property
+     * @param \CuxFramework\utils\CuxSorter $sorter
+     */
     public function setSorter(CuxSorter $sorter) {
         $this->_sorter = $sorter;
     }
 
+    /**
+     * Getter for the $_sorter property
+     * @return \CuxFramework\utils\CuxSorter
+     */
     public function getSorter(): CuxSorter {
         return $this->_sorter;
     }
 
+    /**
+     * Getter for the DataProvider model labels
+     * @return array
+     */
     private function getLabels(): array {
         return $this->_model->labels();
     }
 
+    /**
+     * Generate a random alpha-numerical string of a given length
+     * @param int $length
+     * @return string
+     */
     private function randomString(int $length = 10): string {
         $ret = "";
         $alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -284,10 +414,18 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $ret;
     }
 
+    /**
+     * Method used to render the DataProvider paginator
+     * @return string
+     */
     private function renderPager(): string {
         return $this->_pager->render();
     }
 
+    /**
+     * Method used to render the DataProvider filter summary
+     * @return string
+     */
     private function renderFilter(): string {
         $str = "";
         $filter = $this->getFilter();
@@ -296,21 +434,38 @@ class CuxActiveDataProvider extends CuxDataProvider {
         }
         return $str;
     }
-
+    
+    /**
+     * Method used to render the DataProvider list summary
+     * @return string
+     */
     private function renderSummary(): string {
         return Cux::translate("core.dataProvider", "Page", array(), "Page number, current page") . ": " . $this->_pager->getPage() . " / " . $this->_pager->getTotalPages() . ". " . Cux::translate("core.dataProvider", "Total results", array(), "") . ": " . $this->_pager->getTotalResults();
-        ;
     }
 
+    /**
+     * Method used to render the DataProvider header
+     * @return string
+     */
     private function renderHeader(): string {
         return $this->getHeader();
     }
 
+    /**
+     * Method used to render the DataProvider footer
+     * @return string
+     */
     private function renderFooter(): string {
         return $this->getFooter();
     }
 
-    private function renderSearchFilter($id, $columns): string {
+    /**
+     * Method used to render the search input for a given model property ( column )
+     * @param string $id
+     * @param array $columns
+     * @return string
+     */
+    private function renderSearchFilter(string $id, array $columns): string {
         $str = "<tr id=\"form_{$id}\">";
         foreach ($columns as $key => $columnDetails) {
             $str .= "<th>";
@@ -321,7 +476,13 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $str;
     }
 
-    private function renderJS($id, $columns): string {
+    /**
+     * Method used to render the search input JavaScript code for a given model property ( column )
+     * @param string $id
+     * @param array $columns
+     * @return string
+     */
+    private function renderJS(string $id, array $columns): string {
         $params = Cux::getInstance()->request->getParams();
         $crtLink = Cux::getInstance()->request->getRoutePath();
 
@@ -450,7 +611,24 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $str;
     }
 
-    private function renderTableHead($columns): string {
+    /**
+     * Method used to render the DataProvider table columns ( head )
+     * @param array $columns
+     * The columns array should contain a list of elements with the following information:
+     *     "filter" - the search filter type: ( array )
+     *           "off" => do not display a filter
+     *           "search" => for the mobile version, display the "Search" button/trigger ( generates a button/an icon )
+     *           "interval" => search values between minimum and maximum values ( generates two text inputs )
+     *           "list" => filter the column using a predefined list of options ( generates a dropdown list )
+     *           "present" => filter boolean values ( generates a dropdown list with "Yes" and "No" values )
+     *           "text" => search for free text ( generates a text input )
+     *     "key" - the name/alias of the mapped model property ( string )
+     *     "label" - the label for the rendered table column ( string )
+     *     "width" - the width of the rendered table column ( string/int )
+     *     "options" - html properties for the displayed input(/inputs) (array)
+     * @return string
+     */
+    private function renderTableHead(array $columns): string {
         $str = "<tr>";
         foreach ($columns as $key => $columnDetails) {
             $width = isset($columnDetails["width"]) ? " width='".$columnDetails["width"]."'" : "";
@@ -461,7 +639,25 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $str;
     }
 
-    private function renderColumnFilter($columnDetails, $id): string{
+    /**
+     * Method used to render the DataProvider search form for given model property ( column )
+     * The columnDetails array should contain information for:
+     *     "filter" - the search filter type: ( array )
+     *           "off" => do not display a filter
+     *           "search" => for the mobile version, display the "Search" button/trigger ( generates a button/an icon )
+     *           "interval" => search values between minimum and maximum values ( generates two text inputs )
+     *           "list" => filter the column using a predefined list of options ( generates a dropdown list )
+     *           "present" => filter boolean values ( generates a dropdown list with "Yes" and "No" values )
+     *           "text" => search for free text ( generates a text input )
+     *     "key" - the name/alias of the mapped model property ( string )
+     *     "label" - the label for the rendered table column ( string )
+     *     "width" - the width of the rendered table column ( string/int )
+     *     "options" - html properties for the displayed input(/inputs) (array)
+     * @param array $columnDetails
+     * @param string $id
+     * @return string
+     */
+    private function renderColumnFilter(array $columnDetails, string $id): string{
         $str = "";
         if (isset($columnDetails["filter"])) {
             switch ($columnDetails["filter"]) {
@@ -514,7 +710,25 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $str;
     }
     
-    private function renderMobileHead($columns, $id): string {
+    /**
+     * For mobile devices, render the DataProvider table head
+     * @param array $columns
+     * The columns array should contain a list of elements with the following information:
+     *     "filter" - the search filter type: ( array )
+     *           "off" => do not display a filter
+     *           "search" => for the mobile version, display the "Search" button/trigger ( generates a button/an icon )
+     *           "interval" => search values between minimum and maximum values ( generates two text inputs )
+     *           "list" => filter the column using a predefined list of options ( generates a dropdown list )
+     *           "present" => filter boolean values ( generates a dropdown list with "Yes" and "No" values )
+     *           "text" => search for free text ( generates a text input )
+     *     "key" - the name/alias of the mapped model property ( string )
+     *     "label" - the label for the rendered table column ( string )
+     *     "width" - the width of the rendered table column ( string/int )
+     *     "options" - html properties for the displayed input(/inputs) (array)
+     * @param string $id
+     * @return string
+     */
+    private function renderMobileHead(array $columns, string $id): string {
         $showFilter = $this->getShowFilter();
         $str = "";
         foreach ($columns as $key => $columnDetails) {
@@ -530,6 +744,10 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $str;
     }
 
+    /**
+     * Method used to render the DataProvider list as a HTML table
+     * @return string
+     */
     private function renderList(): string {
 
         $columns = $this->getColumns();
@@ -621,6 +839,10 @@ class CuxActiveDataProvider extends CuxDataProvider {
         return $str;
     }
 
+    /**
+     * Render the DataProvider using the current state of the class instance
+     * @return string
+     */
     public function render(): string {
 
         $ret = "";

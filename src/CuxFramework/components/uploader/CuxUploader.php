@@ -1,13 +1,36 @@
 <?php
 
+/**
+ * CuxUploader class file
+ * 
+ * @package Components
+ * @subpackage Uploader
+ * @author Mihail Cuculici <mihai.cuculici@gmail.com>
+ * @version 0,9
+ * @since 2020-06-13
+ */
+
 namespace CuxFramework\components\uploader;
 
 use CuxFramework\utils\CuxBaseObject;
 use CuxFramework\utils\Cux;
 
+/**
+ * Simple class that can be used to handle uploaded files.
+ * It can also generate thumbnails for image files
+ */
 class CuxUploader extends CuxBaseObject {
 
+    /**
+     * Directory name prefix for the generated thumbnail folders 
+     * @var string
+     */
     private $_prefix;
+    
+    /**
+     * The list of known file ( mime ) types
+     * @var array
+     */
     private $mimeTypes = array(
         '3dm' => 'x-world/x-3dmf',
         '3dmf' => 'x-world/x-3dmf',
@@ -1234,22 +1257,69 @@ class CuxUploader extends CuxBaseObject {
         '123' => 'application/vnd.lotus-1-2-3'
     );
 
+    /**
+     * Store uploaded files in this folder
+     * @var string
+     */
     public $uploadsDir = "uploads/";
+    
+    /**
+     * Store uploaded images in this folder
+     * @var string
+     */
     public $imagesDir = "uploads/images/";
+    
+    /**
+     * For image files, store generated thumbnails in this folder
+     * @var string
+     */
     public $thumbsDir  = "uploads/images/thumbs/";
     
+    /**
+     * Maximum file size for the uploaded files
+     * @var int
+     */
     public $maxFileSize = 3000000; // 3Mb
+    
+    /**
+     * Flag for thumbnail generation
+     * @var bool
+     */
     public $makeThumbs = true;
+    
+    /**
+     * Generated thumbnails width
+     * @var int
+     */
     public $thumbWidth = 120;
+    
+    /**
+     * Generated thumbnails height
+     * @var int
+     */
     public $thumbHeight = 100;
+    
+    /**
+     * Flag to keep the aspect ratio (width / height ) for the generated thumbnails
+     * @var bool
+     */
     public $keepAspectRatio = true;
     
+    /**
+     * Setup object instance properties
+     * @param array $config
+     */
     public function config(array $config) {
         parent::config($config);
         
         $this->setRandomPrefix();
     }
     
+    /**
+     * Get the extension of a given file
+     * @param string $path The path of the file to be processed
+     * @return string
+     */
     public function getExtension(string $path): string{
         $ext = "";
         if (strpos($path, ".") !== false){
@@ -1259,6 +1329,11 @@ class CuxUploader extends CuxBaseObject {
         return $ext;
     }
     
+    /**
+     * Get the mime type of a given file
+     * @param string $path The path of the file to be processed
+     * @return string
+     */
     public function getMimeType(string $path): string {
 
         /**
@@ -1286,15 +1361,33 @@ class CuxUploader extends CuxBaseObject {
         return $ret;
     }
 
+    /**
+     * Check if a given file is image or not
+     * @param string $path The path of the file to be processed
+     * @return bool
+     */
     public function isImage(string $path): bool{
         return in_array($this->getExtension($path), array("jpg", "jpeg", "png", "gif", "bmp", "wbmp", "xbmp", "ico"));
     }
     
+    /**
+     * CHeck if a given file can have a thumbnail or not
+     * @param string $path The path of the file to be processed
+     * @return bool
+     */
     public function canHaveThumbnail(string $path): bool{
         if (!$this->isImage($path)) return false;
         return in_array($this->getExtension($path), array("jpg", "jpeg", "png", "gif"));
     }
     
+    /**
+     * Generate thumbnail for a given image, based on the input arguments
+     * @param string $path The path of the file to be processed
+     * @param int $width The desired thumbnail width
+     * @param int $height The desired thumbnail height
+     * @param bool $keepAspectRatio If set to true, the resulting height may differ from the desired one
+     * @return string
+     */
     public function generateThumbnail(string $path, int $width=400, int $height=300, bool $keepAspectRatio=true): string{
         $thumbName = $this->getThumbName($path, $width, $height, $keepAspectRatio);
         if (!$this->canHaveThumbnail($path)) return false;
@@ -1333,6 +1426,11 @@ class CuxUploader extends CuxBaseObject {
         return ($ret) ? $thumbName : "";
     }
     
+    /**
+     * Generate a random string of a given length
+     * @param int $length The length of the resulting string
+     * @return string
+     */
     private function randomString(int $length = 10): string{
         $ret = "";
         $alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1343,16 +1441,34 @@ class CuxUploader extends CuxBaseObject {
         return $ret;
     }
     
+    /**
+     * Set a random prefix for the generated thumbnail folders
+     * @return \CuxFramework\components\uploader\CuxUploader
+     */
     private function setRandomPrefix(): CuxUploader{
         $this->_prefix = microtime().$this->randomString(5)."_";
         return $this;
     }
     
+    /**
+     * Setter for the $_prefix property
+     * @param string $prefix
+     * @return \CuxFramework\components\uploader\CuxUploader
+     */
     public function setPrefix(string $prefix = ""): CuxUploader{
         $this->_prefix = $prefix;
         return $this;
     }
     
+    /**
+     * Get the thumbnail path for a given image file, based on given arguments
+     * @param string $path The path of the file to be processed
+     * @param int $width The desired thumbnail width
+     * @param int $height The desired thumbnail height
+     * @param bool $keepAspectRatio If set to true, the resulting height may differ from the desired one
+     * @return string
+     * @throws \Exception
+     */
     public function getThumbName(string $path, int $width=400, int $height=300, bool $keepAspectRatio=true): string{
         if (!$this->isImage($path)) return false;
         if (!file_exists($this->uploadsDir)){
@@ -1380,6 +1496,14 @@ class CuxUploader extends CuxBaseObject {
         return $thumbDir.DIRECTORY_SEPARATOR.$width."_".$height."_".(($keepAspectRatio) ? "yes_" : "no_").basename($path);
     }
     
+    /**
+     * Get/generate a thumbnail for a given image file, based on given arguments
+     * @param string $path The path of the file to be processed
+     * @param int $width The desired thumbnail width
+     * @param int $height The desired thumbnail height
+     * @param bool $keepAspectRatio If set to true, the resulting height may differ from the desired one
+     * @return string
+     */
     public function getThumbnail(string $path, int $width=400, int $height=300, bool $keepAspectRatio=true): string{
         if (!$this->isImage($path)) return false;
         $thumbName = $this->getThumbName($path, $width, $height, $keepAspectRatio);
@@ -1389,11 +1513,22 @@ class CuxUploader extends CuxBaseObject {
         return $this->generateThumbnail($path, $width, $height, $keepAspectRatio);
     }
     
+    /**
+     * Convert bytes size to human-readable values, reported in Bytes, KiloBytes, MegaBytes....
+     * @param int $size The size in bytes
+     * @return string
+     */
     public function convert(int $size): string {
         $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
         return sprintf("%.2f %s", $size / pow(1024, ($i = floor(log($size, 1024)))), ' ' . $unit[$i]);
     }
     
+    /**
+     * Store a given uploaded file and generate thumbnails, if required
+     * @param string $name The name of the uploaded file
+     * @return array
+     * @throws \Exception
+     */
     public function uploadFile(string $name): array{
         if (!isset($_FILES[$name])){
             throw new \Exception(Cux::translate("core.errors", "No file found", array(), "Error shown while uploading a file"), 505);
